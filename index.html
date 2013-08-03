@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<title>Minimalist Online Markdown Editor</title>
+		<meta name="description" content="This is the simplest and slickest online Markdown editor. Just write Markdown and see what it looks like as you type. And convert it to HTML in one click."/>
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
+		<meta property="og:image" content="http://markdown.pioul.fr/markdown.png"/>
+		<link rel="stylesheet" href="main.css" type="text/css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="main.js"></script>
+		<script src="showdown.js"></script>
+	</head>
+	<body>
+		<div id="left_column">
+			<div id="top_panels_container">
+				<div class="top_panel" id="quick-reference">
+					<div class="close">×</div>
+					<table>
+						<tr>
+							<td>
+								<pre><code><span class="highlight">*</span>This is italicized<span class="highlight">*</span>, and <span class="highlight">**</span>this is bold<span class="highlight">**</span>.</code></pre>
+							</td>
+							<td><p>Use <code>*</code> or <code>_</code> for emphasis.</p></td>
+						</tr>
+						<tr>
+							<td>
+								<pre><code>This is a first level header
+<span class="highlight">============================</span></code></pre>
+							</td>
+							<td><p>You can alternatively put hash marks at the beginning of the line: <code>#&nbsp;H1&nbsp;#</code>, <code>##&nbsp;H2&nbsp;##</code>, <code>###&nbsp;H3&nbsp;###</code>...</p></td>
+						</tr>
+						<tr>
+							<td>
+								<pre><code>This is a link to <span class="highlight">[Google](http://www.google.com)</span></code></pre>
+							</td>
+							<td><p></p></td>
+						</tr>
+						<tr>
+							<td>
+								<pre><code>First line.<span class="highlight">  </span>
+Second line.</code></pre>
+							</td>
+							<td><p>End a line with two spaces for a linebreak.</p></td>
+						</tr>
+						<tr>
+							<td>
+								<pre><code><span class="highlight">- </span>Unordered list item
+<span class="highlight">- </span>Unordered list item</code></pre>
+							</td>
+							<td><p>Unordered (bulleted) lists use asterisks, pluses, and hyphens (<code>*</code>, <code>+</code>, and <code>-</code>) as list markers.</p></td>
+						</tr>
+						<tr>
+							<td>
+								<pre><code><span class="highlight">1. </span>Ordered list item
+<span class="highlight">2. </span>Ordered list item</code></pre>
+							</td>
+							<td><p>Ordered (numbered) lists use regular numbers, followed by periods, as list markers.</p></td>
+						</tr>
+						<tr>
+							<td><pre><code><span class="highlight">    </span>/* This is a code block */</code></pre></td>
+							<td><p>Indent four spaces for a preformatted block.</p></td>
+						</tr>
+						<tr>
+							<td><pre><code>Let's talk about <span class="highlight">`</span>&lt;html&gt;<span class="highlight">`</span>!</code></pre></td>
+							<td><p>Use backticks for inline code.</p></td>
+						</tr>
+						<tr>
+							<td>
+								<pre><code><span class="highlight">![Valid XHTML](http://w3.org/Icons/valid-xhtml10)</span></code></pre>
+							</td>
+							<td><p>Images are exactly like links, but they have an exclamation point in front of them.</p></td>
+						</tr>
+					</table>
+				</div>
+				<div class="top_panel" id="about">
+					<div class="close">×</div>
+					<p>Hi, I'm <a href="http://pioul.fr/a-propos/" target="_blank">Philippe Masset</a>.</p>
+					<p>I made this minimalist online Markdown editor in a couple of hours just for the heck of it.<br/>And also maybe because I love Markdown (and front end stuff).</p>
+					<p>If you have any suggestions or remarks whatsoever, just click on my name above and you'll have plenty of ways of contacting me.</p>
+					<p>Credit is due to <a href="http://daringfireball.net/" target="_blank">John Gruber</a> for creating <a href="http://daringfireball.net/projects/markdown/" target="_blank">Markdown</a> in the first place, and John Fraser for his amazing JavaScript port, <code>showdown.js</code>.</p>
+				</div>
+			</div>
+			<div class="wrapper">
+				<div class="overlay">
+					<a href="#" class="button toppanel" data-toppanel="quick-reference">Quick Reference</a>
+					<a href="http://daringfireball.net/projects/markdown/syntax" target="_blank" class="button">Markdown</a>
+					<a href="#" class="button toppanel" data-toppanel="about">About</a>
+					<div class="clear"></div>
+				</div>
+				<textarea id="markdown" class="full-height">Minimalist Online Markdown Editor
+=================================
+
+This is the **simplest** and **slickest** online Markdown editor.  
+Just write Markdown and see what it looks like as you type. And convert it to HTML in one click.
+
+Getting started
+---------------
+
+### How? ###
+
+Just start typing in the left panel.
+
+### Buttons you might want to use ###
+
+- **Quick Reference**: that's a reminder of the most basic rules of Markdown
+- **Markdown**: click on that link to go to the official documentation
+- **HTML | Preview**: *HTML* to see the markup generated from your Markdown text, *Preview* to see how it looks like</textarea>
+			</div>
+		</div>
+		<div id="right_column">
+			<div class="wrapper">
+				<div class="overlay">
+					<a href="#" class="button switch" data-switchto="html">HTML</a>
+					<a href="#" class="button switch" data-switchto="preview">Preview</a>
+					<div class="clear"></div>
+				</div>
+				<textarea id="html" class="full-height"></textarea>
+				<div id="preview" class="full-height"></div>
+			</div>
+		</div>
+		<div class="clear"></div>
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-8885785-17']);
+		  _gaq.push(['_trackPageview']);
+		  (function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>
+	</body>
+</html>
