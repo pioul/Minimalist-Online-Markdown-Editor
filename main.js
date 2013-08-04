@@ -4,15 +4,17 @@ $(document).on("ready", function(){
 		
 		// variables
 		fitHeightElements: $(".full-height"),
-		wrappersMargin: $("#left_column > .wrapper:first").outerHeight(true) - $("#left_column > .wrapper:first").height(),
+		wrappersMargin: $("#left-column > .wrapper:first").outerHeight(true) - $("#left-column > .wrapper:first").height(),
 		markdownConverter: new Showdown.converter(),
 		markdownSource: $("#markdown"),
 		markdownPreview: $("#preview"),
 		markdownTargets: $("#html, #preview"),
-		markdownTargetsTriggers: $("#right_column .overlay .switch"),
+		markdownTargetsTriggers: $("#right-column .overlay .switch"),
 		topPanels: $("#top_panels_container .top_panel"),
-		topPanelsTriggers: $("#left_column .overlay .toppanel"),
+		topPanelsTriggers: $("#left-column .overlay .toppanel"),
 		quickReferencePreText: $("#quick-reference pre"),
+		activatedFeatures: [],
+		featuresTriggers: $("#right-column .overlay .feature"),
 		
 		// functions
 		init: function(){
@@ -50,11 +52,14 @@ $(document).on("ready", function(){
 			this.quickReferencePreText.on("click", function(){
 				editor.addToMarkdownSource($(this).text());
 			});
+			this.featuresTriggers.on("click", function(){
+				editor.toggleFeature($(this).data("feature"));
+			});
 		},
 		fitHeight: function(){
 			var newHeight = $(window).height() - this.wrappersMargin;
 			this.fitHeightElements.each(function(){
-				if($(this).closest("#left_column").length){
+				if($(this).closest("#left-column").length){
 					var thisNewHeight = newHeight - $("#top_panels_container").outerHeight();
 				} else {
 					var thisNewHeight = newHeight;
@@ -66,7 +71,9 @@ $(document).on("ready", function(){
 			var markdown = this.markdownSource.val(),
 				html = this.markdownConverter.makeHtml(markdown);
 			$("#html").val(html);
-			$("#preview").html(html);
+			this.markdownPreview
+				.html(html)
+				.trigger("updated");
 		},
 		addToMarkdownSource: function(markdown){
 			var markdownSourceValue = this.markdownSource.val();
@@ -95,6 +102,28 @@ $(document).on("ready", function(){
 			this.topPanels.hide();
 			this.topPanelsTriggers.removeClass("active");
 			this.fitHeight();
+		},
+		toggleFeature: function(which){
+			var featureTrigger = this.featuresTriggers.filter("[data-feature="+ which +"]");
+			switch(which){
+				case "auto-scroll":
+					this.toggleAutoScroll();
+					break;
+			}
+			featureTrigger.toggleClass("active");
+		},
+		toggleAutoScroll: function(){
+			var activatedFeaturesFeatureIndex = $.inArray("auto-scroll", this.activatedFeatures);
+			if(activatedFeaturesFeatureIndex == -1){
+				this.markdownPreview.on("updated", function(){
+					this.scrollTop = this.scrollHeight;
+				});
+				this.markdownPreview.trigger("updated");
+				this.activatedFeatures.push("auto-scroll");
+			} else {
+				this.markdownPreview.off("updated");
+				this.activatedFeatures.splice(activatedFeaturesFeatureIndex, 1);
+			}
 		},
 		onloadEffect: function(step){
 			var theBody = $(document.body);

@@ -12,7 +12,7 @@
 		<script src="showdown.js"></script>
 	</head>
 	<body>
-		<div id="left_column">
+		<div id="left-column">
 			<div id="top_panels_container">
 				<div class="top_panel" id="quick-reference">
 					<div class="close">×</div>
@@ -108,11 +108,14 @@ Just start typing in the left panel.
 - **HTML | Preview**: *HTML* to see the markup generated from your Markdown text, *Preview* to see how it looks like</textarea>
 			</div>
 		</div>
-		<div id="right_column">
+		<div id="right-column">
 			<div class="wrapper">
 				<div class="overlay">
-					<a href="#" class="button switch" data-switchto="html">HTML</a>
-					<a href="#" class="button switch" data-switchto="preview">Preview</a>
+					<div class="button-container">
+						<a href="#" class="button switch" data-switchto="html">HTML</a>
+						<a href="#" class="button switch" data-switchto="preview">Preview</a>
+					</div>
+					<a href="#" class="button symbol feature" data-feature="auto-scroll" title="Toggle auto-scrolling to the bottom of the preview panel">&#x21E9;</a>
 					<div class="clear"></div>
 				</div>
 				<textarea id="html" class="full-height"></textarea>

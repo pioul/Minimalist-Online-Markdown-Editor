@@ -38,8 +38,8 @@ blockquote {
 	padding-left: 10px;
 }
 
-#left_column,
-#right_column {
+#left-column,
+#right-column {
 	float: left;
 	width: 50%;
 }
@@ -49,12 +49,12 @@ blockquote {
 	padding: 20px;
 }
 
-#left_column .wrapper {
+#left-column .wrapper {
 	padding-right: 19px;
 	border-right: 1px solid #f7f7f7;
 }
 
-#right_column .wrapper {
+#right-column .wrapper {
 	padding-left: 19px;
 	border-left: 1px solid #f7f7f7;
 }
@@ -65,8 +65,12 @@ blockquote {
 	right: 40px;
 }
 
-.wrapper .overlay .button {
+.wrapper .overlay .button,
+.wrapper .overlay .button-container {
 	float: left;
+}
+
+.wrapper .overlay .button {
 	background: #fff;
 	margin-right: 5px;
 	padding: 0 6px;
@@ -82,6 +86,10 @@ blockquote {
 	-o-transition: opacity .5s;
 	transition: opacity .5s;
 	opacity: .5;
+}
+
+.wrapper .overlay .button.symbol {
+	font-size: 14px;
 }
 
 .wrapper .overlay .button:hover {
@@ -129,8 +137,8 @@ blockquote {
 	border-bottom-right-radius: 3px;
 }
 
-#left_column #markdown,
-#right_column #html {
+#left-column #markdown,
+#right-column #html {
 	display: block;
 	width: 100%;
 	resize: none;
@@ -139,12 +147,12 @@ blockquote {
 	border: 0;
 }
 
-#left_column #markdown:focus,
-#right_column #html:focus {
+#left-column #markdown:focus,
+#right-column #html:focus {
 	outline: none;
 }
 
-#left_column #top_panels_container .top_panel {
+#left-column #top_panels_container .top_panel {
 	display: none;
 	position: relative;
 	padding: 20px;
@@ -152,11 +160,11 @@ blockquote {
 	border-bottom: 2px solid #f7f7f7;
 }
 
-#left_column #top_panels_container .top_panel a {
+#left-column #top_panels_container .top_panel a {
 	color: #333;
 }
 
-#left_column #top_panels_container .top_panel .close {
+#left-column #top_panels_container .top_panel .close {
 	position: absolute;
 	top: 20px;
 	right: 20px;
@@ -173,7 +181,7 @@ blockquote {
 	border-radius: 10px;
 }
 
-#left_column #top_panels_container .top_panel .close:hover {
+#left-column #top_panels_container .top_panel .close:hover {
 	color: #999;
 	background: #f7f7f7;
 }
