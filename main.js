@@ -52,7 +52,8 @@ $(document).on("ready", function(){
 			this.quickReferencePreText.on("click", function(){
 				editor.addToMarkdownSource($(this).text());
 			});
-			this.featuresTriggers.on("click", function(){
+			this.featuresTriggers.on("click", function(e){
+				e.preventDefault();
 				editor.toggleFeature($(this).data("feature"));
 			});
 		},
@@ -115,10 +116,11 @@ $(document).on("ready", function(){
 		toggleAutoScroll: function(){
 			var activatedFeaturesFeatureIndex = $.inArray("auto-scroll", this.activatedFeatures);
 			if(activatedFeaturesFeatureIndex == -1){
-				this.markdownPreview.on("updated", function(){
-					this.scrollTop = this.scrollHeight;
-				});
-				this.markdownPreview.trigger("updated");
+				this.markdownPreview
+					.on("updated", function(){
+						this.scrollTop = this.scrollHeight;
+					})
+					.trigger("updated");
 				this.activatedFeatures.push("auto-scroll");
 			} else {
 				this.markdownPreview.off("updated");
