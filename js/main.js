@@ -158,6 +158,7 @@ $(document).on("ready", function(){
 				}
 				$(document).off(".fullscreen");
 			} else {
+				this.closeTopPanel();
 				// exit fullscreen when the escape key is pressed
 				$(document).on("keyup.fullscreen", function(e){
 					if(e.keyCode == 27) editor.featuresTriggers.filter("[data-feature=fullscreen]").last().trigger("click");
