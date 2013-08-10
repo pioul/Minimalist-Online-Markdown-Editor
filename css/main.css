@@ -145,7 +145,7 @@ body:hover .overlay.fullscreen .button {
 .overlay .button.icon-fullscreen {
 	width: 13px;
 	height: 20px;
-	background-image: url('fullscreen-icon.png');
+	background-image: url('../images/fullscreen-icon.png');
 	background-repeat: no-repeat;
 	background-position: center center;
 }
