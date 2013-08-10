@@ -6,15 +6,17 @@ $(document).on("ready", function(){
 		fitHeightElements: $(".full-height"),
 		wrappersMargin: $("#left-column > .wrapper:first").outerHeight(true) - $("#left-column > .wrapper:first").height(),
 		markdownConverter: new Showdown.converter(),
+		columns: $("#left-column, #right-column"),
 		markdownSource: $("#markdown"),
 		markdownPreview: $("#preview"),
 		markdownTargets: $("#html, #preview"),
-		markdownTargetsTriggers: $("#right-column .overlay .switch"),
+		markdownTargetsTriggers: $(".overlay .switch"),
 		topPanels: $("#top_panels_container .top_panel"),
 		topPanelsTriggers: $("#left-column .overlay .toppanel"),
 		quickReferencePreText: $("#quick-reference pre"),
-		activatedFeatures: [],
-		featuresTriggers: $("#right-column .overlay .feature"),
+		featuresTriggers: $(".overlay .feature"),
+		isAutoScrolling: false,
+		isFullscreen: false,
 		
 		// functions
 		init: function(){
@@ -54,7 +56,8 @@ $(document).on("ready", function(){
 			});
 			this.featuresTriggers.on("click", function(e){
 				e.preventDefault();
-				editor.toggleFeature($(this).data("feature"));
+				var t = $(this);
+				editor.toggleFeature(t.data("feature"), t.data());
 			});
 		},
 		fitHeight: function(){
@@ -85,10 +88,19 @@ $(document).on("ready", function(){
 		switchToTarget: function(which){
 			var target = $("#"+ which),
 				targetTrigger = this.markdownTargetsTriggers.filter("[data-switchto="+ which +"]");
-			this.markdownTargets.not(target).hide();
+			if(!this.isFullscreen || which != "markdown") this.markdownTargets.not(target).hide();
 			target.show();
 			this.markdownTargetsTriggers.not(targetTrigger).removeClass("active");
 			targetTrigger.addClass("active");
+			if(which != "markdown") this.featuresTriggers.filter("[data-feature=fullscreen][data-tofocus]").last().data("tofocus", which);
+			if(this.isFullscreen){
+				var columnToShow = (which == "markdown")? this.markdownSource.closest(this.columns) : this.markdownPreview.closest(this.columns);
+				columnToShow.show();
+				this.columns.not(columnToShow).hide();
+			}
+			if(this.isAutoScrolling && which == "preview"){
+				this.markdownPreview.trigger("updated"); // auto-scroll on switch since it wasn't earlier due to the preview being hidden
+			}
 		},
 		toggleTopPanel: function(which){
 			var panel = $("#"+ which),
@@ -104,27 +116,52 @@ $(document).on("ready", function(){
 			this.topPanelsTriggers.removeClass("active");
 			this.fitHeight();
 		},
-		toggleFeature: function(which){
+		toggleFeature: function(which, featureData){
 			var featureTrigger = this.featuresTriggers.filter("[data-feature="+ which +"]");
 			switch(which){
 				case "auto-scroll":
 					this.toggleAutoScroll();
 					break;
+				case "fullscreen":
+					this.toggleFullscreen(featureData);
+					break;
 			}
 			featureTrigger.toggleClass("active");
 		},
 		toggleAutoScroll: function(){
-			var activatedFeaturesFeatureIndex = $.inArray("auto-scroll", this.activatedFeatures);
-			if(activatedFeaturesFeatureIndex == -1){
+			if(!this.isAutoScrolling){
 				this.markdownPreview
 					.on("updated", function(){
 						this.scrollTop = this.scrollHeight;
 					})
 					.trigger("updated");
-				this.activatedFeatures.push("auto-scroll");
 			} else {
 				this.markdownPreview.off("updated");
-				this.activatedFeatures.splice(activatedFeaturesFeatureIndex, 1);
+			}
+			this.isAutoScrolling = !this.isAutoScrolling;
+		},
+		toggleFullscreen: function(featureData){
+			var toFocus = featureData.tofocus;
+			this.isFullscreen = !this.isFullscreen;
+			$(document.body).toggleClass("fullscreen");
+			if(toFocus) this.switchToTarget(toFocus);
+			if(!this.isFullscreen){
+				this.columns.show(); // make sure all columns are visible when exiting fullscreen
+				var activeMarkdownTargetsTriggersSwichtoValue = this.markdownTargetsTriggers.filter(".active").first().data("switchto");
+				// force one of the right panel's elements to be active if not already when exiting fullscreen
+				if(activeMarkdownTargetsTriggersSwichtoValue == "markdown"){
+					this.switchToTarget("preview");
+				}
+				// auto-scroll when exiting fullscreen and "preview" is already active since it changes width
+				if(this.isAutoScrolling && activeMarkdownTargetsTriggersSwichtoValue == "preview"){
+					this.markdownPreview.trigger("updated");
+				}
+				$(document).off(".fullscreen");
+			} else {
+				// exit fullscreen when the escape key is pressed
+				$(document).on("keyup.fullscreen", function(e){
+					if(e.keyCode == 27) editor.featuresTriggers.filter("[data-feature=fullscreen]").last().trigger("click");
+				});
 			}
 		},
 		onloadEffect: function(step){
