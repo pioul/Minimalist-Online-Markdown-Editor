@@ -17,14 +17,16 @@ $(document).on("ready", function(){
 		featuresTriggers: $(".overlay .feature"),
 		isAutoScrolling: false,
 		isFullscreen: false,
+		supportsLocalStorage: ("localStorage" in window && window.localStorage !== null),
 		
 		// functions
 		init: function(){
 			this.onloadEffect(0);
 			this.bind();
-			this.switchToTarget('preview');
+			this.switchToTarget("preview");
 			this.fitHeight();
-			this.convert();
+			this.loadMarkdown();
+			this.convertMarkdown();
 			this.onloadEffect(1);
 		},
 		bind: function(){
@@ -32,12 +34,16 @@ $(document).on("ready", function(){
 				editor.fitHeight();
 			});
 			this.markdownSource.on("keyup change", function(){
-				editor.convert();
+				editor.markdownSource.trigger("change.editor");
 			});
 			this.markdownSource.on("cut paste drop", function(){
 				setTimeout(function(){
-					editor.convert();
+					editor.markdownSource.trigger("change.editor");
 				}, 1);
+			});
+			this.markdownSource.on("change.editor", function(){
+				editor.saveMarkdown();
+				editor.convertMarkdown();
 			});
 			this.markdownTargetsTriggers.on("click", function(e){
 				e.preventDefault();
@@ -68,22 +74,39 @@ $(document).on("ready", function(){
 				} else {
 					var thisNewHeight = newHeight;
 				}
-				$(this).css({ height: thisNewHeight +'px' });
+				$(this).css({ height: thisNewHeight +"px" });
 			});
 		},
-		convert: function(){
+		saveMarkdown: function(){
+			if(!this.supportsLocalStorage) return false;
+			var markdown = this.markdownSource.val();
+			// even if localStorage is supported, using it can still throw an exception if disabled or the quota is exceeded
+			try {
+				localStorage.setItem("markdown", markdown);
+			} catch(e){}
+		},
+		loadMarkdown: function(){
+			if(!this.supportsLocalStorage) return false;
+			var markdown;
+			// even if localStorage is supported, using it can still throw an exception if disabled
+			try {
+				markdown = localStorage.getItem("markdown");
+			} catch(e){}
+			if(markdown) this.markdownSource.val(markdown);
+		},
+		convertMarkdown: function(){
 			var markdown = this.markdownSource.val(),
 				html = this.markdownConverter.makeHtml(markdown);
 			$("#html").val(html);
 			this.markdownPreview
 				.html(html)
-				.trigger("updated");
+				.trigger("updated.editor");
 		},
 		addToMarkdownSource: function(markdown){
 			var markdownSourceValue = this.markdownSource.val();
-			if(markdownSourceValue != '') markdownSourceValue += '\n\n';
+			if(markdownSourceValue != "") markdownSourceValue += "\n\n";
 			this.markdownSource.val(markdownSourceValue + markdown);
-			this.convert();
+			this.markdownSource.trigger("change.editor");
 		},
 		switchToTarget: function(which){
 			var target = $("#"+ which),
@@ -99,7 +122,7 @@ $(document).on("ready", function(){
 				this.columns.not(columnToShow).hide();
 			}
 			if(this.isAutoScrolling && which == "preview"){
-				this.markdownPreview.trigger("updated"); // auto-scroll on switch since it wasn't earlier due to the preview being hidden
+				this.markdownPreview.trigger("updated.editor"); // auto-scroll on switch since it wasn't earlier due to the preview being hidden
 			}
 		},
 		toggleTopPanel: function(which){
@@ -131,12 +154,12 @@ $(document).on("ready", function(){
 		toggleAutoScroll: function(){
 			if(!this.isAutoScrolling){
 				this.markdownPreview
-					.on("updated", function(){
+					.on("updated.editor", function(){
 						this.scrollTop = this.scrollHeight;
 					})
-					.trigger("updated");
+					.trigger("updated.editor");
 			} else {
-				this.markdownPreview.off("updated");
+				this.markdownPreview.off("updated.editor");
 			}
 			this.isAutoScrolling = !this.isAutoScrolling;
 		},
@@ -154,7 +177,7 @@ $(document).on("ready", function(){
 				}
 				// auto-scroll when exiting fullscreen and "preview" is already active since it changes width
 				if(this.isAutoScrolling && activeMarkdownTargetsTriggersSwichtoValue == "preview"){
-					this.markdownPreview.trigger("updated");
+					this.markdownPreview.trigger("updated.editor");
 				}
 				$(document).off(".fullscreen");
 			} else {
