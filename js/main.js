@@ -39,7 +39,7 @@ $(document).on("ready", function(){
 			this.markdownSource.on("cut paste drop", function(){
 				setTimeout(function(){
 					editor.markdownSource.trigger("change.editor");
-				}, 1);
+				}, 0);
 			});
 			this.markdownSource.on("change.editor", function(){
 				editor.saveMarkdown();
@@ -155,7 +155,10 @@ $(document).on("ready", function(){
 			if(!this.isAutoScrolling){
 				this.markdownPreview
 					.on("updated.editor", function(){
-						this.scrollTop = this.scrollHeight;
+						var markdownPreview = this;
+						setTimeout(function(){
+							markdownPreview.scrollTop = markdownPreview.scrollHeight;
+						}, 0);
 					})
 					.trigger("updated.editor");
 			} else {
