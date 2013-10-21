@@ -19,7 +19,7 @@ body {
 }
 
 pre,
-p code {
+code {
 	background: #eee;
 	padding: 1px 5px 1px 5px;
 }
@@ -30,6 +30,10 @@ pre {
 
 pre .highlight {
 	background: #ddd;
+}
+
+pre code {
+	padding: 0;
 }
 
 blockquote {
