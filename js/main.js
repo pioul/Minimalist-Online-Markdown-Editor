@@ -36,6 +36,23 @@ $(document).on("ready", function(){
 			this.markdownSource.on("keyup change", function(){
 				editor.markdownSource.trigger("change.editor");
 			});
+            this.markdownSource.on("keydown", function(e){
+                var keyCode = e.keyCode || e.which;
+                if (keyCode == 9) {
+                    e.preventDefault();
+                    var start = editor.markdownSource.get(0).selectionStart;
+                    var end = editor.markdownSource.get(0).selectionEnd;
+
+                    // set textarea value to: text before caret + tab + text after caret
+                    editor.markdownSource.val(editor.markdownSource.val().substring(0, start)
+                        + "\t"
+                        + editor.markdownSource.val().substring(end));
+                    // put caret at right position again
+                    editor.markdownSource.get(0).selectionStart =
+                    editor.markdownSource.get(0).selectionEnd = start + 1;
+                }
+                //Code from http://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
+            });
 			this.markdownSource.on("cut paste drop", function(){
 				setTimeout(function(){
 					editor.markdownSource.trigger("change.editor");
