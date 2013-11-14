@@ -21,6 +21,9 @@ $(document).on("ready", function(){
 		
 		// functions
 		init: function(){
+            editor.markdownSourceEditor = ace.edit("markdown");
+            //editor.setTheme("ace/theme/monokai");
+            editor.markdownSourceEditor.getSession().setMode("ace/mode/markdown");
 			this.onloadEffect(0);
 			this.bind();
 			this.switchToTarget("preview");
@@ -28,6 +31,8 @@ $(document).on("ready", function(){
 			this.loadMarkdown();
 			this.convertMarkdown();
 			this.onloadEffect(1);
+
+
 		},
 		bind: function(){
 			$(window).on("resize", function(){
@@ -96,7 +101,7 @@ $(document).on("ready", function(){
 		},
 		saveMarkdown: function(){
 			if(!this.supportsLocalStorage) return false;
-			var markdown = this.markdownSource.val();
+			var markdown = this.markdownSourceEditor.getValue();
 			// even if localStorage is supported, using it can still throw an exception if disabled or the quota is exceeded
 			try {
 				localStorage.setItem("markdown", markdown);
@@ -109,10 +114,10 @@ $(document).on("ready", function(){
 			try {
 				markdown = localStorage.getItem("markdown");
 			} catch(e){}
-			if(markdown) this.markdownSource.val(markdown);
+			if(markdown) this.markdownSourceEditor.setValue(markdown);
 		},
 		convertMarkdown: function(){
-			var markdown = this.markdownSource.val(),
+			var markdown = this.markdownSourceEditor.getValue(),
 				html = this.markdownConverter.makeHtml(markdown);
 			$("#html").val(html);
 			this.markdownPreview
@@ -120,7 +125,7 @@ $(document).on("ready", function(){
 				.trigger("updated.editor");
 		},
 		addToMarkdownSource: function(markdown){
-			var markdownSourceValue = this.markdownSource.val();
+			var markdownSourceValue = this.markdownSourceEditor.getValue();
 			if(markdownSourceValue != "") markdownSourceValue += "\n\n";
 			this.markdownSource.val(markdownSourceValue + markdown);
 			this.markdownSource.trigger("change.editor");
@@ -221,7 +226,6 @@ $(document).on("ready", function(){
 		}
 		
 	};
-	
 	editor.init();
-	
+
 });
