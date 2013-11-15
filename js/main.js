@@ -24,7 +24,9 @@ $(document).on("ready", function(){
             editor.markdownSourceEditor = ace.edit("markdown");
             //editor.setTheme("ace/theme/monokai");
             editor.markdownSourceEditor.getSession().setMode("ace/mode/markdown");
-			this.onloadEffect(0);
+            editor.markdownSourceEditor.setShowPrintMargin(false);
+            editor.markdownSourceEditor.renderer.setShowGutter(false);
+            this.onloadEffect(0);
 			this.bind();
 			this.switchToTarget("preview");
 			this.fitHeight();
