@@ -8,6 +8,7 @@
 		<meta property="og:image" content="http://markdown.pioul.fr/images/markdown.png"/>
 		<link rel="stylesheet" href="css/main.css" type="text/css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="js/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/main.js"></script>
 		<script src="js/showdown.js"></script>
 	</head>
@@ -90,7 +91,7 @@ Second line.</code></pre>
 					<a href="#" class="button icon-fullscreen feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
 					<div class="clear"></div>
 				</div>
-				<textarea id="markdown" class="full-height" placeholder="Write Markdown">Minimalist Online Markdown Editor
+				<div id="markdown" class="full-height" placeholder="Write Markdown">Minimalist Online Markdown Editor
 =================================
 
 This is the **simplest** and **slickest** online Markdown editor.  
@@ -112,7 +113,7 @@ Just start typing in the left panel.
 
 - No data is sent to any server – everything you type stays in your browser
 - The editor automatically saves what you write locally in case you accidentally close it.  
-  If using a public computer, either empty the left panel before leaving the editor or use your browser's privacy mode</textarea>
+  If using a public computer, either empty the left panel before leaving the editor or use your browser's privacy mode</div>
 			</div>
 		</div>
 		<div id="right-column">

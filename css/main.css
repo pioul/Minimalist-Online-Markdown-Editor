@@ -71,6 +71,7 @@ blockquote {
 	position: absolute;
 	top: 20px;
 	right: 40px;
+    z-index: 300;
 }
 
 .overlay.fullscreen {

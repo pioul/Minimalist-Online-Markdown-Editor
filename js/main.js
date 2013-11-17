@@ -21,13 +21,20 @@ $(document).on("ready", function(){
 		
 		// functions
 		init: function(){
-			this.onloadEffect(0);
+            editor.markdownSourceEditor = ace.edit("markdown");
+            //editor.setTheme("ace/theme/monokai");
+            editor.markdownSourceEditor.getSession().setMode("ace/mode/markdown");
+            editor.markdownSourceEditor.setShowPrintMargin(false);
+            editor.markdownSourceEditor.renderer.setShowGutter(false);
+            this.onloadEffect(0);
 			this.bind();
 			this.switchToTarget("preview");
 			this.fitHeight();
 			this.loadMarkdown();
 			this.convertMarkdown();
 			this.onloadEffect(1);
+
+
 		},
 		bind: function(){
 			$(window).on("resize", function(){
@@ -36,6 +43,23 @@ $(document).on("ready", function(){
 			this.markdownSource.on("keyup change", function(){
 				editor.markdownSource.trigger("change.editor");
 			});
+            this.markdownSource.on("keydown", function(e){
+                var keyCode = e.keyCode || e.which;
+                if (keyCode == 9) {
+                    e.preventDefault();
+                    var start = editor.markdownSource.get(0).selectionStart;
+                    var end = editor.markdownSource.get(0).selectionEnd;
+
+                    // set textarea value to: text before caret + tab + text after caret
+                    editor.markdownSource.val(editor.markdownSource.val().substring(0, start)
+                        + "\t"
+                        + editor.markdownSource.val().substring(end));
+                    // put caret at right position again
+                    editor.markdownSource.get(0).selectionStart =
+                    editor.markdownSource.get(0).selectionEnd = start + 1;
+                }
+                //Code from http://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
+            });
 			this.markdownSource.on("cut paste drop", function(){
 				setTimeout(function(){
 					editor.markdownSource.trigger("change.editor");
@@ -79,7 +103,7 @@ $(document).on("ready", function(){
 		},
 		saveMarkdown: function(){
 			if(!this.supportsLocalStorage) return false;
-			var markdown = this.markdownSource.val();
+			var markdown = this.markdownSourceEditor.getValue();
 			// even if localStorage is supported, using it can still throw an exception if disabled or the quota is exceeded
 			try {
 				localStorage.setItem("markdown", markdown);
@@ -92,10 +116,10 @@ $(document).on("ready", function(){
 			try {
 				markdown = localStorage.getItem("markdown");
 			} catch(e){}
-			if(markdown) this.markdownSource.val(markdown);
+			if(markdown) this.markdownSourceEditor.setValue(markdown);
 		},
 		convertMarkdown: function(){
-			var markdown = this.markdownSource.val(),
+			var markdown = this.markdownSourceEditor.getValue(),
 				html = this.markdownConverter.makeHtml(markdown);
 			$("#html").val(html);
 			this.markdownPreview
@@ -103,7 +127,7 @@ $(document).on("ready", function(){
 				.trigger("updated.editor");
 		},
 		addToMarkdownSource: function(markdown){
-			var markdownSourceValue = this.markdownSource.val();
+			var markdownSourceValue = this.markdownSourceEditor.getValue();
 			if(markdownSourceValue != "") markdownSourceValue += "\n\n";
 			this.markdownSource.val(markdownSourceValue + markdown);
 			this.markdownSource.trigger("change.editor");
@@ -204,7 +228,6 @@ $(document).on("ready", function(){
 		}
 		
 	};
-	
 	editor.init();
-	
+
 });
