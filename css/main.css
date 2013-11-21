@@ -164,8 +164,13 @@ body:hover .overlay.fullscreen .button {
 	width: 100%;
 	resize: none;
 	margin: 0;
-	padding: 0;
+	padding: 30px 0 0 0;
 	border: 0;
+}
+
+#left-column #preview,
+#right-column #preview {
+ padding-top: 15px;
 }
 
 #left-column #markdown:focus,
