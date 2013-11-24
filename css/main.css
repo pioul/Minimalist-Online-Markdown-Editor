@@ -55,7 +55,6 @@ blockquote {
 .wrapper {
 	position: relative;
 	padding: 22px 0 20px 20px;
-	padding-top: 22px;
 }
 
 #left-column .wrapper {
@@ -98,18 +97,9 @@ blockquote {
 	margin-left: 0;
 }
 
-.buttons-container .button.symbol {
-	font-size: 14px;
-}
-
 .buttons-container .button:active,
 .buttons-container .button.active {
 	border-bottom-color: #b5b5b5;
-}
-
-.wrapper:hover .buttons-container .button,
-body:hover .buttons-container.fullscreen .button {
-	opacity: 1;
 }
 
 .buttons-container .button-group .button.switch {
