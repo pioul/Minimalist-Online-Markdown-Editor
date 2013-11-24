@@ -54,11 +54,11 @@ blockquote {
 
 .wrapper {
 	position: relative;
-	padding: 20px;
+	padding: 22px 0 20px 20px;
+	padding-top: 22px;
 }
 
 #left-column .wrapper {
-	padding-right: 19px;
 	border-right: 1px solid #f7f7f7;
 }
 
@@ -67,95 +67,81 @@ blockquote {
 	border-left: 1px solid #f7f7f7;
 }
 
-.overlay {
+.buttons-container {
 	position: absolute;
-	top: 20px;
-	right: 40px;
+	top: 0;
+	right: 0;
+	background: #f7f7f7;
 }
 
-.overlay.fullscreen {
+.buttons-container.fullscreen {
 	display: none;
 }
 
-.overlay .button,
-.overlay .button-container {
+.buttons-container .button,
+.buttons-container .button-group {
 	float: left;
 }
 
-.overlay .button {
-	background: #fff;
-	margin-right: 5px;
-	padding: 0 6px;
-	color: #999;
+.buttons-container .button {
+	height: 18px;
+	margin-left: 1px;
+	padding: 2px 6px 0;
+	line-height: 18px;
+	color: #888;
 	text-decoration: none;
 	font-size: 11px;
-	border: 1px solid #ddd;
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	-moz-transition: opacity .5s;
-	-webkit-transition: opacity .5s;
-	-o-transition: opacity .5s;
-	transition: opacity .5s;
-	opacity: .5;
+	border-bottom: 2px solid transparent;
 }
 
-.overlay .button.symbol {
+.buttons-container .button:first-child {
+	margin-left: 0;
+}
+
+.buttons-container .button.symbol {
 	font-size: 14px;
 }
 
-.overlay .button:hover {
-	-webkit-box-shadow: inset 0 -1px 1px rgba(0,0,0,.1);
-	-moz-box-shadow: inset 0 -1px 1px rgba(0,0,0,.1);
-	box-shadow: inset 0 -1px 1px rgba(0,0,0,.1);
+.buttons-container .button:active,
+.buttons-container .button.active {
+	border-bottom-color: #b5b5b5;
 }
 
-.overlay .button:active,
-.overlay .button.active {
-	background-color: #f9f9f9;
-	text-shadow: 1px 1px #fff;
-	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
-	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.1);
-	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.wrapper:hover .overlay .button,
-body:hover .overlay.fullscreen .button {
+.wrapper:hover .buttons-container .button,
+body:hover .buttons-container.fullscreen .button {
 	opacity: 1;
 }
 
-.overlay .button.switch {
-	margin: 0 0 0 -1px;
-	-moz-border-radius: 0;
-	-webkit-border-radius: 0;
-	border-radius: 0;
+.buttons-container .button-group .button.switch {
+	padding-left: 3px;
+	padding-right: 3px;
 }
 
-.overlay .button.switch:first-of-type {
-	-moz-border-top-left-radius: 3px;
-	-webkit-border-top-left-radius: 3px;
-	border-top-left-radius: 3px;
-	-moz-border-bottom-left-radius: 3px;
-	-webkit-border-bottom-left-radius: 3px;
-	border-bottom-left-radius: 3px;
+.buttons-container .button-group .button.switch:first-child {
+	padding-left: 6px;
 }
 
-.overlay .button.switch:last-of-type {
-	margin-right: 5px;
-	-moz-border-top-right-radius: 3px;
-	-webkit-border-top-right-radius: 3px;
-	border-top-right-radius: 3px;
-	-moz-border-bottom-right-radius: 3px;
-	-webkit-border-bottom-right-radius: 3px;
-	border-bottom-right-radius: 3px;
+.buttons-container .button-group .button.switch:last-child {
+	padding-right: 6px;
 }
 
-.overlay .button.icon-fullscreen {
-	width: 13px;
-	height: 20px;
-	background-image: url('../images/fullscreen-icon.png');
-	background-repeat: no-repeat;
-	background-position: center center;
+.buttons-container .button-group .button.switch:after {
+	content: "/";
+	position: relative;
+	right: -4px;
+}
+
+.buttons-container .button-group .button.switch:last-child:after {
+	content: none;
+}
+
+.buttons-container .button.icon-arrow-down-a {
+	width: 9px;
+	font-size: 12px;
+}
+
+.buttons-container .button.icon-arrow-expand {
+	font-size: 16px;
 }
 
 #left-column #markdown,
@@ -177,7 +163,7 @@ body:hover .overlay.fullscreen .button {
 	display: none;
 	position: relative;
 	padding: 20px;
-	background: #fff;
+	background: #f7f7f7;
 	border-bottom: 2px solid #f7f7f7;
 }
 
@@ -195,16 +181,12 @@ body:hover .overlay.fullscreen .button {
 	line-height: 14px;
 	font-size: 14px;
 	text-align: center;
-	color: #ddd;
+	color: #999;
 	cursor: pointer;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
-	border-radius: 10px;
 }
 
 #left-column #top_panels_container .top_panel .close:hover {
-	color: #999;
-	background: #f7f7f7;
+	color: #666;
 }
 
 #quick-reference {
@@ -258,10 +240,10 @@ body:hover .overlay.fullscreen .button {
 	margin: 0 auto;
 }
 
-.fullscreen .overlay {
+.fullscreen .buttons-container {
 	display: none;
 }
 
-.fullscreen .overlay.fullscreen {
+.fullscreen .buttons-container.fullscreen {
 	display: block;
 }

@@ -1,0 +1,38 @@
+/*
+  Ionicons, v1.3.5
+  Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
+  https://twitter.com/helloimben  https://twitter.com/ionicframework
+  MIT License: https://github.com/driftyco/ionicons
+*/
+@font-face {
+	font-family: "Ionicons";
+	src:url("../fonts/ionicons/ionicons.eot");
+	src:url("../fonts/ionicons/ionicons.eot?#iefix") format("embedded-opentype"),
+		url("../fonts/ionicons/ionicons.ttf") format("truetype"),
+		url("../fonts/ionicons/ionicons.woff") format("woff"),
+		url("../fonts/ionicons/ionicons.svg#ionicons") format("svg");
+	font-weight: normal;
+	font-style: normal;
+}
+
+.icon-arrow-down-a,
+.icon-arrow-expand {
+	display: inline-block;
+	font-family: "Ionicons";
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-arrow-down-a:before {
+	content: "\f103";
+}
+
+.icon-arrow-expand:before {
+	content: "\f25e";
+}
