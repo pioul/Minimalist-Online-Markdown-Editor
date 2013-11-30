@@ -55,11 +55,11 @@ $(document).on("ready", function() {
 			});
 			this.topPanelsTriggers.on("click", function(e) {
 				e.preventDefault();
-				editor.toggleTopPanel($(this).data("toppanel"));
+				editor.toggleTopPanel($("#"+ $(this).data("toppanel")));
 			});
 			this.topPanels.children(".close").on("click", function(e) {
 				e.preventDefault();
-				editor.closeTopPanel();
+				editor.closeTopPanels();
 			});
 			this.quickReferencePreText.on("click", function() {
 				editor.addToMarkdownSource($(this).text());
@@ -143,21 +143,31 @@ $(document).on("ready", function() {
 			}
 		},
 
-		// Toggle top panels visibility
-		toggleTopPanel: function(which) {
-			var panel = $("#"+ which),
-				panelTrigger = this.topPanelsTriggers.filter("[data-toppanel="+ which +"]");
-			this.topPanels.not(panel).hide();
-			panel.toggle();
-			this.topPanelsTriggers.not(panelTrigger).removeClass("active");
-			panelTrigger.toggleClass("active");
-			this.fitHeight();
+		// Toggle a top panel's visibility
+		toggleTopPanel: function(panel) {
+			if (panel.is(":visible")) this.closeTopPanels();
+				else this.openTopPanel(panel);
 		},
 
-		closeTopPanel: function() {
+		// Open a top panel
+		openTopPanel: function(panel) {
+			var panelTrigger = this.topPanelsTriggers.filter("[data-toppanel="+ panel.attr("id") +"]");
+			panel.show();
+			panelTrigger.addClass("active");
+			this.topPanels.not(panel).hide();
+			this.topPanelsTriggers.not(panelTrigger).removeClass("active");
+			this.fitHeight();
+			$(document).off("keyup.toppanel").on("keyup.toppanel", function(e) { // Close top panel when the escape key is pressed
+				if (e.keyCode == 27) editor.closeTopPanels();
+			});
+		},
+
+		// Close all top panels
+		closeTopPanels: function() {
 			this.topPanels.hide();
 			this.topPanelsTriggers.removeClass("active");
 			this.fitHeight();
+			$(document).off("keyup.toppanel");
 		},
 
 		// Toggle editor feature
@@ -207,12 +217,11 @@ $(document).on("ready", function() {
 				if (this.isAutoScrolling && activeMarkdownTargetsTriggersSwichtoValue == "preview") {
 					this.markdownPreview.trigger("updated.editor");
 				}
-				$(document).off(".fullscreen");
+				$(document).off("keyup.fullscreen");
 			// Enter fullscreen
 			} else {
-				this.closeTopPanel();
-				// Exit fullscreen when the escape key is pressed
-				$(document).on("keyup.fullscreen", function(e) {
+				this.closeTopPanels();
+				$(document).on("keyup.fullscreen", function(e) { // Exit fullscreen when the escape key is pressed
 					if (e.keyCode == 27) editor.featuresTriggers.filter("[data-feature=fullscreen]").last().trigger("click");
 				});
 			}
