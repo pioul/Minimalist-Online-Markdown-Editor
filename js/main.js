@@ -36,6 +36,11 @@ $(document).on("ready", function() {
 				editor.fitHeight();
 			});
 			this.markdownSource.on({
+				keydown: function(e) {
+					if (e.keyCode == 9) {
+						editor.handleTabKeyPress(e);
+					}
+				},
 				"keyup change": function() {
 					editor.markdownSource.trigger("change.editor");
 				},
@@ -117,11 +122,22 @@ $(document).on("ready", function() {
 		},
 
 		// Programmatically add Markdown text to the textarea
-		addToMarkdownSource: function(markdown) {
+		// position = { start: Number, end: Number }
+		addToMarkdownSource: function(markdown, position) {
 			var markdownSourceValue = this.markdownSource.val();
-			if (markdownSourceValue != "") markdownSourceValue += "\n\n";
-			this.markdownSource.val(markdownSourceValue + markdown);
-			this.markdownSource.trigger("change.editor");
+			if (typeof(position) == "undefined") { // Add text at the end
+				var newMarkdownSourceValue =
+					(markdownSourceValue.length? markdownSourceValue + "\n\n" : "") +
+					markdown;
+			} else { // Add text at a given position
+				var newMarkdownSourceValue =
+					markdownSourceValue.substring(0, position.start) +
+					markdown +
+					markdownSourceValue.substring(position.end);
+			}
+			this.markdownSource
+				.val(newMarkdownSourceValue)
+				.trigger("change.editor");
 		},
 
 		// Switch between editor panels
@@ -237,6 +253,22 @@ $(document).on("ready", function() {
 				case 1:
 					theBody.fadeTo(1000, 1);
 					break;
+			}
+		},
+
+		// Insert a tab character when the tab key is pressed (instead of focusing the next form element)
+		// Doesn't work in IE<9
+		handleTabKeyPress: function(e) {
+			var markdownSourceElement = this.markdownSource[0],
+				tabInsertPosition = {
+					start: markdownSourceElement.selectionStart,
+					end: markdownSourceElement.selectionEnd
+				};
+			if (typeof(tabInsertPosition.start) == "number" && typeof(tabInsertPosition.end) == "number") {
+				e.preventDefault();
+				this.addToMarkdownSource("\t", tabInsertPosition);
+				var cursorPosition = tabInsertPosition.start + 1;
+				markdownSourceElement.setSelectionRange(cursorPosition, cursorPosition);
 			}
 		}
 		
