@@ -23,9 +23,8 @@ $(document).on("ready", function() {
 		init: function() {
 			this.onloadEffect(0);
 			this.bind();
-			this.switchToTarget("preview");
 			this.fitHeight();
-			this.loadMarkdown();
+			this.restoreState();
 			this.convertMarkdown();
 			this.onloadEffect(1);
 		},
@@ -50,13 +49,13 @@ $(document).on("ready", function() {
 					}, 0);
 				},
 				"change.editor": function() {
-					editor.saveMarkdown();
+					editor.save("markdown", editor.markdownSource.val());
 					editor.convertMarkdown();
 				}
 			});
 			this.markdownTargetsTriggers.on("click", function(e) {
 				e.preventDefault();
-				editor.switchToTarget($(this).data("switchto"));
+				editor.switchToPanel($(this).data("switchto"));
 			});
 			this.topPanelsTriggers.on("click", function(e) {
 				e.preventDefault();
@@ -90,25 +89,30 @@ $(document).on("ready", function() {
 			});
 		},
 
-		// Save Markdown in localStorage
-		saveMarkdown: function() {
+		// Save a key/value pair in localStorage (either Markdown text or enabled features)
+		save: function(key, value) {
 			if (!this.supportsLocalStorage) return false;
-			var markdown = this.markdownSource.val();
 			// Even if localStorage is supported, using it can still throw an exception if disabled or the quota is exceeded
 			try {
-				localStorage.setItem("markdown", markdown);
+				localStorage.setItem(key, value);
 			} catch (e) {}
 		},
 
-		// Load Markdown from localStorage
-		loadMarkdown: function() {
+		// Restore the editor's state from localStorage (saved Markdown and enabled features)
+		restoreState: function() {
 			if (!this.supportsLocalStorage) return false;
-			var markdown;
+			var markdown, isAutoScrolling, isFullscreen, activePanel;
 			// Even if localStorage is supported, using it can still throw an exception if disabled
 			try {
 				markdown = localStorage.getItem("markdown");
+				isAutoScrolling = localStorage.getItem("isAutoScrolling");
+				isFullscreen = localStorage.getItem("isFullscreen");
+				activePanel = localStorage.getItem("activePanel");
 			} catch (e) {}
 			if (markdown) this.markdownSource.val(markdown);
+			if (isAutoScrolling == "y") this.toggleFeature("auto-scroll");
+			if (isFullscreen == "y") this.toggleFeature("fullscreen");
+			this.switchToPanel(activePanel || "preview");
 		},
 
 		// Convert Markdown to HTML using showdown.js
@@ -141,7 +145,7 @@ $(document).on("ready", function() {
 		},
 
 		// Switch between editor panels
-		switchToTarget: function(which) {
+		switchToPanel: function(which) {
 			var target = $("#"+ which),
 				targetTrigger = this.markdownTargetsTriggers.filter("[data-switchto="+ which +"]");
 			if (!this.isFullscreen || which != "markdown") this.markdownTargets.not(target).hide();
@@ -157,6 +161,7 @@ $(document).on("ready", function() {
 			if (this.isAutoScrolling && which == "preview") {
 				this.markdownPreview.trigger("updated.editor"); // Auto-scroll on switch since it wasn't possible earlier due to the preview being hidden
 			}
+			this.save("activePanel", which);
 		},
 
 		// Toggle a top panel's visibility
@@ -214,20 +219,21 @@ $(document).on("ready", function() {
 				this.markdownPreview.off("updated.editor");
 			}
 			this.isAutoScrolling = !this.isAutoScrolling;
+			this.save("isAutoScrolling", this.isAutoScrolling? "y" : "n");
 		},
 
 		toggleFullscreen: function(featureData) {
-			var toFocus = featureData.tofocus;
+			var toFocus = featureData && featureData.tofocus;
 			this.isFullscreen = !this.isFullscreen;
 			$(document.body).toggleClass("fullscreen");
-			if (toFocus) this.switchToTarget(toFocus);
+			if (toFocus) this.switchToPanel(toFocus);
 			// Exit fullscreen
 			if (!this.isFullscreen) {
 				this.columns.show(); // Make sure all columns are visible when exiting fullscreen
 				var activeMarkdownTargetsTriggersSwichtoValue = this.markdownTargetsTriggers.filter(".active").first().data("switchto");
 				// Force one of the right panel's elements to be active if not already when exiting fullscreen
 				if (activeMarkdownTargetsTriggersSwichtoValue == "markdown") {
-					this.switchToTarget("preview");
+					this.switchToPanel("preview");
 				}
 				// Auto-scroll when exiting fullscreen and "preview" is already active since it changes width
 				if (this.isAutoScrolling && activeMarkdownTargetsTriggersSwichtoValue == "preview") {
@@ -241,6 +247,7 @@ $(document).on("ready", function() {
 					if (e.keyCode == 27) editor.featuresTriggers.filter("[data-feature=fullscreen]").last().trigger("click");
 				});
 			}
+			this.save("isFullscreen", this.isFullscreen? "y" : "n");
 		},
 
 		// Subtle fade-in effect
