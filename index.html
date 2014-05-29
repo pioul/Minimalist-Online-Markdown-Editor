@@ -85,11 +85,13 @@ Second line.</code></pre>
 				</div>
 			</div>
 			<div class="wrapper">
-				<div class="buttons-container">
-					<a href="#" class="button toppanel" data-toppanel="quick-reference">Quick Reference</a>
-					<a href="#" class="button toppanel" data-toppanel="about">About</a>
-					<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
-					<div class="clear"></div>
+				<div class="topbar hidden-when-fullscreen">
+					<div class="buttons-container">
+						<a href="#" class="button toppanel" data-toppanel="quick-reference">Quick Reference</a>
+						<a href="#" class="button toppanel" data-toppanel="about">About</a>
+						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
+						<div class="clear"></div>
+					</div>
 				</div>
 				<textarea id="markdown" class="full-height" placeholder="Write Markdown">Minimalist Online Markdown Editor
 =================================
@@ -118,28 +120,32 @@ Just start typing in the left panel.
 		</div>
 		<div id="right-column">
 			<div class="wrapper">
-				<div class="buttons-container">
-					<div class="button-group">
-						<a href="#" class="button switch" data-switchto="html">HTML</a>
-						<a href="#" class="button switch" data-switchto="preview">Preview</a>
+				<div class="topbar hidden-when-fullscreen">
+					<div class="buttons-container">
+						<div class="button-group">
+							<a href="#" class="button switch" data-switchto="html">HTML</a>
+							<a href="#" class="button switch" data-switchto="preview">Preview</a>
+						</div>
+						<a href="#" class="button icon-arrow-down-a feature" data-feature="auto-scroll" title="Toggle auto-scrolling to the bottom of the preview panel"></a>
+						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="" title="Go fullscreen"></a><!-- data-tofocus is set dynamically by the HTML/preview switch -->
+						<div class="clear"></div>
 					</div>
-					<a href="#" class="button icon-arrow-down-a feature" data-feature="auto-scroll" title="Toggle auto-scrolling to the bottom of the preview panel"></a>
-					<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="" title="Go fullscreen"></a><!-- data-tofocus is set dynamically by the HTML/preview switch -->
-					<div class="clear"></div>
 				</div>
 				<textarea id="html" class="full-height"></textarea>
 				<div id="preview" class="full-height"></div>
 			</div>
 		</div>
 		<div class="clear"></div>
-		<div class="buttons-container fullscreen">
-			<div class="button-group">
-				<a href="#" class="button switch" data-switchto="markdown">Markdown</a>
-				<a href="#" class="button switch" data-switchto="html">HTML</a>
-				<a href="#" class="button switch" data-switchto="preview">Preview</a>
+		<div class="topbar visible-when-fullscreen">
+			<div class="buttons-container">
+				<div class="button-group">
+					<a href="#" class="button switch" data-switchto="markdown">Markdown</a>
+					<a href="#" class="button switch" data-switchto="html">HTML</a>
+					<a href="#" class="button switch" data-switchto="preview">Preview</a>
+				</div>
+				<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" title="Exit fullscreen"></a>
+				<div class="clear"></div>
 			</div>
-			<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" title="Exit fullscreen"></a>
-			<div class="clear"></div>
 		</div>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
