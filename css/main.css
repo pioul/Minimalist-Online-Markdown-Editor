@@ -1,0 +1,21 @@
+body.iframe {
+	height: auto;
+	-webkit-user-select: text;
+	user-select: text;
+	cursor: auto;
+}
+
+body:not(.iframe)::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: 2px;
+	background: #f7f7f7;
+}
+
+#preview-iframe {
+	width: 100%;
+	border: 0;
+}

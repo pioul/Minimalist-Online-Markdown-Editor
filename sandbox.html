@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+		<link rel="stylesheet" href="editor/css/main.css" type="text/css">
+		<script src="js/jquery.min.js"></script>
+		<script>
+			$(window).on("load", function() {
+				
+				var body = $(document.body),
+					postHeight = function() {
+						window.parent.postMessage(body.height(), "*");
+					};
+				
+				$(window).on({
+					resize: function() {
+						postHeight();
+					},
+					message: function(e) {
+						body.html(e.originalEvent.data);
+						postHeight();
+						
+						// if there are images, the height of the iframe has to be manually updated to reflect the height of the images
+						// thus, wait for all images to load, then send the actual height to the parent window
+						var images = body.find("img");
+						if (images.length) {
+							var loadedImages = 0,
+								incrementLoadedImages = function() {
+									if (++loadedImages >= images.length) postHeight();
+								};
+							images.each(function() {
+								var image = $(this);
+								if (image.complete) {
+									incrementLoadedImages();
+								} else {
+									image.on("load", function() {
+										incrementLoadedImages();
+									});
+								}
+							});
+						}
+						
+					}
+				});
+				
+				body.on("click", "a", function(e) {
+					e.preventDefault();
+					open($(e.target).attr("href"), "MME_external_link");
+				});
+				
+			});
+		</script>
+	</head>
+	<body class="iframe"></body>
+</html>
