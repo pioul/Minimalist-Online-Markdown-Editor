@@ -267,6 +267,21 @@ $(document).ready(function() {
 				var cursorPosition = tabInsertPosition.start + 1;
 				markdownSourceElement.setSelectionRange(cursorPosition, cursorPosition);
 			}
+		},
+
+		// Count the words in the Markdown output and update the word count in the corresponding
+		// .word-count elements in the editor
+		updateWordCount: function(e) {
+			var bodyText = $('#preview').text();
+		    if (bodyText.length == 0) {
+		        $('.word-count').html('');
+		        return;
+		    }
+		    else {
+		    	var wordCount = bodyText.trim().replace(/\s+/gi, ' ').split(' ').length;
+		    	var wordCountWithCommas = wordCount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+		    	$('.word-count').html(wordCountWithCommas+' words');
+		    }
 		}
 		
 	};

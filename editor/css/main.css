@@ -242,3 +242,12 @@ blockquote {
 	max-width: 800px;
 	margin: 0 auto;
 }
+
+.word-count{
+	display:inline;
+	font-size:12px;
+	position:relative;
+	left:-15px;
+	top:1px;
+	color:#999;
+}

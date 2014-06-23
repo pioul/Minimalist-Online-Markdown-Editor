@@ -39,17 +39,7 @@ $(document).ready(function() {
 		// Update the preview panel with new HTML
 		updateMarkdownPreview: function(html) {
 			editor.markdownPreview.html(html);
-
-			// Update word count
-			var bodyText = $('#preview').text();
-		    if (bodyText.length == 0) {
-		        $('#word-count').html(0);
-		        return;
-		    }
-		    else {
-		    	var wordCount = bodyText.trim().replace(/\s+/gi, ' ').split(' ').length;
-		    	$('#word-count').html(addCommas(wordCount));
-		    }
+			editor.updateWordCount();
 		}
 
 	};
@@ -57,16 +47,3 @@ $(document).ready(function() {
 	app.init();
 
 });
-
-function addCommas(nStr)
-{
-    nStr += '';
-    var x = nStr.split('.');
-    var x1 = x[0];
-    var x2 = x.length > 1 ? '.' + x[1] : '';
-    var rgx = /(\d+)(\d{3})/;
-    while (rgx.test(x1)) {
-        x1 = x1.replace(rgx, '$1' + ',' + '$2');
-    }
-    return x1 + x2;
-}
