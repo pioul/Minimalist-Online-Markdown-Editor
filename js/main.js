@@ -15,6 +15,7 @@ $(document).ready(function() {
 		topPanelsTriggers: $("#left-column .buttons-container .toppanel"),
 		quickReferencePreText: $("#quick-reference pre"),
 		featuresTriggers: $(".buttons-container .feature"),
+		wordCountContainers: $(".word-count"),
 		isAutoScrolling: false,
 		isFullscreen: false,
 		
@@ -25,6 +26,7 @@ $(document).ready(function() {
 			this.fitHeight();
 			this.restoreState(function() {
 				editor.convertMarkdown();
+				editor.updateWordCount();
 				editor.onloadEffect(1);
 			});
 		},
@@ -51,6 +53,7 @@ $(document).ready(function() {
 				"change.editor": function() {
 					editor.save("markdown", editor.markdownSource.val());
 					editor.convertMarkdown();
+					editor.updateWordCount();
 				}
 			});
 			this.markdownTargetsTriggers.on("click", function(e) {
@@ -266,6 +269,21 @@ $(document).ready(function() {
 				this.addToMarkdownSource("\t", tabInsertPosition);
 				var cursorPosition = tabInsertPosition.start + 1;
 				markdownSourceElement.setSelectionRange(cursorPosition, cursorPosition);
+			}
+		},
+
+		// Count the words in the Markdown output and update the word count in the corresponding
+		// .word-count elements in the editor
+		updateWordCount: function(e) {
+			var bodyText = this.markdownPreview.text();
+
+			if (bodyText.length == 0) {
+				this.wordCountContainers.text("");
+				return;
+			} else {
+				var wordCount = bodyText.trim().replace(/\s+/gi, " ").split(" ").length;
+				var wordCountWithCommas = wordCount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
+				this.wordCountContainers.text(wordCountWithCommas +" words");
 			}
 		}
 		
