@@ -76,10 +76,17 @@ blockquote {
 	border-left: 1px solid #f7f7f7;
 }
 
-.topbar {
+.topbar,
+.bottom-bar {
 	position: absolute;
 	top: 0;
 	right: 0;
+}
+
+.bottom-bar {
+	top: auto;
+	bottom: 0;
+	padding-right: 5px;
 }
 
 .topbar .buttons-container {
@@ -142,6 +149,14 @@ blockquote {
 
 .topbar .buttons-container .button.icon-arrow-expand {
 	font-size: 16px;
+}
+
+.bottom-bar .word-count {
+	float: right;
+	height: 20px;
+	line-height: 20px;
+	font-size: 11px;
+	color: #888;
 }
 
 #left-column #markdown,
