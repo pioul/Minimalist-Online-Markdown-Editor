@@ -39,6 +39,7 @@ $(document).ready(function() {
 		// Update the preview panel with new HTML
 		updateMarkdownPreview: function(html) {
 			editor.markdownPreview.html(html);
+			editor.updateWordCount();
 		}
 
 	};
