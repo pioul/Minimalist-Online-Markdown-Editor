@@ -1,7 +1,7 @@
 {
 	"name": "Minimalist Markdown Editor",
 	"description": "This is the simplest and slickest Markdown editor. Just write Markdown and see what it looks like as you type.",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"app": {
 		"background": {
 			"scripts": [
