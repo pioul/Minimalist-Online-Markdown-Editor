@@ -1,11 +1,4 @@
-body.iframe {
-	height: auto;
-	-webkit-user-select: text;
-	user-select: text;
-	cursor: auto;
-}
-
-body:not(.iframe)::before {
+body:before {
 	content: "";
 	position: absolute;
 	top: 0;

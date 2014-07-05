@@ -14,7 +14,7 @@ $(document).ready(function() {
 
 		initBindings: function() {
 			$(window).on("message", function(e) {
-				app.updateMarkdownPreviewIframeHeight(e.originalEvent.data);
+				app.receiveMessage(e.originalEvent);
 			});
 
 			// In the Chrome app, the preview panel requires to be in a sandboxed iframe, hence isn't loaded immediately with the rest of the document
@@ -22,6 +22,18 @@ $(document).ready(function() {
 				app.isMarkdownPreviewIframeLoaded = true;
 				app.markdownPreviewIframeLoadEventCallbacks.fire();
 			});
+		},
+
+		// Post messages to the iframe
+		// Currently only used to transfer HTML from this window to the iframe for display
+		postMessage: function(data) {
+			this.markdownPreviewIframe[0].contentWindow.postMessage(data, "*");
+		},
+
+		// Receive messages sent to this window (from the iframe)
+		receiveMessage: function(e) {
+			if (e.data.hasOwnProperty("height")) this.updateMarkdownPreviewIframeHeight(e.data.height);
+			if (e.data.hasOwnProperty("text")) editor.updateWordCount(e.data.text);
 		},
 
 		// Save a key/value pair in chrome.storage (either Markdown text or enabled features)
@@ -47,11 +59,11 @@ $(document).ready(function() {
 
 		// Update the preview panel with new HTML
 		updateMarkdownPreview: function(html) {
-			this.markdownPreviewIframe[0].contentWindow.postMessage(html, "*");
+			this.postMessage(html);
 		},
 
 		updateMarkdownPreviewIframeHeight: function(height) {
-			app.markdownPreviewIframe.css("height", height);
+			this.markdownPreviewIframe.css("height", height);
 			editor.markdownPreview.trigger("updated.editor");
 		}
 
