@@ -26,7 +26,6 @@ $(document).ready(function() {
 			this.fitHeight();
 			this.restoreState(function() {
 				editor.convertMarkdown();
-				editor.updateWordCount();
 				editor.onloadEffect(1);
 			});
 		},
@@ -53,7 +52,6 @@ $(document).ready(function() {
 				"change.editor": function() {
 					editor.save("markdown", editor.markdownSource.val());
 					editor.convertMarkdown();
-					editor.updateWordCount();
 				}
 			});
 			this.markdownTargetsTriggers.on("click", function(e) {
@@ -274,17 +272,15 @@ $(document).ready(function() {
 
 		// Count the words in the Markdown output and update the word count in the corresponding
 		// .word-count elements in the editor
-		updateWordCount: function(e) {
-			var bodyText = this.markdownPreview.text();
+		updateWordCount: function(text) {
+			var wordCount = "";
 
-			if (bodyText.length == 0) {
-				this.wordCountContainers.text("");
-				return;
-			} else {
-				var wordCount = bodyText.trim().replace(/\s+/gi, " ").split(" ").length;
-				var wordCountWithCommas = wordCount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",");
-				this.wordCountContainers.text(wordCountWithCommas +" words");
+			if (text.length) {
+				wordCount = text.trim().replace(/\s+/gi, " ").split(" ").length;
+				wordCount = wordCount.toString().replace(/\B(?=(?:\d{3})+(?!\d))/g, ",") +" words"; // Format number (add commas and unit)
 			}
+
+			this.wordCountContainers.text(wordCount);
 		}
 		
 	};
