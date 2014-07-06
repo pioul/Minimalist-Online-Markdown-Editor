@@ -56,6 +56,11 @@ blockquote {
 	padding-left: 10px;
 }
 
+hr {
+	border: 0;
+	border-top: 1px solid #e7e7e7;
+}
+
 #left-column,
 #right-column {
 	float: left;
