@@ -1,8 +1,14 @@
-$(document).ready(function() {
+var editor,
+	$window = $(window),
+	$document = $(document);
+
+$document.ready(function() {
+	"use strict";
 	
 	editor = {
 		
 		// Editor variables
+		body: $(document.body),
 		fitHeightElements: $(".full-height"),
 		wrappersMargin: $("#left-column > .wrapper:first").outerHeight(true) - $("#left-column > .wrapper:first").height(),
 		markdownConverter: new Showdown.converter(),
@@ -32,14 +38,12 @@ $(document).ready(function() {
 
 		// Handle events on several DOM elements
 		initBindings: function() {
-			$(window).on("resize", function() {
+			$window.on("resize", function() {
 				editor.fitHeight();
 			});
 			this.markdownSource.on({
 				keydown: function(e) {
-					if (e.keyCode == 9) {
-						editor.handleTabKeyPress(e);
-					}
+					if (e.keyCode == keyCode.TAB) editor.handleTabKeyPress(e);
 				},
 				"keyup change": function() {
 					editor.markdownSource.trigger("change.editor");
@@ -49,8 +53,8 @@ $(document).ready(function() {
 						editor.markdownSource.trigger("change.editor");
 					}, 0);
 				},
-				"change.editor": function() {
-					editor.save("markdown", editor.markdownSource.val());
+				"change.editor": function(e, shouldntSaveNewValue) {
+					if (!shouldntSaveNewValue) editor.save("markdown", editor.markdownSource.val());
 					editor.convertMarkdown();
 				}
 			});
@@ -78,7 +82,7 @@ $(document).ready(function() {
 
 		// Resize some elements to make the editor fit inside the window
 		fitHeight: function() {
-			var newHeight = $(window).height() - this.wrappersMargin;
+			var newHeight = $window.height() - this.wrappersMargin;
 			this.fitHeightElements.each(function() {
 				var t = $(this);
 				if (t.closest("#left-column").length) {
@@ -120,7 +124,7 @@ $(document).ready(function() {
 		// position = { start: Number, end: Number }
 		addToMarkdownSource: function(markdown, position) {
 			var markdownSourceValue = this.markdownSource.val();
-			if (typeof(position) == "undefined") { // Add text at the end
+			if (typeof position == "undefined") { // Add text at the end
 				var newMarkdownSourceValue =
 					(markdownSourceValue.length? markdownSourceValue + "\n\n" : "") +
 					markdown;
@@ -130,9 +134,14 @@ $(document).ready(function() {
 					markdown +
 					markdownSourceValue.substring(position.end);
 			}
+			this.updateMarkdownSource(newMarkdownSourceValue);
+		},
+
+		// Programmatically update the Markdown textarea with new Markdown text
+		updateMarkdownSource: function(markdown, shouldntSaveNewValue) {
 			this.markdownSource
-				.val(newMarkdownSourceValue)
-				.trigger("change.editor");
+				.val(markdown)
+				.trigger("change.editor", [ shouldntSaveNewValue ]);
 		},
 
 		// Switch between editor panels
@@ -169,8 +178,8 @@ $(document).ready(function() {
 			this.topPanels.not(panel).hide();
 			this.topPanelsTriggers.not(panelTrigger).removeClass("active");
 			this.fitHeight();
-			$(document).off("keyup.toppanel").on("keyup.toppanel", function(e) { // Close top panel when the escape key is pressed
-				if (e.keyCode == 27) editor.closeTopPanels();
+			$document.off("keydown.toppanel").on("keydown.toppanel", function(e) {
+				if (e.keyCode == keyCode.ESCAPE) editor.closeTopPanels();
 			});
 		},
 
@@ -179,7 +188,7 @@ $(document).ready(function() {
 			this.topPanels.hide();
 			this.topPanelsTriggers.removeClass("active");
 			this.fitHeight();
-			$(document).off("keyup.toppanel");
+			$document.off("keydown.toppanel");
 		},
 
 		// Toggle editor feature
@@ -216,7 +225,7 @@ $(document).ready(function() {
 		toggleFullscreen: function(featureData) {
 			var toFocus = featureData && featureData.tofocus;
 			this.isFullscreen = !this.isFullscreen;
-			$(document.body).toggleClass("fullscreen");
+			this.body.toggleClass("fullscreen");
 			if (toFocus) this.switchToPanel(toFocus);
 			// Exit fullscreen
 			if (!this.isFullscreen) {
@@ -230,12 +239,12 @@ $(document).ready(function() {
 				if (this.isAutoScrolling && activeMarkdownTargetsTriggersSwichtoValue == "preview") {
 					this.markdownPreview.trigger("updated.editor");
 				}
-				$(document).off("keyup.fullscreen");
+				$document.off("keydown.fullscreen");
 			// Enter fullscreen
 			} else {
 				this.closeTopPanels();
-				$(document).on("keyup.fullscreen", function(e) { // Exit fullscreen when the escape key is pressed
-					if (e.keyCode == 27) editor.featuresTriggers.filter("[data-feature=fullscreen]").last().trigger("click");
+				$document.on("keydown.fullscreen", function(e) {
+					if (e.keyCode == keyCode.ESCAPE) editor.featuresTriggers.filter("[data-feature=fullscreen]").last().trigger("click");
 				});
 			}
 			this.save("isFullscreen", this.isFullscreen? "y" : "n");
@@ -243,13 +252,12 @@ $(document).ready(function() {
 
 		// Subtle fade-in effect
 		onloadEffect: function(step) {
-			var theBody = $(document.body);
 			switch (step) {
 				case 0:
-					theBody.fadeTo(0, 0);
+					this.body.fadeTo(0, 0);
 					break;
 				case 1:
-					theBody.fadeTo(1000, 1);
+					this.body.fadeTo(1000, 1);
 					break;
 			}
 		},
@@ -262,7 +270,7 @@ $(document).ready(function() {
 					start: markdownSourceElement.selectionStart,
 					end: markdownSourceElement.selectionEnd
 				};
-			if (typeof(tabInsertPosition.start) == "number" && typeof(tabInsertPosition.end) == "number") {
+			if (typeof tabInsertPosition.start == "number" && typeof tabInsertPosition.end == "number") {
 				e.preventDefault();
 				this.addToMarkdownSource("\t", tabInsertPosition);
 				var cursorPosition = tabInsertPosition.start + 1;
