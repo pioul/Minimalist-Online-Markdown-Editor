@@ -6,13 +6,16 @@
 		<meta name="description" content="This is the simplest and slickest Markdown editor. Just write Markdown and see what it looks like as you type. And convert it to HTML in one click."/>
 		<link rel="stylesheet" href="editor/css/main.css" type="text/css">
 		<link rel="stylesheet" href="editor/css/ionicons.css" type="text/css">
+		<link rel="stylesheet" href="css/utilities.css" type="text/css">
 		<link rel="stylesheet" href="css/main.css" type="text/css">
 		<script src="js/jquery.min.js"></script>
+		<script src="editor/js/utilities.js"></script>
 		<script src="editor/js/main.js"></script>
 		<script src="editor/js/showdown.js"></script>
+		<script src="js/utilities.js"></script>
 		<script src="js/main.js"></script>
 	</head>
-	<body>
+	<body class="clearfix">
 		<div id="left-column">
 			<div id="top_panels_container">
 				<div class="top_panel" id="quick-reference">
@@ -86,12 +89,12 @@ Second line.</code></pre>
 			</div>
 			<div class="wrapper">
 				<div class="topbar hidden-when-fullscreen">
-					<div class="buttons-container">
+					<div class="buttons-container clearfix">
 						<a href="#" class="button toppanel" data-toppanel="quick-reference">Quick Reference</a>
 						<a href="#" class="button toppanel" data-toppanel="about">About</a>
 						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
-						<div class="clear"></div>
 					</div>
+					<div class="file-menu clearfix"></div>
 				</div>
 				<textarea id="markdown" class="full-height" placeholder="Write Markdown">Minimalist Markdown Editor
 ==========================
@@ -121,19 +124,17 @@ Just start typing in the left panel.
 		<div id="right-column">
 			<div class="wrapper">
 				<div class="topbar hidden-when-fullscreen">
-					<div class="buttons-container">
+					<div class="buttons-container clearfix">
 						<div class="button-group">
 							<a href="#" class="button switch" data-switchto="html">HTML</a>
 							<a href="#" class="button switch" data-switchto="preview">Preview</a>
 						</div>
 						<a href="#" class="button icon-arrow-down-a feature" data-feature="auto-scroll" title="Toggle auto-scrolling to the bottom of the preview panel"></a>
 						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="" title="Go fullscreen"></a><!-- data-tofocus is set dynamically by the HTML/preview switch -->
-						<div class="clear"></div>
 					</div>
 				</div>
-				<div class="bottom-bar hidden-when-fullscreen">
+				<div class="bottom-bar hidden-when-fullscreen clearfix">
 					<div class="word-count"></div>
-					<div class="clear"></div>
 				</div>
 				<textarea id="html" class="full-height"></textarea>
 				<div id="preview" class="full-height">
@@ -141,21 +142,19 @@ Just start typing in the left panel.
 				</div>
 			</div>
 		</div>
-		<div class="clear"></div>
 		<div class="topbar visible-when-fullscreen">
-			<div class="buttons-container">
+			<div class="buttons-container clearfix">
 				<div class="button-group">
 					<a href="#" class="button switch" data-switchto="markdown">Markdown</a>
 					<a href="#" class="button switch" data-switchto="html">HTML</a>
 					<a href="#" class="button switch" data-switchto="preview">Preview</a>
 				</div>
 				<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" title="Exit fullscreen"></a>
-				<div class="clear"></div>
 			</div>
+			<div class="file-menu clearfix"></div>
 		</div>
-		<div class="bottom-bar visible-when-fullscreen">
+		<div class="bottom-bar visible-when-fullscreen clearfix">
 			<div class="word-count"></div>
-			<div class="clear"></div>
 		</div>
 	</body>
 </html>

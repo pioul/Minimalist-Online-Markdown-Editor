@@ -17,7 +17,8 @@
 	},
 	"permissions": [
 		"storage",
-		"unlimitedStorage"
+		"unlimitedStorage",
+		{ "fileSystem": ["write", "retainEntries"] }
 	],
 	"offline_enabled": true,
 	"sandbox": {

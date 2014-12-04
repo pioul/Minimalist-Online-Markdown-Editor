@@ -12,3 +12,96 @@ body:before {
 	width: 100%;
 	border: 0;
 }
+
+.topbar .file-menu {
+	margin-right: 10px;
+}
+
+.topbar .file-menu .file-menu-item {
+	position: relative;
+	float: right;
+	height: 18px;
+	margin-right: 1px;
+	padding: 2px 20px 0 8px;
+	color: #b5b5b5;
+	font-size: 11px;
+	line-height: 18px;
+	cursor: pointer;
+	border-bottom: 2px solid transparent;
+}
+
+.topbar .file-menu .file-menu-item:hover,
+.topbar .file-menu .file-menu-item:active,
+.topbar .file-menu .file-menu-item.active {
+	color: #888;
+}
+
+.topbar .file-menu .file-menu-item:active,
+.topbar .file-menu .file-menu-item.active {
+	border-bottom-color: #b5b5b5;
+}
+
+.topbar .file-menu .file-menu-item:before {
+	content: "";
+	position: absolute;
+	top: 4px;
+	right: -1px;
+	bottom: 2px;
+	width: 1px;
+	background: #e7e7e7;
+}
+
+.topbar .file-menu .file-menu-item:first-child:before {
+	content: none;
+}
+
+.topbar .file-menu .file-menu-item .filename {
+	position: relative;
+	z-index: -1; /* Place .filename under .file-menu-item for click events to only fire on .file-menu-item; creating other stacking contexts around here or changing these properties might break the file menu on the JS side. */
+}
+
+.topbar .file-menu .file-menu-item .close {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	bottom: 3px;
+	width: 12px;
+	line-height: 12px;
+	font-size: 13px;
+	text-align: center;
+	color: #e7e7e7;
+	border-radius: 7px;
+}
+
+.topbar .file-menu .file-menu-item:hover .close,
+.topbar .file-menu .file-menu-item:active .close,
+.topbar .file-menu .file-menu-item.active .close {
+	color: #b5b5b5;
+}
+
+.topbar .file-menu .file-menu-item .close:hover {
+	color: #888;
+	background: #e7e7e7;
+}
+
+.topbar .file-menu .file-menu-item.has-changed .close::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 5px;
+	height: 5px;
+	background: #e7e7e7;
+	border: 4px solid #fff;
+	border-radius: 6.5px;
+}
+
+.topbar .file-menu .file-menu-item.has-changed:hover .close::before,
+.topbar .file-menu .file-menu-item.has-changed:active .close::before,
+.topbar .file-menu .file-menu-item.has-changed.active .close::before {
+	background: #b5b5b5;
+}
+
+.topbar .file-menu .file-menu-item.has-changed .close:hover::before {
+	display: none;
+}

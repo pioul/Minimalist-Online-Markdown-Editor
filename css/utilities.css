@@ -1,0 +1,50 @@
+.modal-container {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.modal {
+	position: absolute;
+	top: 20%;
+	left: 50%;
+	width: 300px;
+	margin-left: -150px;
+	background: #fff;
+	border: 1px solid #b5b5b5;
+	border-radius: 2px;
+}
+
+.modal .content {
+	padding: 15px;
+}
+
+.modal .buttons {
+	padding: 15px;
+	padding-top: 0;
+}
+
+.modal .buttons .button {
+	float: right;
+	height: 20px;
+	margin-left: 10px;
+	padding: 0 5px;
+	font-size: 12px;
+	text-decoration: none;
+	color: #888;
+	border-radius: 2px;
+	border: 1px solid #b5b5b5;
+}
+
+.modal .buttons .button.button-primary {
+	color: #333;
+	border-color: #888;
+	font-weight: bold;
+}
+
+.modal .buttons .button:active,
+.modal .buttons .button:focus {
+	background: #f7f7f7;
+}
