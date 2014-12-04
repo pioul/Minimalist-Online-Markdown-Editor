@@ -1,4 +1,14 @@
-.clear {
+.clearfix {
+	*zoom: 1;
+}
+
+.clearfix:before,
+.clearfix:after {
+	content: "";
+	display: table;
+}
+
+.clearfix:after {
 	clear: both;
 }
 
@@ -86,6 +96,7 @@ hr {
 	position: absolute;
 	top: 0;
 	right: 0;
+	left: 0;
 }
 
 .bottom-bar {
