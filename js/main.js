@@ -689,8 +689,11 @@ $document.ready(function() {
 				},
 
 				addItem: function(file) {
+					var menuItemEl = $(this.generateItemMarkup()).data("id", file.id);
+					this.updateItemNameEl(menuItemEl, file.name);
+
 					this.setItem(file.id, {
-						el: $(this.generateItemMarkup(file)).appendTo(el).data("id", file.id),
+						el: menuItemEl.appendTo(el),
 						visualCues: {
 							hasTempChanges: false
 						}
@@ -700,11 +703,18 @@ $document.ready(function() {
 				},
 				
 				updateItemName: function(file) {
-					var menuItem = this.getItem(file.id);
-					menuItem.el.children(".filename").text(file.name);
-
+					this.updateItemNameEl(this.getItem(file.id).el, file.name);
 					this.updateNavControlsVis();
 					this.scrollActiveItemIntoView();
+				},
+
+				updateItemNameEl: function(menuItemEl, name) {
+					var shortName = limitStrLen(name, 35);
+
+					menuItemEl
+						.attr("title", (name != shortName)? name : "")
+						.children(".filename")
+							.text(shortName);
 				},
 				
 				updateItemChangesVisualCue: function(file) {
@@ -728,10 +738,10 @@ $document.ready(function() {
 					if (isSwitchingTabsNeeded) this.switchToItem(fileSystem.getClosestOpenFileId(id));
 				},
 
-				generateItemMarkup: function(file) {
+				generateItemMarkup: function() {
 					return [
 						"<div class=\"file-menu-item\">",
-							"<span class=\"filename\">"+ escapeHTML(file.name) +"</span>",
+							"<span class=\"filename\"></span>",
 							"<span class=\"close\">×</span>",
 						"</div>"
 					].join("");

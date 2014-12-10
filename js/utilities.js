@@ -1,27 +1,7 @@
-var escapeHTML, Modal, confirm, normalizeNewlines, shortcutManager;
+var Modal, confirm, normalizeNewlines, shortcutManager, limitStrLen;
 
 (function() {
 	"use strict";
-
-	escapeHTML = (function() {
-		var matchingChars = /[&<>"']/g,
-
-			charMap = {
-				"&": "&amp;",
-				"<": "&lt;",
-				">": "&gt;",
-				"\"": "&#34;",
-				"'": "&#39;"
-			},
-
-			replaceCallback = function(char) {
-				return charMap[char];
-			};
-
-		return function(str) {
-			return String(str).replace(matchingChars, replaceCallback);
-		};
-	})();
 
 	// Extend the keyCode constants with values only needed in this app
 	$.extend(keyCode, {
@@ -224,4 +204,11 @@ var escapeHTML, Modal, confirm, normalizeNewlines, shortcutManager;
 			}
 		};
 	})();
+
+	// Limit the length of a string by, if it's longer than intended, remove text from the middle and inserting an ellipsis
+	limitStrLen = function(str, length) {
+		if (str.length > length) length = length / 2 - 1, str = str.substr(0, length) +"…"+ str.substr(-length);
+
+		return str;
+	};
 })();
