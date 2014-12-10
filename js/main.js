@@ -89,7 +89,7 @@ $document.ready(function() {
 					.then(function() { console.log("SAVE SUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)})
 					.catch(function(reason) {
 						console.log("SAVE UNSUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments);
-						if ([fileSystem.File.SAVE_REJECTION_MSG, fileSystem.WRITETOENTRY_REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
+						if ([fileSystem.File.SAVE_REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
 					})
 					.done();
 			});
@@ -102,7 +102,7 @@ $document.ready(function() {
 					.then(function() { console.log("SAVEAS SUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)})
 					.catch(function(reason) {
 						console.log("SAVEAS UNSUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments);
-						if ([fileSystem.WRITETOENTRY_REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
+						if (reason != fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) throw reason;
 					})
 					.done();
 			});
@@ -541,7 +541,11 @@ $document.ready(function() {
 			if (file.hasTempChanges()) {
 				confirm("Save changes before closing?", confirm.TERNARY_CHOICE)
 					.then(function(value) {
-						if (value == "yes") return file.save();
+						if (value == "yes") {
+							return file.save().catch(function(reason) {
+								if (reason != fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) throw reason;
+							});
+						}
 					})
 					.then(close)
 					.catch(function(reason) {
@@ -560,8 +564,8 @@ $document.ready(function() {
 		File.prototype.save = function() {
 			var file = this;
 
-			if (!file.hasTempChanges()) return Promise.reject(fileSystem.File.SAVE_REJECTION_MSG);
 			if (file.isTempFile()) return file.saveAs();
+			if (!file.hasTempChanges()) return Promise.reject(fileSystem.File.SAVE_REJECTION_MSG);
 
 			return fileSystem.writeToEntry(file.entry, file.cache.tempContents)
 				.then(function() {
