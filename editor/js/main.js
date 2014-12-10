@@ -4,6 +4,8 @@ var editor,
 
 $document.ready(function() {
 	"use strict";
+
+	var buttonsContainers = $(".buttons-container");
 	
 	editor = {
 		
@@ -16,11 +18,12 @@ $document.ready(function() {
 		markdownSource: $("#markdown"),
 		markdownPreview: $("#preview"),
 		markdownTargets: $("#html, #preview"),
-		markdownTargetsTriggers: $(".buttons-container .switch"),
+		buttonsContainers: buttonsContainers,
+		markdownTargetsTriggers: buttonsContainers.find(".switch"),
 		topPanels: $("#top_panels_container .top_panel"),
-		topPanelsTriggers: $("#left-column .buttons-container .toppanel"),
+		topPanelsTriggers: buttonsContainers.find(".toppanel"),
 		quickReferencePreText: $("#quick-reference pre"),
-		featuresTriggers: $(".buttons-container .feature"),
+		featuresTriggers: buttonsContainers.find(".feature"),
 		wordCountContainers: $(".word-count"),
 		isAutoScrolling: false,
 		isFullscreen: false,
@@ -43,7 +46,7 @@ $document.ready(function() {
 			});
 			this.markdownSource.on({
 				keydown: function(e) {
-					if (e.keyCode == keyCode.TAB) editor.handleTabKeyPress(e);
+					if (!e.ctrlKey && e.keyCode == keyCode.TAB) editor.handleTabKeyPress(e);
 				},
 				"keyup change": function() {
 					editor.markdownSource.trigger("change.editor");
@@ -248,6 +251,7 @@ $document.ready(function() {
 				});
 			}
 			this.save("isFullscreen", this.isFullscreen? "y" : "n");
+			this.body.trigger("fullscreen.editor", [this.isFullscreen]);
 		},
 
 		// Subtle fade-in effect
