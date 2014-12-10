@@ -90,11 +90,15 @@ Second line.</code></pre>
 			<div class="wrapper">
 				<div class="topbar hidden-when-fullscreen">
 					<div class="buttons-container clearfix">
+						<a href="#" class="button icon-chevron-right file-menu-control" data-file-menu-control="scroll-right"></a>
 						<a href="#" class="button toppanel" data-toppanel="quick-reference">Quick Reference</a>
 						<a href="#" class="button toppanel" data-toppanel="about">About</a>
 						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
 					</div>
-					<div class="file-menu clearfix"></div>
+					<div class="buttons-container clearfix">
+						<a href="#" class="button icon-chevron-left file-menu-control" data-file-menu-control="scroll-left"></a>
+					</div>
+					<div class="file-menu"></div>
 				</div>
 				<textarea id="markdown" class="full-height" placeholder="Write Markdown">Minimalist Markdown Editor
 ==========================
@@ -144,6 +148,7 @@ Just start typing in the left panel.
 		</div>
 		<div class="topbar visible-when-fullscreen">
 			<div class="buttons-container clearfix">
+				<a href="#" class="button icon-chevron-right file-menu-control" data-file-menu-control="scroll-right"></a>
 				<div class="button-group">
 					<a href="#" class="button switch" data-switchto="markdown">Markdown</a>
 					<a href="#" class="button switch" data-switchto="html">HTML</a>
@@ -151,7 +156,10 @@ Just start typing in the left panel.
 				</div>
 				<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" title="Exit fullscreen"></a>
 			</div>
-			<div class="file-menu clearfix"></div>
+			<div class="buttons-container clearfix">
+				<a href="#" class="button icon-chevron-left file-menu-control" data-file-menu-control="scroll-left"></a>
+			</div>
+			<div class="file-menu"></div>
 		</div>
 		<div class="bottom-bar visible-when-fullscreen clearfix">
 			<div class="word-count"></div>

@@ -6,7 +6,6 @@ $document.ready(function() {
 	app = {
 
 		// Chrome app variables
-		fileMenuEl: $(".file-menu"),
 		markdownPreviewIframe: $("#preview-iframe"),
 		isMarkdownPreviewIframeLoaded: false,
 		markdownPreviewIframeLoadEventCallbacks: $.Callbacks(),
@@ -15,7 +14,7 @@ $document.ready(function() {
 			editor.init();
 			this.initBindings();
 			this.initFSBindings();
-			fileMenu.initBindings();
+			fileMenu.init();
 		},
 
 		initBindings: function() {
@@ -69,44 +68,48 @@ $document.ready(function() {
 					// console.log(e);
 					var a = JSON.stringify(e.originalEvent.dataTransfer);
 					console.log(a);
-				},
-
-				keydown: function(e) {
-					if (!e.ctrlKey) return;
-					var toDo;
-
-					switch(e.keyCode) {
-						case keyCode.N: // CTRL + N
-							toDo = function() {
-								e.preventDefault();
-								fileSystem.chooseNewTempFile();
-							};
-							break;
-						case keyCode.O: // CTRL + O
-							toDo = function() {
-								e.preventDefault();
-								fileSystem.chooseEntries();
-							};
-							break;
-						case keyCode.S: // CTRL + S
-							toDo = function() {
-								e.preventDefault();
-								var file = fileSystem.getFile(fileMenu.activeItemId);
-
-								if (e.shiftKey) file.saveAs().then(function() { console.log("SAVEAS SUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)}, function() { console.log("SAVEAS UNSUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)}).done();
-									else file.save().then(function() { console.log("SAVE SUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)}, function() { console.log("SAVE UNSUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)}).done();
-							};
-							break;
-						case keyCode.W: // CTRL + W
-							toDo = function() {
-								e.preventDefault();
-								fileSystem.getFile(fileMenu.activeItemId).close();
-							};
-							break;
-					}
-
-					if (toDo) Modal.ifNoModalOpen().then(toDo).catch(function() { e.preventDefault() }).done();
 				}
+			});
+
+			shortcutManager.register(["CTRL + N", "CTRL + T"], function(e) {
+				e.preventDefault();
+				fileSystem.chooseNewTempFile();
+			});
+
+			shortcutManager.register("CTRL + O", function(e) {
+				e.preventDefault();
+				fileSystem.chooseEntries();
+			});
+
+			shortcutManager.register("CTRL + S", function(e) {
+				e.preventDefault();
+				
+				var file = fileSystem.getFile(fileMenu.activeItemId);
+				file.save()
+					.then(function() { console.log("SAVE SUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)})
+					.catch(function(reason) {
+						console.log("SAVE UNSUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments);
+						if ([fileSystem.File.SAVE_REJECTION_MSG, fileSystem.WRITETOENTRY_REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
+					})
+					.done();
+			});
+
+			shortcutManager.register("CTRL + SHIFT + S", function(e) {
+				e.preventDefault();
+
+				var file = fileSystem.getFile(fileMenu.activeItemId);
+				file.saveAs()
+					.then(function() { console.log("SAVEAS SUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)})
+					.catch(function(reason) {
+						console.log("SAVEAS UNSUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments);
+						if ([fileSystem.WRITETOENTRY_REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
+					})
+					.done();
+			});
+
+			shortcutManager.register("CTRL + W", function(e) {
+				e.preventDefault();
+				fileSystem.getFile(fileMenu.activeItemId).close();
 			});
 		},
 
@@ -125,7 +128,7 @@ $document.ready(function() {
 		},
 
 		// Save a key/value pair in chrome.storage (either Markdown text or enabled features)
-		// This method can be called in place of editor.save to save things from /editor, or directly for key/value storage
+		// This method can be called from editor.save() to save things from /editor, or directly for key/value storage
 		// It must thus allow for two types of usage: replication of usage from editor.save, and app-specific storage
 		// And, the Chrome app allowing multiple files and tabs to be open at once (while the basic editor doesn't), 
 		// the key/value pair has to be transformed to a more complex format when key == "markdown"
@@ -273,20 +276,49 @@ $document.ready(function() {
 						if (!toSave || toSave & this.saveThe.openFilesIds) app.save("openFilesIds", openFilesIds);
 					},
 
+					// Shouldn't be called directly: abstracted as fileSystem.getOpenFileIdAtIndex()
+					getOpenFileIdAtIndex: function(index) {
+						return openFilesIds[index];
+					},
+
 					// Shouldn't be called directly: abstracted as fileSystem.getLastOpenFileId()
 					getLastOpenFileId: function() {
 						return openFilesIds[openFilesIds.length - 1];
 					},
 
 					// Shouldn't be called directly: abstracted as fileSystem.getClosestOpenFileId()
-					// Return the id of the closest open file, ideally the next one, or the prev one if none to the right, or null
+					// Returns the id of the closest open file, ideally the next one, or the prev one if none to the right, or null
 					getClosestOpenFileId: function(id) {
 						var openFileIdIndex = openFilesIds.indexOf(id);
-
 						if (openFileIdIndex == -1 || openFilesIds.length <= 1) return null; // No open file other than this one
+
 						if (openFileIdIndex >= openFilesIds.length - 1) return openFilesIds[--openFileIdIndex]; // No open file next, return previous file id instead
 
 						return openFilesIds[++openFileIdIndex]; // There's an open file next, return its id
+					},
+
+					// Shouldn't be called directly: abstracted as fileSystem.getNextOpenFileId()
+					// Returns the id of the next open file, looping over to the first when necessary, or null
+					getNextOpenFileId: function(id) {
+						var openFileIdIndex = openFilesIds.indexOf(id);
+						if (openFileIdIndex == -1 || openFilesIds.length <= 1) return null; // No open file other than this one
+
+						openFileIdIndex++;
+						if (openFileIdIndex > openFilesIds.length - 1) openFileIdIndex = 0;
+
+						return openFilesIds[openFileIdIndex];
+					},
+
+					// Shouldn't be called directly: abstracted as fileSystem.getPrevOpenFileId()
+					// Returns the id of the next open file, looping over to the last when necessary, or null
+					getPrevOpenFileId: function(id) {
+						var openFileIdIndex = openFilesIds.indexOf(id);
+						if (openFileIdIndex == -1 || openFilesIds.length <= 1) return null; // No open file other than this one
+
+						openFileIdIndex--;
+						if (openFileIdIndex < 0) openFileIdIndex = openFilesIds.length - 1;
+
+						return openFilesIds[openFileIdIndex];
 					}
 				};
 			})(),
@@ -324,8 +356,7 @@ $document.ready(function() {
 						chrome.fileSystem.getWritableEntry(entry, function(writableEntry) {
 							writableEntry.createWriter(function(writer) {
 								writer.onerror = function() {
-									console.log("failed writing to file");
-									rejectPromise();
+									rejectPromise(fileSystem.WRITETOENTRY_REJECTION_MSG);
 								};
 
 								writer.onwriteend = function() {
@@ -352,12 +383,11 @@ $document.ready(function() {
 								}]
 							},
 							function(writableEntry) {
-								if (typeof writableEntry == "undefined") { rejectPromise(); return; } // undefined when user closes dialog
+								if (typeof writableEntry == "undefined") { rejectPromise(fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG); return; }
 
 								writableEntry.createWriter(function(writer) {
 									writer.onerror = function() {
-										console.log("failed writing to file");
-										rejectPromise();
+										rejectPromise(fileSystem.WRITETOENTRY_REJECTION_MSG);
 									};
 
 									writer.onwriteend = resolvePromise.bind(null, writableEntry);
@@ -401,8 +431,11 @@ $document.ready(function() {
 					return promise;
 				},
 
+				getOpenFileIdAtIndex: cache.getOpenFileIdAtIndex.bind(cache),
 				getLastOpenFileId: cache.getLastOpenFileId.bind(cache),
 				getClosestOpenFileId: cache.getClosestOpenFileId.bind(cache),
+				getNextOpenFileId: cache.getNextOpenFileId.bind(cache),
+				getPrevOpenFileId: cache.getPrevOpenFileId.bind(cache),
 
 				setFile: files.set.bind(files),
 				getFile: files.get.bind(files),
@@ -414,6 +447,11 @@ $document.ready(function() {
 					return r;
 				},
 				isEmpty: function(id) { return !files.size }
+			},
+
+			fsConstants = {
+				WRITETOENTRY_REJECTION_MSG: "Failed writing to FS entry.",
+				USER_CLOSED_DIALOG_REJECTION_MSG: "User closed dialog."
 			},
 
 			// A temporary file (one that's only stored in the cache, w/o being linked to the file system) is identified by this.isTempFile() == true
@@ -469,16 +507,25 @@ $document.ready(function() {
 		// (If the user has changed that file's contents in the editor in the meantime, ask him if he'd like to reload it from the fs)
 		File.prototype.checkDiskContents = function() {
 			var file = this,
-				pastOrigContents = file.cache.origContents;
+				pastOrigContents = file.cache.origContents,
+				fileHasTempChanges = file.hasTempChanges();
 
 			file.read().then(function(fileContents) {
 				if (fileContents != pastOrigContents) {
 					let updateEditorContents = function() {
-						editor.updateMarkdownSource(fileContssents);
+						editor.updateMarkdownSource(fileContents);
 					};
 
-					if (file.hasTempChanges()) confirm("The file has changed on disk. Reload it?").then(updateEditorContents, fileMenu.updateItemChangesVisualCue.bind(fileMenu, file)).done();
-						else updateEditorContents();
+					if (fileHasTempChanges) {
+						confirm("The file has changed on disk. Reload it?")
+							.then(updateEditorContents)
+							.catch(function(reason) {
+								if (reason != confirm.REJECTION_MSG) throw reason;
+							})
+							.done();
+					} else {
+						updateEditorContents();
+					}
 				}
 			}).done();
 		};
@@ -513,7 +560,7 @@ $document.ready(function() {
 		File.prototype.save = function() {
 			var file = this;
 
-			if (!file.hasTempChanges()) return Promise.reject();
+			if (!file.hasTempChanges()) return Promise.reject(fileSystem.File.SAVE_REJECTION_MSG);
 			if (file.isTempFile()) return file.saveAs();
 
 			return fileSystem.writeToEntry(file.entry, file.cache.tempContents)
@@ -542,18 +589,19 @@ $document.ready(function() {
 			if (propKey == "tempContents") fileMenu.updateItemChangesVisualCue(this);
 		};
 
+		File.SAVE_REJECTION_MSG = "No changes to save."
+
 		var generateUniqueFileId = function() {
 			var randId;
 
 			do {
 				randId = Math.floor(Math.random() * Math.pow(10, 10)).toString(36);
-				console.log("rand");
 			} while (fileSystem.hasFile(randId));
 
 			return randId;
 		};
 
-		return $.extend(fsMethods, {
+		return $.extend(fsMethods, fsConstants, {
 			File: File
 		});
 
@@ -562,42 +610,97 @@ $document.ready(function() {
 	// Handle the display of file menu items
 	// Mostly called from fileSystem
 	var fileMenu = (function() {
-		var items = new Map(), // Map files' ids with their respective menu item objects
+		const SCROLLBY_STEP = 160;
+
+		var el = $(".file-menu"),
+			items = new Map(), // Map files' ids with their respective menu item objects
 			activeItemId = null,
+			areNavControlsVisible = false,
+			navControlsTriggers = editor.buttonsContainers.find(".file-menu-control"),
+
+			// File menu DOM elements (both the file menu itself and every menu item) actually contain two DOM elements.
+			// When scrolling, we only want to work with the visible one: that's what this method is for.
+			getVisibleDOMEl = function($el) {
+				return editor.isFullscreen? $el[1] : $el[0];
+			},
 
 			fileMenuMethods = {
-				initBindings: function() {
-					app.fileMenuEl.on("click dblclick", function(e) {
-						e.preventDefault();
-						var className = e.target.className.trim().split(" ")[0]; // Get the first class
+				init: function() {
+					this.updateNavControlsVis();
+					this.initBindings();
+				},
 
-						switch (e.type +" on ."+ className) {
-							case "click on .file-menu-item":
-								fileMenu.switchToItem($(e.target).data("id"));
-								break;
-							case "click on .close":
-								var id = $(e.target).closest(".file-menu-item").data("id");
-								fileSystem.getFile(id).close();
-								break;
-							case "dblclick on .file-menu":
-								fileSystem.chooseNewTempFile();
-								break;
-						}
+				initBindings: function() {
+					el.on({
+						"click dblclick": function(e) {
+							e.preventDefault();
+							var className = e.target.className.trim().split(" ")[0]; // Get the first class
+
+							switch (e.type +" on ."+ className) {
+								case "click on .file-menu-item":
+									fileMenu.switchToItem($(e.target).data("id"));
+									break;
+								case "click on .close":
+									var id = $(e.target).closest(".file-menu-item").data("id");
+									fileSystem.getFile(id).close();
+									break;
+								case "dblclick on .file-menu":
+									fileSystem.chooseNewTempFile();
+									break;
+							}
+						},
+
+						wheel: fileMenu.controlNav.bind(fileMenu, "vertical-scroll")
+					});
+
+					$window.on("resize", function() {
+						fileMenu.updateNavControlsVis();
+						fileMenu.scrollActiveItemIntoView();
+					});
+
+					editor.body.on("fullscreen.editor", function() {
+						fileMenu.updateNavControlsVis();
+						fileMenu.scrollActiveItemIntoView();
+					});
+
+					navControlsTriggers.on("click", function(e) {
+						e.preventDefault();
+						fileMenu.controlNav($(this).data("fileMenuControl"));
+					});
+
+					shortcutManager.register("CTRL + TAB", function(e) {
+						e.preventDefault();
+						fileMenu.controlNav("jump-right");
+					});
+
+					shortcutManager.register("CTRL + SHIFT + TAB", function(e) {
+						e.preventDefault();
+						fileMenu.controlNav("jump-left");
+					});
+
+					shortcutManager.register(["CTRL + 1", "CTRL + 2", "CTRL + 3", "CTRL + 4", "CTRL + 5", "CTRL + 6", "CTRL + 7", "CTRL + 8", "CTRL + 9"], function(e) {
+						e.preventDefault();
+						fileMenu.controlNav("jump-number", e);
 					});
 				},
 
 				addItem: function(file) {
 					this.setItem(file.id, {
-						el: $(this.generateItemMarkup(file)).prependTo(app.fileMenuEl).data("id", file.id),
+						el: $(this.generateItemMarkup(file)).appendTo(el).data("id", file.id),
 						visualCues: {
 							hasTempChanges: false
 						}
 					});
+
+					this.updateNavControlsVis();
 				},
 				
 				updateItemName: function(file) {
 					var menuItem = this.getItem(file.id);
 					menuItem.el.children(".filename").text(file.name);
+
+					this.updateNavControlsVis();
+					this.scrollActiveItemIntoView();
 				},
 				
 				updateItemChangesVisualCue: function(file) {
@@ -615,6 +718,8 @@ $document.ready(function() {
 
 					menuItem.el.remove();
 					this.deleteItem(id);
+
+					this.updateNavControlsVis();
 
 					if (isSwitchingTabsNeeded) this.switchToItem(fileSystem.getClosestOpenFileId(id));
 				},
@@ -635,6 +740,8 @@ $document.ready(function() {
 						id = fileSystem.getLastOpenFileId();
 					}
 
+					if (id == this.activeItemId) return;
+
 					console.log("fileMenu items", items);
 
 					this.forEachItem(function(menuItem, itemId) {
@@ -648,6 +755,95 @@ $document.ready(function() {
 							menuItem.el.removeClass("active");
 						}
 					});
+
+					this.scrollActiveItemIntoView();
+				},
+
+				// Element.scrollIntoView() didn't do exactly what was wanted here
+				scrollActiveItemIntoView: function() {
+					if (!this.activeItemId) return;
+
+					var fileMenuEl = getVisibleDOMEl(el),
+						menuItemEl = getVisibleDOMEl(this.getItem(this.activeItemId).el),
+						fileMenuElScrollLeft = fileMenuEl.scrollLeft,
+						menuItemElOffsetLeft = menuItemEl.offsetLeft;
+					
+					// Align to left
+					if (fileMenuElScrollLeft > menuItemElOffsetLeft) {
+						fileMenuEl.scrollLeft = menuItemElOffsetLeft;
+						return;
+					}
+
+					// Or align to right
+					var fileMenuElOffsetWidth = fileMenuEl.offsetWidth,
+						menuItemElOffsetWidth = menuItemEl.offsetWidth,
+						diff = (menuItemElOffsetLeft + menuItemElOffsetWidth) - (fileMenuElScrollLeft + fileMenuElOffsetWidth);
+					if (diff > 0) fileMenuEl.scrollLeft += diff;
+
+					// Or do nothing
+				},
+
+				updateNavControlsVis: function() {
+					var fileMenuEl = getVisibleDOMEl(el),
+						shouldNavControlsBeVisible = fileMenuEl.scrollWidth > fileMenuEl.offsetWidth;
+
+					if (shouldNavControlsBeVisible == areNavControlsVisible) return;
+
+					editor.buttonsContainers.toggleClass("show-file-menu-controls", shouldNavControlsBeVisible);
+					areNavControlsVisible = shouldNavControlsBeVisible;
+				},
+
+				controlNav: function(action, e) {
+					switch (action) {
+						case "vertical-scroll":
+							this.hScroll(e);
+							break;
+						case "scroll-left":
+							this.scrollBy(-SCROLLBY_STEP);
+							break;
+						case "scroll-right":
+							this.scrollBy(SCROLLBY_STEP);
+							break;
+						case "jump-left":
+							this.switchToItem(fileSystem.getPrevOpenFileId(this.activeItemId));
+							break;
+						case "jump-right":
+							this.switchToItem(fileSystem.getNextOpenFileId(this.activeItemId));
+							break;
+						case "jump-number":
+							var openFileId,
+								number = e.originalEvent.keyCode,
+								openFileIdIndexMap = new Map([
+									[keyCode[1], 1],
+									[keyCode[2], 2],
+									[keyCode[3], 3],
+									[keyCode[4], 4],
+									[keyCode[5], 5],
+									[keyCode[6], 6],
+									[keyCode[7], 7],
+									[keyCode[8], 8]
+								]);
+
+							if (openFileIdIndexMap.has(number)) openFileId = fileSystem.getOpenFileIdAtIndex(openFileIdIndexMap.get(number) - 1); // If jump to number 1-8, jump to corresponding tab
+								else openFileId = fileSystem.getLastOpenFileId(); // If jump to number 9, jump to last tab
+
+							if (openFileId) this.switchToItem(openFileId);
+							break;
+					}
+				},
+
+				// When a vertical wheel event is fired, transform it into horizontal scrolling
+				hScroll: function(e) {
+					e = e.originalEvent;
+
+					if (e.deltaX || e.deltaZ) return;
+
+					this.scrollBy(e.deltaY); // Units are always px since Chrome only uses e.deltaMode == WheelEvent.DOM_DELTA_PIXEL (see https://code.google.com/p/chromium/issues/detail?id=227454#c23)
+					
+				},
+
+				scrollBy: function(x) {
+					getVisibleDOMEl(el).scrollLeft += x;
 				},
 
 				setItem: items.set.bind(items),
@@ -655,6 +851,8 @@ $document.ready(function() {
 				deleteItem: items.delete.bind(items),
 				forEachItem: items.forEach.bind(items)
 			};
+
+
 
 		return $.extend(fileMenuMethods, {
 			activeItemId: activeItemId

@@ -1,4 +1,4 @@
-var escapeHTML, Modal, confirm, normalizeNewlines;
+var escapeHTML, Modal, confirm, normalizeNewlines, shortcutManager;
 
 (function() {
 	"use strict";
@@ -28,7 +28,17 @@ var escapeHTML, Modal, confirm, normalizeNewlines;
 		N: 78,
 		O: 79,
 		S: 83,
-		W: 87
+		T: 84,
+		W: 87,
+		1: 49,
+		2: 50,
+		3: 51,
+		4: 52,
+		5: 53,
+		6: 54,
+		7: 55,
+		8: 56,
+		9: 57
 	});
 
 	Modal = (function() {
@@ -84,8 +94,10 @@ var escapeHTML, Modal, confirm, normalizeNewlines;
 		// Used to enforce the fact that modals are blocking: event handlers that aren't "blocked/disabled" by the modals' transparent overlay
 		// should go through this method before getting executed to make sure they're not executed while a modal is open (e.g., keyboard shortcuts handlers).
 		Modal.ifNoModalOpen = function() {
-			return openModals.length? Promise.reject() : Promise.resolve();
+			return openModals.length? Promise.reject(Modal.ifNoModalOpen.REJECTION_MSG) : Promise.resolve();
 		};
+
+		Modal.ifNoModalOpen.REJECTION_MSG = "A modal is currently open.";
 
 		initBindings();
 
@@ -158,4 +170,58 @@ var escapeHTML, Modal, confirm, normalizeNewlines;
 			console.error("Uncaught error or rejection inside Promise", e);
 		});
 	};
+
+	// Register handlers for keyboard shortcuts using a human-readable format
+	shortcutManager = (function() {
+		var sequenceSeparator = " + ",
+			handlers = new Map(),
+
+			init = function() {
+				editor.body.on("keydown", runMatchingHandler);
+			},
+
+			// Run the handler registered with the detected shortcut
+			runMatchingHandler = function(e) {
+				if (!e.ctrlKey || e.altKey) return; // All shortcuts currently use CTRL, and none use ALT
+
+				var shortcut, handler, sequence = ["CTRL"];
+
+				if (e.shiftKey) sequence.push("SHIFT");
+
+				sequence.push(e.keyCode);
+				shortcut = sequence.join(sequenceSeparator);
+
+				handler = handlers.get(shortcut);
+				if (!handler) return;
+
+				Modal.ifNoModalOpen()
+					.then(handler.bind(null, e))
+					.catch(function(reason) {
+						e.preventDefault();
+						if (reason != Modal.ifNoModalOpen.REJECTION_MSG) throw reason;
+					})
+					.done();
+			};
+
+		$document.ready(init);
+
+		return {
+			register: function(shortcut, handler) { // shortcut can be an array of shortcuts to register the same handler on them
+				var sequence, sequenceLastIndex, key,
+					shortcuts = shortcut instanceof Array? shortcut : [shortcut];
+
+				for (shortcut of shortcuts) {
+					// The last fragment of a shortcut should be a character representing a keyboard key: convert it to a keyCode
+					sequence = shortcut.split(sequenceSeparator);
+					sequenceLastIndex = sequence.length - 1;
+					key = sequence[sequenceLastIndex];
+
+					if (keyCode.hasOwnProperty(key)) sequence[sequenceLastIndex] = keyCode[key];
+					shortcut = sequence.join(sequenceSeparator);
+
+					handlers.set(shortcut, handler);
+				}
+			}
+		};
+	})();
 })();

@@ -14,29 +14,29 @@ body:before {
 }
 
 .topbar .file-menu {
+	position: relative;
 	margin-right: 10px;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .topbar .file-menu .file-menu-item {
 	position: relative;
-	float: right;
+	display: inline-block;
 	height: 18px;
 	margin-right: 1px;
 	padding: 2px 20px 0 8px;
-	color: #b5b5b5;
+	color: #888;
 	font-size: 11px;
 	line-height: 18px;
 	cursor: pointer;
 	border-bottom: 2px solid transparent;
 }
 
-.topbar .file-menu .file-menu-item:hover,
-.topbar .file-menu .file-menu-item:active,
-.topbar .file-menu .file-menu-item.active {
-	color: #888;
+.topbar .file-menu .file-menu-item:last-of-type {
+	margin-right: 0;
 }
 
-.topbar .file-menu .file-menu-item:active,
 .topbar .file-menu .file-menu-item.active {
 	border-bottom-color: #b5b5b5;
 }
@@ -51,7 +51,7 @@ body:before {
 	background: #e7e7e7;
 }
 
-.topbar .file-menu .file-menu-item:first-child:before {
+.topbar .file-menu .file-menu-item:last-of-type:before {
 	content: none;
 }
 
@@ -69,14 +69,8 @@ body:before {
 	line-height: 12px;
 	font-size: 13px;
 	text-align: center;
-	color: #e7e7e7;
-	border-radius: 7px;
-}
-
-.topbar .file-menu .file-menu-item:hover .close,
-.topbar .file-menu .file-menu-item:active .close,
-.topbar .file-menu .file-menu-item.active .close {
 	color: #b5b5b5;
+	border-radius: 7px;
 }
 
 .topbar .file-menu .file-menu-item .close:hover {
@@ -91,17 +85,55 @@ body:before {
 	right: 0;
 	width: 5px;
 	height: 5px;
-	background: #e7e7e7;
+	background: #b5b5b5;
 	border: 4px solid #fff;
 	border-radius: 6.5px;
 }
 
-.topbar .file-menu .file-menu-item.has-changed:hover .close::before,
-.topbar .file-menu .file-menu-item.has-changed:active .close::before,
-.topbar .file-menu .file-menu-item.has-changed.active .close::before {
-	background: #b5b5b5;
-}
-
 .topbar .file-menu .file-menu-item.has-changed .close:hover::before {
 	display: none;
+}
+
+.topbar .buttons-container:nth-child(2) {
+	float: left;
+}
+
+.topbar .buttons-container .button[data-file-menu-control] {
+	display: none;
+}
+
+.topbar .buttons-container.show-file-menu-controls .button[data-file-menu-control] {
+	display: block;
+}
+
+.topbar .buttons-container .button.icon-chevron-left,
+.topbar .buttons-container .button.icon-chevron-right {
+	font-size: 10px;
+	border-bottom: 0;
+	padding: 0;
+	width: 18px;
+	height: 18px;
+	line-height: 18px;
+	text-align: center;
+	margin: 2px;
+	border-radius: 2px;
+	text-indent: 2px;
+	background: #eaeaea;
+}
+
+.topbar .buttons-container .button.icon-chevron-left {
+	text-indent: -2px;
+}
+
+.topbar .buttons-container .button.icon-chevron-left:active,
+.topbar .buttons-container .button.icon-chevron-right:active {
+	background: #e1e1e1;
+}
+
+.topbar .buttons-container .button.icon-chevron-left:before {
+	content: "\25C4";
+}
+
+.topbar .buttons-container .button.icon-chevron-right:before {
+	content: "\25BA";
 }
