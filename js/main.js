@@ -195,6 +195,7 @@ $document.ready(function() {
 	var fileSystem = (function() {
 
 		var files = new Map(),
+			entriesDisplayPathsMap = new Map(), // Maps permanent files' entries' display paths with their ids
 
 			// fileSystem.cache takes care of saving things to persist them between sessions even if the user didn't explicitly ask to
 			// -> Everything that goes into fileSystem goes into fileSystem.cache, but the reverse isn't true (in other words, fileSystem.cache saves only a subset of the files' properties, that is the props that are cached)
@@ -336,19 +337,46 @@ $document.ready(function() {
 						function(entries) {
 							if (typeof entries == "undefined") return; // undefined when user closes dialog
 
-							var promise,
-								promisedPermFilesBeingCreated = [];
+							var promisedPermFilesBeingCreated = [],
+								lastChosenAlreadyOpenFile = null,
+								wereNewFilesSuccessfullyOpen = false;
 
-							for (var i = 0, ln = entries.length; i < ln; i++) {
-								promise = fileSystem.createPermFile(entries[i]);
+							for (let i = 0, ln = entries.length; i < ln; i++) {
+								let entry = entries[i];
+								
+								let promise = fileSystem.getEntryDisplayPath(entry).then(function(displayPath) {
+									var fileId = fileSystem.getEntriesDisplayPathsMap(displayPath);
+
+									// If the display path has already been saved, hence the file has already been opened,
+									// save that file's id in order to switch to the file's tab later if necessary.
+									if (fileId) {
+										lastChosenAlreadyOpenFile = fileId;
+									} else {
+										return fileSystem.createPermFile(entry).then(function() {
+											wereNewFilesSuccessfullyOpen = true;
+										});
+									}
+								});
+
 								promisedPermFilesBeingCreated.push(promise);
 							}
 
+							// Switch to the latest open file. If the selected FS entries didn't result in any new file being open,
+							// switch to the latest of the files that were both selected and already open.
 							Promise.all(promisedPermFilesBeingCreated).then(function() {
-								fileMenu.switchToItem();
+								fileMenu.switchToItem(wereNewFilesSuccessfullyOpen? null : lastChosenAlreadyOpenFile);
 							}).done();
 						}
 					);
+				},
+
+				// chrome.fileSystem.getDisplayPath doesn't work reliably with symlinks
+				getEntryDisplayPath: function(entry) {
+					return new Promise(function(resolvePromise) {
+						chrome.fileSystem.getDisplayPath(entry, function(displayPath) {
+							resolvePromise(displayPath);
+						});
+					});
 				},
 
 				writeToEntry: function(entry, text) {
@@ -356,7 +384,7 @@ $document.ready(function() {
 						chrome.fileSystem.getWritableEntry(entry, function(writableEntry) {
 							writableEntry.createWriter(function(writer) {
 								writer.onerror = function() {
-									rejectPromise(fileSystem.WRITETOENTRY_REJECTION_MSG);
+									rejectPromise(fileSystem.WRITE_TO_ENTRY_REJECTION_MSG);
 								};
 
 								writer.onwriteend = function() {
@@ -387,7 +415,7 @@ $document.ready(function() {
 
 								writableEntry.createWriter(function(writer) {
 									writer.onerror = function() {
-										rejectPromise(fileSystem.WRITETOENTRY_REJECTION_MSG);
+										rejectPromise(fileSystem.WRITE_TO_ENTRY_REJECTION_MSG);
 									};
 
 									writer.onwriteend = resolvePromise.bind(null, writableEntry);
@@ -431,6 +459,8 @@ $document.ready(function() {
 					return promise;
 				},
 
+				isEmpty: function(id) { return !files.size },
+
 				getOpenFileIdAtIndex: cache.getOpenFileIdAtIndex.bind(cache),
 				getLastOpenFileId: cache.getLastOpenFileId.bind(cache),
 				getClosestOpenFileId: cache.getClosestOpenFileId.bind(cache),
@@ -446,11 +476,14 @@ $document.ready(function() {
 
 					return r;
 				},
-				isEmpty: function(id) { return !files.size }
+
+				setEntriesDisplayPathsMap: entriesDisplayPathsMap.set.bind(entriesDisplayPathsMap),
+				getEntriesDisplayPathsMap: entriesDisplayPathsMap.get.bind(entriesDisplayPathsMap),
+				deleteEntriesDisplayPathsMap: entriesDisplayPathsMap.delete.bind(entriesDisplayPathsMap)
 			},
 
 			fsConstants = {
-				WRITETOENTRY_REJECTION_MSG: "Failed writing to FS entry.",
+				WRITE_TO_ENTRY_REJECTION_MSG: "Failed writing to FS entry.",
 				USER_CLOSED_DIALOG_REJECTION_MSG: "User closed dialog."
 			},
 
@@ -465,9 +498,17 @@ $document.ready(function() {
 			};
 
 		File.prototype.makePermanent = function(entry) {
-			this.setCachedProp("entryId", chrome.fileSystem.retainEntry(entry));
-			this.entry = entry;
-			this.name = entry.name;
+			var file = this;
+
+			file.setCachedProp("entryId", chrome.fileSystem.retainEntry(entry));
+			file.entry = entry;
+			file.name = entry.name;
+			fileSystem.getEntryDisplayPath(entry)
+				.then(function(displayPath) {
+					fileSystem.setEntriesDisplayPathsMap(displayPath, file.id);
+					file.entryDisplayPath = displayPath;
+				})
+				.done();
 		};
 
 		File.prototype.isTempFile = function() { return !this.cache.entryId };
@@ -534,6 +575,7 @@ $document.ready(function() {
 			var file = this,
 				close = function() {
 					fileSystem.deleteFile(file.id);
+					fileSystem.deleteEntriesDisplayPathsMap(file.entryDisplayPath);
 					fileMenu.removeItem(file.id);
 					cache.removeFile(file.id);
 				};
@@ -593,7 +635,8 @@ $document.ready(function() {
 			if (propKey == "tempContents") fileMenu.updateItemChangesVisualCue(this);
 		};
 
-		File.SAVE_REJECTION_MSG = "No changes to save."
+		File.SAVE_REJECTION_MSG = "No changes to save.";
+		File.GET_DISPLAY_PATH_REJECTION_MSG = "No display path: file is temporary.";
 
 		var generateUniqueFileId = function() {
 			var randId;
