@@ -382,10 +382,12 @@ $document.ready(function() {
 				writeToEntry: function(entry, text) {
 					return new Promise(function(resolvePromise, rejectPromise) {
 						chrome.fileSystem.getWritableEntry(entry, function(writableEntry) {
+							var onError = function(error) {
+								rejectPromise(error);
+							};
+
 							writableEntry.createWriter(function(writer) {
-								writer.onerror = function() {
-									rejectPromise(fileSystem.WRITE_TO_ENTRY_REJECTION_MSG);
-								};
+								writer.onerror = onError;
 
 								writer.onwriteend = function() {
 									writer.onwriteend = resolvePromise;
@@ -396,7 +398,7 @@ $document.ready(function() {
 								};
 
 								writer.truncate(0);
-							});
+							}, onError);
 						});
 					});
 				},
@@ -413,15 +415,16 @@ $document.ready(function() {
 							function(writableEntry) {
 								if (typeof writableEntry == "undefined") { rejectPromise(fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG); return; }
 
-								writableEntry.createWriter(function(writer) {
-									writer.onerror = function() {
-										rejectPromise(fileSystem.WRITE_TO_ENTRY_REJECTION_MSG);
-									};
+								var onError = function(error) {
+									rejectPromise(error);
+								};
 
+								writableEntry.createWriter(function(writer) {
+									writer.onerror = onError;
 									writer.onwriteend = resolvePromise.bind(null, writableEntry);
 
 									writer.write(new Blob([text]), {type: "text/plain"});
-								});
+								}, onError);
 							}
 						);
 					});
@@ -483,7 +486,6 @@ $document.ready(function() {
 			},
 
 			fsConstants = {
-				WRITE_TO_ENTRY_REJECTION_MSG: "Failed writing to FS entry.",
 				USER_CLOSED_DIALOG_REJECTION_MSG: "User closed dialog."
 			},
 
@@ -491,7 +493,7 @@ $document.ready(function() {
 			// A permanent file has this.cache.entryId set to the fs entry id, this.entry to the entry itself, and this.isTempFile() == false
 			File = function(id) {
 				this.id = id;
-				this.name = "untitled";
+				this.name = fileSystem.File.DEFAULT_NAME;
 				console.log("File constructor:", this, id);
 				this.cache = cache.addFile(this.id);
 				fileSystem.setFile(this.id, this);
@@ -511,6 +513,17 @@ $document.ready(function() {
 				.done();
 		};
 
+		File.prototype.makeTemporary = function() {
+			this.name = fileSystem.File.DEFAULT_NAME;
+			this.setCachedProp("entryId", null);
+			this.setCachedProp("origContents", "");
+			fileSystem.deleteEntriesDisplayPathsMap(this.entryDisplayPath);
+			delete this.entry;
+			delete this.entryDisplayPath;
+			fileMenu.updateItemName(this);
+			fileMenu.updateItemChangesVisualCue(this);
+		};
+
 		File.prototype.isTempFile = function() { return !this.cache.entryId };
 
 		File.prototype.read = function() {
@@ -518,7 +531,12 @@ $document.ready(function() {
 
 			return new Promise(function(resolvePromise, rejectPromise) {
 				var text,
-					reader = new FileReader();
+					reader = new FileReader(),
+
+					onError = function(error) {
+						rejectPromise(error);
+					};
+
 				reader.onload = function() {
 					text = normalizeNewlines(reader.result);
 
@@ -526,14 +544,11 @@ $document.ready(function() {
 					resolvePromise(text);
 				};
 
-				reader.onerror = function() {
-					console.log("failed reading file");
-					rejectPromise();
-				};
+				reader.onerror = onError; // Currently passes one param, a FileError obj, that could change to be a DOMError obj
 
 				file.entry.file(function(file) {
 					reader.readAsText(file);
-				});
+				}, onError);
 			});
 		};
 
@@ -544,31 +559,46 @@ $document.ready(function() {
 			if (!this.isTempFile()) this.checkDiskContents();
 		};
 
-		// Read the file's contents from the disk, update the cache, and update the editor's contents
-		// (If the user has changed that file's contents in the editor in the meantime, ask him if he'd like to reload it from the fs)
+		// Read the file's contents from the disk, and if new content, update the cache and update the editor's contents.
+		// (If the user has changed that file's contents in the editor in the meantime, ask him if he'd like to reload it from the fs.)
+		// (If file file isn't found on the FS, offer to keep its contents, otherwise close it.)
 		File.prototype.checkDiskContents = function() {
 			var file = this,
 				pastOrigContents = file.cache.origContents,
 				fileHasTempChanges = file.hasTempChanges();
 
-			file.read().then(function(fileContents) {
-				if (fileContents != pastOrigContents) {
-					let updateEditorContents = function() {
-						editor.updateMarkdownSource(fileContents);
-					};
+			file.read()
+				.then(function(fileContents) {
+					if (fileContents != pastOrigContents) {
+						let updateEditorContents = function() {
+							editor.updateMarkdownSource(fileContents);
+						};
 
-					if (fileHasTempChanges) {
-						confirm("The file has changed on disk. Reload it?")
-							.then(updateEditorContents)
-							.catch(function(reason) {
-								if (reason != confirm.REJECTION_MSG) throw reason;
-							})
-							.done();
-					} else {
-						updateEditorContents();
+						if (fileHasTempChanges) {
+							confirm("The file has changed on disk. Reload it?")
+								.then(updateEditorContents)
+								.catch(function(reason) {
+									if (reason != confirm.REJECTION_MSG) throw reason;
+								})
+								.done();
+						} else {
+							updateEditorContents();
+						}
 					}
-				}
-			}).done();
+				})
+				.catch(function(error) {
+					if (error.name != "NotFoundError") throw error;
+
+					confirm("Another program deleted that file. Keep its contents in the editor?")
+						.then(file.makeTemporary.bind(file))
+						.catch(function(reason) {
+							if (reason != confirm.REJECTION_MSG) throw reason;
+
+							file.close();
+						})
+						.done();
+				})
+				.done();
 		};
 
 		File.prototype.close = function() {
@@ -637,6 +667,7 @@ $document.ready(function() {
 
 		File.SAVE_REJECTION_MSG = "No changes to save.";
 		File.GET_DISPLAY_PATH_REJECTION_MSG = "No display path: file is temporary.";
+		File.DEFAULT_NAME = "untitled";
 
 		var generateUniqueFileId = function() {
 			var randId;
