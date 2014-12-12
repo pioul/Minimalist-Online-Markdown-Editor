@@ -589,7 +589,10 @@ $document.ready(function() {
 				.catch(function(error) {
 					if (error.name != "NotFoundError") throw error;
 
-					confirm("Another program deleted that file. Keep its contents in the editor?")
+					confirm("Another program deleted that file. Keep its contents in the editor?", [
+						new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Keep in editor" })),
+						new confirm.Button(confirm.Button.CANCEL_BUTTON.extend({ text: "Close the file" }))
+					])
 						.then(file.makeTemporary.bind(file))
 						.catch(function(reason) {
 							if (reason != confirm.REJECTION_MSG) throw reason;
@@ -611,7 +614,11 @@ $document.ready(function() {
 				};
 
 			if (file.hasTempChanges()) {
-				confirm("Save changes before closing?", confirm.TERNARY_CHOICE)
+				confirm("Save changes before closing?", [
+					new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Save changes", dataValue: "yes" })),
+					new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Don't save", dataValue: "no" })),
+					new confirm.Button(confirm.Button.CANCEL_BUTTON.extend({ text: "Don't close" }))
+				])
 					.then(function(value) {
 						if (value == "yes") {
 							return file.save().catch(function(reason) {

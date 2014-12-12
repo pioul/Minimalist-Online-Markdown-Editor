@@ -84,46 +84,72 @@ var Modal, confirm, normalizeNewlines, shortcutManager, limitStrLen;
 		return Modal;
 	})();
 
-	confirm = function(text, isTernaryChoice) {
+	confirm = function(text, buttons) {
 		return new Promise(function(resolvePromise, rejectPromise) {
 			rejectPromise = rejectPromise.bind(null, confirm.REJECTION_MSG);
 
-			var buttons = isTernaryChoice?
-					"<a href=\"#\" class=\"button button-primary\" data-action=\"confirm\" data-value=\"yes\">Yes</a><a href=\"#\" class=\"button button-primary\" data-action=\"confirm\" data-value=\"no\">No</a><a href=\"#\" class=\"button\" data-action=\"cancel\">Cancel</a>":
-					"<a href=\"#\" class=\"button button-primary\" data-action=\"confirm\">Ok</a><a href=\"#\" class=\"button\" data-action=\"cancel\">Cancel</a>",
+			if (typeof buttons == "undefined") buttons = [new confirm.Button(confirm.Button.OK_BUTTON), new confirm.Button(confirm.Button.CANCEL_BUTTON)];
 
-				modal = new Modal({
-					content: text,
-					buttons: buttons,
+			var modal = new Modal({
+				content: text,
+				buttons: buttons.join(""),
 
-					onInit: function() {
-						var modal = this,
-							buttons = modal.el.find(".buttons .button");
+				onInit: function() {
+					var modal = this,
+						buttons = modal.el.find(".buttons .button");
 
-						modal.el.on("close.modal", function() { rejectPromise() });
+					modal.el.on("close.modal", function() { rejectPromise() });
 
-						buttons.filter("[data-action=\"cancel\"]").on("click", function(e) {
+					buttons.filter("[data-action=\"cancel\"]").on("click", function(e) {
+						e.preventDefault();
+						rejectPromise();
+						modal.close();
+					});
+
+					buttons.filter("[data-action=\"confirm\"]")
+						.on("click", function(e) {
 							e.preventDefault();
-							rejectPromise();
+							resolvePromise($(e.target).data("value"));
 							modal.close();
-						});
-
-						buttons.filter("[data-action=\"confirm\"]")
-							.on("click", function(e) {
-								e.preventDefault();
-								resolvePromise($(e.target).data("value"));
-								modal.close();
-							})
-							.first().focus();
-					}
-				});
+						})
+						.first().focus();
+				}
+			});
 
 			modal.show();
 		});
 	};
 
-	confirm.TERNARY_CHOICE = true; // Use as confirm() second param
 	confirm.REJECTION_MSG = "User closed confirm modal.";
+
+	confirm.Button = (function() {
+		// Yes, I'm using a constructor to return a string (well, a String obj). "new Button()" looks cool, and it's abstracted enough that we don't care what's underneath.
+		var Button = function(options) {
+				return new String("<a href=\"#\" class=\""+ options.class +"\" data-action=\""+ options.dataAction +"\" data-value=\""+ options.dataValue +"\">"+ options.text +"</a>");
+			},
+
+			ButtonConfig = function(options) {
+				$.extend(this, options);
+			};
+
+		ButtonConfig.prototype.extend = function(options) {
+			return $.extend({}, this, options);
+		};
+
+		// Sets of options
+		Button.CANCEL_BUTTON = new ButtonConfig({
+			class: "button",
+			dataAction: "cancel",
+			text: "Cancel"
+		});
+		Button.OK_BUTTON = new ButtonConfig({
+			class: "button button-primary",
+			dataAction: "confirm",
+			text: "Ok"
+		});
+
+		return Button;
+	})();
 
 	// The editor regularly compares files' contents to detect changes, and different line break format will mess with the result.
 	// Chrome (and all browsers) already normalize line breaks as LF characters inside a form element's API value (which is 
