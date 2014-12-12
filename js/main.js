@@ -241,7 +241,7 @@ $document.ready(function() {
 										if (propKey == "entryId" && propVal != null) {
 											chrome.fileSystem.restoreEntry(propVal, function(entry) {
 												if (typeof entry != "undefined") {
-													file.makePermanent(entry);
+													file.makePermanent(entry).done();
 													fileMenu.updateItemName(file);
 												}
 											});
@@ -453,10 +453,14 @@ $document.ready(function() {
 					var file, promise;
 
 					file = new fileSystem.File(generateUniqueFileId());
-					file.makePermanent(entry);
-					fileMenu.addItem(file);
-					promise = file.read().then(function(fileContents) {
-						file.setCachedProp("tempContents", fileContents);
+					promise = file.makePermanent(entry);
+
+					promise.then(function() {
+						fileMenu.addItem(file);
+
+						return file.read().then(function(fileContents) {
+							file.setCachedProp("tempContents", fileContents);
+						});
 					});
 
 					return promise;
@@ -505,12 +509,12 @@ $document.ready(function() {
 			file.setCachedProp("entryId", chrome.fileSystem.retainEntry(entry));
 			file.entry = entry;
 			file.name = entry.name;
-			fileSystem.getEntryDisplayPath(entry)
+
+			return fileSystem.getEntryDisplayPath(entry)
 				.then(function(displayPath) {
 					fileSystem.setEntriesDisplayPathsMap(displayPath, file.id);
 					file.entryDisplayPath = displayPath;
-				})
-				.done();
+				});
 		};
 
 		File.prototype.makeTemporary = function() {
@@ -658,10 +662,12 @@ $document.ready(function() {
 
 			return fileSystem.writeToNewEntry(file.cache.tempContents)
 				.then(function(entry) {
-					file.makePermanent(entry);
-					fileMenu.updateItemName(file);
 					file.setCachedProp("origContents", file.cache.tempContents);
 					fileMenu.updateItemChangesVisualCue(file);
+
+					return file.makePermanent(entry).then(function() {
+						fileMenu.updateItemName(file);
+					});
 				});
 		};
 
