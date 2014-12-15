@@ -15,6 +15,7 @@ $document.ready(function() {
 		wrappersMargin: $("#left-column > .wrapper:first").outerHeight(true) - $("#left-column > .wrapper:first").height(),
 		markdownConverter: new Showdown.converter(),
 		columns: $("#left-column, #right-column"),
+		markdown: "",
 		markdownSource: $("#markdown"),
 		markdownPreview: $("#preview"),
 		markdownTargets: $("#html, #preview"),
@@ -34,7 +35,7 @@ $document.ready(function() {
 			this.initBindings();
 			this.fitHeight();
 			this.restoreState(function() {
-				editor.convertMarkdown();
+				editor.onInput();
 				editor.onloadEffect(1);
 			});
 		},
@@ -44,43 +45,67 @@ $document.ready(function() {
 			$window.on("resize", function() {
 				editor.fitHeight();
 			});
-			this.markdownSource.on({
-				keydown: function(e) {
-					if (!e.ctrlKey && e.keyCode == keyCode.TAB) editor.handleTabKeyPress(e);
-				},
-				"keyup change": function() {
-					editor.markdownSource.trigger("change.editor");
-				},
-				"cut paste drop": function() {
-					setTimeout(function() {
-						editor.markdownSource.trigger("change.editor");
-					}, 0);
-				},
-				"change.editor": function(e, shouldntSaveNewValue) {
-					if (!shouldntSaveNewValue) editor.save("markdown", editor.markdownSource.val());
-					editor.convertMarkdown();
-				}
+
+			this.markdownSource.on("keydown", function(e) {
+				if (!e.ctrlKey && e.keyCode == keyCode.TAB) editor.handleTabKeyPress(e);
 			});
+
+			if (doesSupportInputEvent) {
+				this.markdownSource.on("input", function() {
+					editor.onInput();
+				});
+			} else {
+				var onInput = function() {
+					editor.onInput();
+				};
+
+				this.markdownSource.on({
+					"keyup change": onInput,
+
+					"cut paste drop": function() {
+						setTimeout(onInput, 0);
+					}
+				});
+			}
+
 			this.markdownTargetsTriggers.on("click", function(e) {
 				e.preventDefault();
 				editor.switchToPanel($(this).data("switchto"));
 			});
+
 			this.topPanelsTriggers.on("click", function(e) {
 				e.preventDefault();
 				editor.toggleTopPanel($("#"+ $(this).data("toppanel")));
 			});
+
 			this.topPanels.children(".close").on("click", function(e) {
 				e.preventDefault();
 				editor.closeTopPanels();
 			});
+
 			this.quickReferencePreText.on("click", function() {
 				editor.addToMarkdownSource($(this).text());
 			});
+
 			this.featuresTriggers.on("click", function(e) {
 				e.preventDefault();
 				var t = $(this);
 				editor.toggleFeature(t.data("feature"), t.data());
 			});
+		},
+
+		onInput: function() {
+			var updatedMarkdown = this.markdownSource.val();
+
+			if (updatedMarkdown != this.markdown) {
+				this.markdown = updatedMarkdown;
+				this.onChange();
+			}
+		},
+
+		onChange: function() {
+			this.save("markdown", this.markdown);
+			this.convertMarkdown();
 		},
 
 		// Resize some elements to make the editor fit inside the window
@@ -116,8 +141,7 @@ $document.ready(function() {
 
 		// Convert Markdown to HTML using showdown.js
 		convertMarkdown: function() {
-			var markdown = this.markdownSource.val(),
-				html = this.markdownConverter.makeHtml(markdown);
+			var html = this.markdownConverter.makeHtml(this.markdown);
 			document.getElementById("html").value = html;
 			app.updateMarkdownPreview(html);
 			this.markdownPreview.trigger("updated.editor");
@@ -126,7 +150,7 @@ $document.ready(function() {
 		// Programmatically add Markdown text to the textarea
 		// position = { start: Number, end: Number }
 		addToMarkdownSource: function(markdown, position) {
-			var markdownSourceValue = this.markdownSource.val();
+			var markdownSourceValue = this.markdown;
 			if (typeof position == "undefined") { // Add text at the end
 				var newMarkdownSourceValue =
 					(markdownSourceValue.length? markdownSourceValue + "\n\n" : "") +
@@ -141,10 +165,9 @@ $document.ready(function() {
 		},
 
 		// Programmatically update the Markdown textarea with new Markdown text
-		updateMarkdownSource: function(markdown, shouldntSaveNewValue) {
-			this.markdownSource
-				.val(markdown)
-				.trigger("change.editor", [ shouldntSaveNewValue ]);
+		updateMarkdownSource: function(markdown) {
+			this.markdownSource.val(markdown);
+			this.onInput();
 		},
 
 		// Switch between editor panels
