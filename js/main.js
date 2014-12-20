@@ -136,8 +136,8 @@ $document.ready(function() {
 			// Hijack saving to convert the key/value pair to a more complex format
 			if (key == "markdown") {
 				let file = fileSystem.getFile(fileMenu.activeItemId);
-
-				file.setCachedProp("tempContents", value);
+				file.cache.tempContents = value;
+				fileMenu.updateItemChangesVisualCue(file);
 
 				return;
 			}
@@ -149,26 +149,41 @@ $document.ready(function() {
 		},
 
 		// Restore the editor's state from chrome.storage (saved Markdown and enabled features)
-		restoreState: function(c) {
+		restoreState: function(callback) {
 			// restoreState needs the preview panel to be loaded: if it isn't loaded when restoreState is called, call restoreState again as soon as it is
 			if (!this.isMarkdownPreviewIframeLoaded) {
 				this.markdownPreviewIframeLoadEventCallbacks.add(function() {
-					app.restoreState(c);
+					app.restoreState(callback);
 				});
 
 				return;
 			}
 
+			var editorRestoredItems,
+
+				tryRunningCallback = (function() {
+					var expectedTries = 2;
+
+					return function() {
+						if (!--expectedTries) callback(editorRestoredItems);
+					};
+				})();
+
 			// Retrieve locally stored data to be sent to editor
 			// In the same way the "markdown" key is hijacked when saving the editor's contents, it's not included here so that the app can handle the restoration of the editor's contents itself
-			chrome.storage.local.get(["isAutoScrolling", "isFullscreen", "activePanel"], c);
+			chrome.storage.local.get(["isAutoScrolling", "isFullscreen", "activePanel"], function(restoredItems) {
+				editorRestoredItems = restoredItems;
+				tryRunningCallback();
+			});
 
 			// Retrieve locally stored data to be handled by the app
 			// Restore openFilesIds, files and activeFileMenuItemId, in that order and while making sure the previous item has been restored before restoring the next
 			chrome.storage.local.get(["openFilesIds", "filesCache", "activeFileMenuItemId"], function(restoredItems) { console.log("restoredItems", restoredItems);
 				if (restoredItems.openFilesIds) fileSystem.restoreFiles(restoredItems.openFilesIds);
-				if (restoredItems.filesCache) fileSystem.restoreFilesCachedProps(restoredItems.filesCache);
+				if (restoredItems.filesCache) fileSystem.cache.restoreFilesCachedProps(restoredItems.filesCache);
+				if (fileSystem.isEmpty()) fileSystem.chooseNewTempFile();
 				fileMenu.switchToItem(restoredItems.activeFileMenuItemId);
+				tryRunningCallback();
 			});
 		},
 
@@ -198,31 +213,53 @@ $document.ready(function() {
 			entriesDisplayPathsMap = new Map(), // Maps permanent files' entries' display paths with their ids
 
 			// fileSystem.cache takes care of saving things to persist them between sessions even if the user didn't explicitly ask to
-			// -> Everything that goes into fileSystem goes into fileSystem.cache, but the reverse isn't true (in other words, fileSystem.cache saves only a subset of the files' properties, that is the props that are cached)
+			// fileSystem.cache saves only a subset of the files' properties, that is the enumerable props of FileCache instances
 			// fileSystem saves to chrome.fileSystem, fileSystem.cache saves to chrome.storage.local
+			// Files maintain a reference to their cache, and cached props must be read and set through their "public" properties, that is
+			// the ones exposed in their prototype: set and get using e.g. file.cache.tempContents rather than file.cache._tempContents
 			cache = (function() {
 				var openFilesIds = [], // Stores files' ids, and their sorting order
 					filesCache = {}; // Stores additional properties for files, mapped to the files' ids
+
+				var FileCache = function() {
+						this._entryId = null;
+						this._origContents = "";
+						this._tempContents = "";
+					},
+
+					setFileCacheProp = function(name, val) {
+						this[name] = val;
+						cache.save(cache.saveThe.filesCache);
+					};
+
+				Object.defineProperty(FileCache.prototype, "entryId", {
+					enumerable: true,
+					get: function() { return this._entryId },
+					set: function(newVal) { setFileCacheProp.call(this, "_entryId", newVal) }
+				});
+
+				Object.defineProperty(FileCache.prototype, "origContents", {
+					enumerable: true,
+					get: function() { return this._origContents },
+					set: function(newVal) { setFileCacheProp.call(this, "_origContents", newVal) }
+				});
+
+				Object.defineProperty(FileCache.prototype, "tempContents", {
+					enumerable: true,
+					get: function() { return this._tempContents },
+					set: function(newVal) { setFileCacheProp.call(this, "_tempContents", newVal) }
+				});
 
 				return {
 					addFile: function(id) {
 						openFilesIds.push(id);
 
-						filesCache[id] = {
-							entryId: null,
-							origContents: "",
-							tempContents: ""
-						};
-
+						var fileCache = new FileCache();
+						filesCache[id] = fileCache;
+						
 						this.save();
 
-						return filesCache[id];
-					},
-
-					// Shouldn't be called directly: abstracted as File.prototype.setCachedProp(propKey, propVal)
-					updateFileCachedProp: function(id, propKey, propVal) {
-						filesCache[id][propKey] = propVal;
-						this.save(this.saveThe.filesCache);
+						return fileCache;
 					},
 
 					restoreFilesCachedProps: function(filesCachedProps) {
@@ -238,7 +275,7 @@ $document.ready(function() {
 										let propVal = fileCachedProps[propKey];
 
 										// If that file has an entryId, hijack the normal flow to make the file permanent
-										if (propKey == "entryId" && propVal != null) {
+										if (propKey == "_entryId" && propVal != null) {
 											chrome.fileSystem.restoreEntry(propVal, function(entry) {
 												if (typeof entry != "undefined") {
 													file.makePermanent(entry).done();
@@ -249,7 +286,7 @@ $document.ready(function() {
 											continue;
 										}
 
-										file.setCachedProp(propKey, propVal);
+										file.cache[propKey] = propVal;
 									}
 								}
 							}
@@ -440,8 +477,6 @@ $document.ready(function() {
 					for (let id of ids) fileSystem.createTempFile(id);
 				},
 
-				restoreFilesCachedProps: cache.restoreFilesCachedProps.bind(cache),
-
 				createTempFile: function(id) {
 					var file = new fileSystem.File(id);
 					fileMenu.addItem(file);
@@ -459,7 +494,8 @@ $document.ready(function() {
 						fileMenu.addItem(file);
 
 						return file.read().then(function(fileContents) {
-							file.setCachedProp("tempContents", fileContents);
+							file.cache.tempContents = fileContents;
+							fileMenu.updateItemChangesVisualCue(file);
 						});
 					});
 
@@ -506,7 +542,7 @@ $document.ready(function() {
 		File.prototype.makePermanent = function(entry) {
 			var file = this;
 
-			file.setCachedProp("entryId", chrome.fileSystem.retainEntry(entry));
+			file.cache.entryId = chrome.fileSystem.retainEntry(entry);
 			file.entry = entry;
 			file.name = entry.name;
 
@@ -519,8 +555,8 @@ $document.ready(function() {
 
 		File.prototype.makeTemporary = function() {
 			this.name = fileSystem.File.DEFAULT_NAME;
-			this.setCachedProp("entryId", null);
-			this.setCachedProp("origContents", "");
+			this.cache.entryId = null;
+			this.cache.origContents = "";
 			fileSystem.deleteEntriesDisplayPathsMap(this.entryDisplayPath);
 			delete this.entry;
 			delete this.entryDisplayPath;
@@ -544,7 +580,7 @@ $document.ready(function() {
 				reader.onload = function() {
 					text = normalizeNewlines(reader.result);
 
-					file.setCachedProp("origContents", text);
+					file.cache.origContents = text;
 					resolvePromise(text);
 				};
 
@@ -652,7 +688,7 @@ $document.ready(function() {
 
 			return fileSystem.writeToEntry(file.entry, file.cache.tempContents)
 				.then(function() {
-					file.setCachedProp("origContents", file.cache.tempContents);
+					file.cache.origContents = file.cache.tempContents;
 					fileMenu.updateItemChangesVisualCue(file);
 				});
 		};
@@ -662,20 +698,13 @@ $document.ready(function() {
 
 			return fileSystem.writeToNewEntry(file.cache.tempContents)
 				.then(function(entry) {
-					file.setCachedProp("origContents", file.cache.tempContents);
+					file.cache.origContents = file.cache.tempContents;
 					fileMenu.updateItemChangesVisualCue(file);
 
 					return file.makePermanent(entry).then(function() {
 						fileMenu.updateItemName(file);
 					});
 				});
-		};
-
-		File.prototype.setCachedProp = function(propKey, propVal) {
-			cache.updateFileCachedProp(this.id, propKey, propVal);
-
-			// Hijack saving the file's tempContents to check for a change
-			if (propKey == "tempContents") fileMenu.updateItemChangesVisualCue(this);
 		};
 
 		File.SAVE_REJECTION_MSG = "No changes to save.";
@@ -693,7 +722,8 @@ $document.ready(function() {
 		};
 
 		return $.extend(fsMethods, fsConstants, {
-			File: File
+			File: File,
+			cache: cache
 		});
 
 	})();
