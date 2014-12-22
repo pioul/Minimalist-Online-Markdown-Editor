@@ -666,19 +666,15 @@ $document.ready(function() {
 			if (file.hasTempChanges()) {
 				confirm("Save changes before closing?", [
 					new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Save changes", dataValue: "yes" })),
-					new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Don't save", dataValue: "no" })),
+					new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Discard", dataValue: "no" })),
 					new confirm.Button(confirm.Button.CANCEL_BUTTON.extend({ text: "Don't close" }))
 				])
 					.then(function(value) {
-						if (value == "yes") {
-							return file.save().catch(function(reason) {
-								if (reason != fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) throw reason;
-							});
-						}
+						if (value == "yes") return file.save(); // Can throw fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG if saveAs() is called and the "save as" dialog is closed
 					})
 					.then(close)
 					.catch(function(reason) {
-						if (reason != confirm.REJECTION_MSG) throw reason;
+						if ([confirm.REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
 					})
 					.done();
 			} else {
