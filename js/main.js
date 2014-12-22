@@ -13,8 +13,9 @@ $document.ready(function() {
 		init: function() {
 			editor.init();
 			this.initBindings();
-			this.initFSBindings();
+			fileSystem.initBindings();
 			fileMenu.init();
+			UndoManager.initBindings();
 		},
 
 		initBindings: function() {
@@ -27,89 +28,6 @@ $document.ready(function() {
 			this.markdownPreviewIframe.on("load", function() {
 				app.isMarkdownPreviewIframeLoaded = true;
 				app.markdownPreviewIframeLoadEventCallbacks.fire();
-			});
-		},
-
-		// Listen for drag and drop and key combinations to open/save files from/to the file system
-		initFSBindings: function() {
-			editor.body.on({
-				// Indicate the body is a valid drop target
-				"dragenter dragover": function(e) {
-					if (e.originalEvent.dataTransfer.types.indexOf("Files") != -1) {
-						e.preventDefault();
-					}
-				},
-
-				drop: function(e) {
-					var dt = e.originalEvent.dataTransfer;
-
-					if (dt.types.indexOf("Files") != -1) {
-						e.preventDefault();
-					}
-
-					if (dt.files.length) {
-						Array.prototype.forEach.call(dt.files, function(file) {
-							// Only accept files that are some type of text (most commonly "text/plain") or of unknown type (such as .md as of today)
-							if (!file.type || file.type.indexOf("text/") == 0) {
-								var reader = new FileReader();
-								reader.onload = function() {
-									console.log(reader.result);
-									// PUT THE FILE CONTENTS IN THE MD PANEL HERE
-									// Find a way to do this in a DRY way: replace md contents, trigger change event?, save in localstorage?, convert md
-								};
-								reader.onerror = function() {
-									console.log("failed reading file");
-								};
-								reader.readAsText(file);
-							}
-						});
-					}
-
-					// console.log(e);
-					var a = JSON.stringify(e.originalEvent.dataTransfer);
-					console.log(a);
-				}
-			});
-
-			shortcutManager.register(["CTRL + N", "CTRL + T"], function(e) {
-				e.preventDefault();
-				fileSystem.chooseNewTempFile();
-			});
-
-			shortcutManager.register("CTRL + O", function(e) {
-				e.preventDefault();
-				fileSystem.chooseEntries();
-			});
-
-			shortcutManager.register("CTRL + S", function(e) {
-				e.preventDefault();
-				
-				var file = fileSystem.getFile(fileMenu.activeItemId);
-				file.save()
-					.then(function() { console.log("SAVE SUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)})
-					.catch(function(reason) {
-						console.log("SAVE UNSUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments);
-						if ([fileSystem.File.SAVE_REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
-					})
-					.done();
-			});
-
-			shortcutManager.register("CTRL + SHIFT + S", function(e) {
-				e.preventDefault();
-
-				var file = fileSystem.getFile(fileMenu.activeItemId);
-				file.saveAs()
-					.then(function() { console.log("SAVEAS SUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments)})
-					.catch(function(reason) {
-						console.log("SAVEAS UNSUCCESSFUL", fileSystem.getFile(fileMenu.activeItemId), arguments);
-						if (reason != fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) throw reason;
-					})
-					.done();
-			});
-
-			shortcutManager.register("CTRL + W", function(e) {
-				e.preventDefault();
-				fileSystem.getFile(fileMenu.activeItemId).close();
 			});
 		},
 
@@ -135,7 +53,8 @@ $document.ready(function() {
 		save: function(key, value) {
 			// Hijack saving to convert the key/value pair to a more complex format
 			if (key == "markdown") {
-				let file = fileSystem.getFile(fileMenu.activeItemId);
+				let file = fileSystem.getActiveFile();
+				file.undoManager.save(file.cache.tempContents, value);
 				file.cache.tempContents = value;
 				fileMenu.updateItemChangesVisualCue(file);
 
@@ -199,7 +118,7 @@ $document.ready(function() {
 
 		// Automatically check whether the active file has changed when the app window regains focus
 		checkActiveFileForChanges: function() {
-			var activeFile = fileSystem.getFile(fileMenu.activeItemId);
+			var activeFile = fileSystem.getActiveFile();
 			if (!activeFile.isTempFile()) activeFile.checkDiskContents();
 		}
 
@@ -362,6 +281,88 @@ $document.ready(function() {
 			})(),
 
 			fsMethods = {
+				initBindings: function() {
+					shortcutManager.register(["CTRL + N", "CTRL + T"], function(e) {
+						e.preventDefault();
+						fileSystem.chooseNewTempFile();
+					});
+
+					shortcutManager.register("CTRL + O", function(e) {
+						e.preventDefault();
+						fileSystem.chooseEntries();
+					});
+
+					shortcutManager.register("CTRL + S", function(e) {
+						e.preventDefault();
+						
+						var file = fileSystem.getActiveFile();
+						file.save()
+							.then(function() { console.log("SAVE SUCCESSFUL", fileSystem.getActiveFile(), arguments)})
+							.catch(function(reason) {
+								console.log("SAVE UNSUCCESSFUL", fileSystem.getActiveFile(), arguments);
+								if ([fileSystem.File.SAVE_REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
+							})
+							.done();
+					});
+
+					shortcutManager.register("CTRL + SHIFT + S", function(e) {
+						e.preventDefault();
+
+						var file = fileSystem.getActiveFile();
+						file.saveAs()
+							.then(function() { console.log("SAVEAS SUCCESSFUL", fileSystem.getActiveFile(), arguments)})
+							.catch(function(reason) {
+								console.log("SAVEAS UNSUCCESSFUL", fileSystem.getActiveFile(), arguments);
+								if (reason != fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) throw reason;
+							})
+							.done();
+					});
+
+					shortcutManager.register("CTRL + W", function(e) {
+						e.preventDefault();
+						fileSystem.getActiveFile().close();
+					});
+
+					editor.body.on({
+						// Indicate the body is a valid drop target
+						"dragenter dragover": function(e) {
+							if (e.originalEvent.dataTransfer.types.indexOf("Files") != -1) {
+								e.preventDefault();
+							}
+						},
+
+						drop: function(e) {
+							var dt = e.originalEvent.dataTransfer;
+
+							if (dt.types.indexOf("Files") != -1) {
+								e.preventDefault();
+							}
+
+							if (dt.files.length) {
+								Array.prototype.forEach.call(dt.files, function(file) {
+									// Only accept files that are some type of text (most commonly "text/plain") or of unknown type (such as .md as of today)
+									if (!file.type || file.type.indexOf("text/") == 0) {
+										var reader = new FileReader();
+										reader.onload = function() {
+											console.log(reader.result);
+											// PUT THE FILE CONTENTS IN THE MD PANEL HERE
+											// Find a way to do this in a DRY way: replace md contents, trigger change event?, save in localstorage?, convert md
+										};
+										reader.onerror = function() {
+											console.log("failed reading file");
+										};
+										reader.readAsText(file);
+									}
+								});
+							}
+
+							// console.log(e);
+							var a = JSON.stringify(e.originalEvent.dataTransfer);
+							console.log(a);
+						}
+					});
+				},
+
 				chooseEntries: function() {
 					chrome.fileSystem.chooseEntry(
 						{
@@ -490,7 +491,7 @@ $document.ready(function() {
 					file = new fileSystem.File(generateUniqueFileId());
 					promise = file.makePermanent(entry);
 
-					promise.then(function() {
+					promise = promise.then(function() {
 						fileMenu.addItem(file);
 
 						return file.read().then(function(fileContents) {
@@ -503,6 +504,10 @@ $document.ready(function() {
 				},
 
 				isEmpty: function(id) { return !files.size },
+
+				getActiveFile: function() {
+					return this.getFile(fileMenu.activeItemId);
+				},
 
 				getOpenFileIdAtIndex: cache.getOpenFileIdAtIndex.bind(cache),
 				getLastOpenFileId: cache.getLastOpenFileId.bind(cache),
@@ -536,6 +541,7 @@ $document.ready(function() {
 				this.name = fileSystem.File.DEFAULT_NAME;
 				console.log("File constructor:", this, id);
 				this.cache = cache.addFile(this.id);
+				this.undoManager = new UndoManager();
 				fileSystem.setFile(this.id, this);
 			};
 
@@ -594,8 +600,12 @@ $document.ready(function() {
 
 		// Load the file's cached contents into the editor
 		// Also read from the file to see if the cached contents are different from the file's
+		// The file's undo manager is frozen because its contents won't change, while the editor's will: we don't these non-changes
+		// to be saved when propagated from the editor
 		File.prototype.loadInEditor = function() { console.log("loadInEditor file:", this);
-			editor.updateMarkdownSource(this.cache.tempContents, true);
+			this.undoManager.freeze();
+			editor.updateMarkdownSource(this.cache.tempContents);
+			this.undoManager.unfreeze();
 			if (!this.isTempFile()) this.checkDiskContents();
 		};
 
@@ -988,6 +998,85 @@ $document.ready(function() {
 		return $.extend(fileMenuMethods, {
 			activeItemId: activeItemId
 		});
+	})();
+
+	var UndoManager = (function() {
+		var UndoManager = function() {
+			this.stack = new Undo.Stack();
+			this.isFrozen = false; // Freeze UndoManager instance when undoing/redoing to avoid polluting the stack
+			this.saveData = {
+				timer: null,
+				firstOldVal: null
+			};
+		};
+
+		UndoManager.initBindings = function() {
+			shortcutManager.register("CTRL + Z", function(e) {
+				e.preventDefault();
+				fileSystem.getActiveFile().undoManager.undo();
+			});
+
+			shortcutManager.register(["CTRL + SHIFT + Z", "CTRL + Y"], function(e) {
+				e.preventDefault();
+				fileSystem.getActiveFile().undoManager.redo();
+			});
+		};
+
+		UndoManager.prototype.save = function(oldVal, newVal) {
+			if (this.isFrozen) return;
+
+			if (this.saveData.firstOldVal === null) this.saveData.firstOldVal = oldVal;
+				else oldVal = this.saveData.firstOldVal;
+
+			clearTimeout(this.saveData.timer);
+			this.saveData.timer = setTimeout(function() {
+				this.stack.execute(new FileSaveCommand(oldVal, newVal));
+				this.saveData.firstOldVal = null;
+			}.bind(this), 250);
+		};
+
+		UndoManager.prototype.undo = function() {
+			if (this.stack.canUndo()) {
+				this.freeze();
+				this.stack.undo();
+				this.unfreeze();
+			}
+		};
+
+		UndoManager.prototype.redo = function() {
+			if (this.stack.canRedo()) {
+				this.freeze();
+				this.stack.redo();
+				this.unfreeze();
+			}
+		};
+
+		UndoManager.prototype.freeze = function() {
+			this.isFrozen = true;
+		};
+
+		UndoManager.prototype.unfreeze = function() {
+			this.isFrozen = false;
+		};
+
+		var FileSaveCommand = Undo.Command.extend({
+			constructor: function(oldVal, newVal) {
+				this.oldVal = oldVal;
+				this.newVal = newVal;
+			},
+
+			execute: function() {},
+
+			undo: function() {
+				editor.updateMarkdownSource(this.oldVal);
+			},
+			
+			redo: function() {
+				editor.updateMarkdownSource(this.newVal);
+			}
+		});
+
+		return UndoManager;
 	})();
 
 	app.init();

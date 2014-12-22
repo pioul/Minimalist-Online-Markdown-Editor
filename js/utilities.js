@@ -10,6 +10,8 @@ var Modal, confirm, normalizeNewlines, shortcutManager, limitStrLen;
 		S: 83,
 		T: 84,
 		W: 87,
+		Y: 89,
+		Z: 90,
 		1: 49,
 		2: 50,
 		3: 51,
