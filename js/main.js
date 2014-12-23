@@ -95,12 +95,25 @@ $document.ready(function() {
 				tryRunningCallback();
 			});
 
-			// Retrieve locally stored data to be handled by the app
-			// Restore openFilesIds, files and activeFileMenuItemId, in that order and while making sure the previous item has been restored before restoring the next
-			chrome.storage.local.get(["openFilesIds", "filesCache", "activeFileMenuItemId"], function(restoredItems) { console.log("restoredItems", restoredItems);
+			// Retrieve locally stored data to be handled by the app.
+			// Restore "openFilesIds", "filesCache" and "activeFileMenuItemId", in that order and while making sure the previous item has been restored before restoring the next.
+			// Also try to restore "markdown" to update from an old version of the app that used the "markdown" key to store its contents.
+			chrome.storage.local.get(["openFilesIds", "filesCache", "activeFileMenuItemId", "markdown"], function(restoredItems) { console.log("restoredItems", restoredItems);
 				if (restoredItems.openFilesIds) fileSystem.restoreFiles(restoredItems.openFilesIds);
 				if (restoredItems.filesCache) fileSystem.cache.restoreFilesCachedProps(restoredItems.filesCache);
-				if (fileSystem.isEmpty()) fileSystem.chooseNewTempFile();
+
+				if (fileSystem.isEmpty()) {
+					fileSystem.chooseNewTempFile();
+
+					// Just updated from an older version of the editor: populate the new file with the old version's saved contents, and delete that key.
+					if (restoredItems.markdown) {
+						fileSystem.getActiveFile().undoManager.freeze();
+						editor.updateMarkdownSource(restoredItems.markdown);
+						fileSystem.getActiveFile().undoManager.unfreeze();
+						chrome.storage.local.remove("markdown");
+					}
+				}
+
 				fileMenu.switchToItem(restoredItems.activeFileMenuItemId);
 				tryRunningCallback();
 			});
