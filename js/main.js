@@ -102,15 +102,49 @@ $document.ready(function() {
 				if (restoredItems.openFilesIds) fileSystem.restoreFiles(restoredItems.openFilesIds);
 				if (restoredItems.filesCache) fileSystem.cache.restoreFilesCachedProps(restoredItems.filesCache);
 
+				// First app launch (otherwise at least one temp file is already open)
 				if (fileSystem.isEmpty()) {
 					fileSystem.chooseNewTempFile();
 
-					// Just updated from an older version of the editor: populate the new file with the old version's saved contents, and delete that key.
-					if (restoredItems.markdown) {
+					let populateNewFile = function(text) {
 						fileSystem.getActiveFile().undoManager.freeze();
-						editor.updateMarkdownSource(restoredItems.markdown);
+						editor.updateMarkdownSource(text);
 						fileSystem.getActiveFile().undoManager.unfreeze();
+					};
+
+					// Updated from an older version of the editor: populate the new file with the old version's saved contents, and delete that key
+					if (restoredItems.markdown) {
+						populateNewFile(restoredItems.markdown);
 						chrome.storage.local.remove("markdown");
+					// Fresh new install: populate the new file with welcome instructions
+					} else {
+						let welcomeMsg = [
+							"Minimalist Markdown Editor",
+							"==========================",
+							"",
+							"This is the **simplest** and **slickest** Markdown editor.  ",
+							"Just write Markdown and see what it looks like as you type. And convert it to HTML in one click.",
+							"",
+							"Getting started",
+							"---------------",
+							"",
+							"### How?",
+							"",
+							"Just start typing in the left panel.",
+							"",
+							"### Buttons you might want to use",
+							"",
+							"- **Quick Reference**: that's a reminder of the most basic rules of Markdown",
+							"- **HTML | Preview**: *HTML* to see the markup generated from your Markdown text, *Preview* to see how it looks like",
+							"",
+							"### Privacy",
+							"",
+							"- No data is sent to any server – everything you type stays inside your application",
+							"- The editor automatically saves what you write locally for further use.  ",
+							"  If using a public computer, empty the left panel before leaving the editor"
+						].join("\n");
+						
+						populateNewFile(welcomeMsg);
 					}
 				}
 
