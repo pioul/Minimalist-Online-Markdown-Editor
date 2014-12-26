@@ -21,44 +21,46 @@
 			<div id="top_panels_container">
 				<div class="top_panel" id="quick-reference">
 					<div class="close">×</div>
+
+					<h2>Quick Reference</h2>
+
 					<table>
 						<tr>
 							<td>
-								<pre><code><span class="highlight">*</span>This is italicized<span class="highlight">*</span>, and <span class="highlight">**</span>this is bold<span class="highlight">**</span>.</code></pre>
+								<pre><code><span class="highlight">*</span>This is italicized<span class="highlight">*</span>, <wbr/>and <span class="highlight">**</span>this is bold<span class="highlight">**</span>.</code></pre>
 							</td>
 							<td><p>Use <code>*</code> or <code>_</code> for emphasis.</p></td>
 						</tr>
 						<tr>
 							<td>
-								<pre><code>This is a first level header
-<span class="highlight">============================</span></code></pre>
+								<pre><code><span class="highlight">#</span> This is a first level header</code></pre>
 							</td>
-							<td><p>You can alternatively put hash marks at the beginning of the line: <code>#&nbsp;H1</code>, <code>##&nbsp;H2</code>, <code>###&nbsp;H3</code>...</p></td>
+							<td><p>Use one or more hash marks for headers: <code>#&nbsp;H1</code>, <code>##&nbsp;H2</code>, <code>###&nbsp;H3</code>…</p></td>
 						</tr>
 						<tr>
 							<td>
-								<pre><code>This is a link to <span class="highlight">[Google](http://www.google.com)</span></code></pre>
+								<pre><code>This is a link to <wbr/><span class="highlight">[Google](http://www.google.com)</span></code></pre>
 							</td>
 							<td><p></p></td>
 						</tr>
 						<tr>
 							<td>
-								<pre><code>First line.<span class="highlight">  </span>
-Second line.</code></pre>
+								<pre><code>First line.<span class="highlight">  </span><br
+									/>Second line.</code></pre>
 							</td>
 							<td><p>End a line with two spaces for a linebreak.</p></td>
 						</tr>
 						<tr>
 							<td>
-								<pre><code><span class="highlight">- </span>Unordered list item
-<span class="highlight">- </span>Unordered list item</code></pre>
+								<pre><code><span class="highlight">- </span>Unordered list item<br
+									/><span class="highlight">- </span>Unordered list item</code></pre>
 							</td>
-							<td><p>Unordered (bulleted) lists use asterisks, pluses, and hyphens (<code>*</code>, <code>+</code>, and <code>-</code>) as list markers.</p></td>
+							<td><p>Unordered (bulleted) lists use asterisks, pluses, or hyphens (<code>*</code>, <code>+</code>, or <code>-</code>) as list markers.</p></td>
 						</tr>
 						<tr>
 							<td>
-								<pre><code><span class="highlight">1. </span>Ordered list item
-<span class="highlight">2. </span>Ordered list item</code></pre>
+								<pre><code><span class="highlight">1. </span>Ordered list item<br
+									/><span class="highlight">2. </span>Ordered list item</code></pre>
 							</td>
 							<td><p>Ordered (numbered) lists use regular numbers, followed by periods, as list markers.</p></td>
 						</tr>
@@ -72,20 +74,43 @@ Second line.</code></pre>
 						</tr>
 						<tr>
 							<td>
-								<pre><code><span class="highlight">![Valid XHTML](http://w3.org/Icons/valid-xhtml10)</span></code></pre>
+								<pre><code><span class="highlight">![](http://w3.org/Icons/valid-xhtml10)</span></code></pre>
 							</td>
-							<td><p>Images are exactly like links, but they have an exclamation point in front of them.</p></td>
+							<td><p>Images are exactly like links, with an exclamation mark in front of them.</p></td>
 						</tr>
 					</table>
+
 					<p><a href="http://daringfireball.net/projects/markdown/syntax" target="_blank">Full Markdown documentation</a></p>
 				</div>
 				<div class="top_panel" id="about">
 					<div class="close">×</div>
+
+					<h2>About MME</h2>
+
 					<p>Hi, I'm <a href="http://pioul.fr/a-propos/" target="_blank">Philippe Masset</a>.</p>
-					<p>I made this minimalist Markdown editor because I love Markdown and simple things.<br/>
-					The whole source code is on <a href="https://github.com/pioul/Minimalist-Markdown-Editor-for-Chrome" target="_blank">GitHub</a>, and this editor is also available online as a <a href="http://markdown.pioul.fr/" target="_blank">web app</a>.</p>
+					<p>I made the Minimalist Markdown Editor because I love Markdown and simple things.<br/>
+						The whole source code is on <a href="https://github.com/pioul/Minimalist-Markdown-Editor-for-Chrome" target="_blank">GitHub</a>, and this editor is also available online as a <a href="http://markdown.pioul.fr/" target="_blank">web app</a>.</p>
 					<p>If you have any suggestions or remarks whatsoever, just click on my name above and you'll have plenty of ways of contacting me.</p>
-					<p>Credit is due to <a href="http://daringfireball.net/" target="_blank">John Gruber</a> for creating <a href="http://daringfireball.net/projects/markdown/" target="_blank">Markdown</a> in the first place, and John Fraser for his amazing JavaScript port, <code>showdown.js</code>.</p>
+
+					<h3>Shortcuts</h3>
+
+					<ul>
+						<li><kbd>CTRL + O</kbd> to open files</li>
+						<li><kbd>CTRL + T</kbd> or <kbd>CTRL + N</kbd> to open a new tab</li>
+						<li><kbd>CTRL + S</kbd> to save the current file or tab, <kbd>CTRL + SHIFT + S</kbd> to save as a new file</li>
+						<li><kbd>CTRL + W</kbd> to close the current file or tab</li>
+						<li><kbd>CTRL + TAB</kbd> to switch to the next tab, <kbd>CTRL + SHIFT + TAB</kbd> to the previous</li>
+						<li><kbd>CTRL + 1-8</kbd> to switch to tabs number one through eight, <kbd>CTRL + 9</kbd> to switch to the last tab</li>
+						<li><kbd>CTRL + Z</kbd> to undo your last action, <kbd>CTRL + SHIFT + Z</kbd> or <kbd>CTRL + Y</kbd> to redo it</li>
+					</ul>
+
+					<h3>Privacy</h3>
+
+					<ul>
+						<li>No data is sent to any server – everything you type stays inside your application</li>
+						<li>The editor automatically saves what you write locally for future use.<br/>
+							If using a public computer, close all tabs before leaving the editor</li>
+					</ul>
 				</div>
 			</div>
 			<div class="wrapper">

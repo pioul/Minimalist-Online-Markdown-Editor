@@ -119,14 +119,12 @@ $document.ready(function() {
 					// Fresh new install: populate the new file with welcome instructions
 					} else {
 						let welcomeMsg = [
-							"Minimalist Markdown Editor",
-							"==========================",
+							"# Minimalist Markdown Editor",
 							"",
 							"This is the **simplest** and **slickest** Markdown editor.  ",
 							"Just write Markdown and see what it looks like as you type. And convert it to HTML in one click.",
 							"",
-							"Getting started",
-							"---------------",
+							"## Getting started",
 							"",
 							"### How?",
 							"",
@@ -137,11 +135,17 @@ $document.ready(function() {
 							"- **Quick Reference**: that's a reminder of the most basic rules of Markdown",
 							"- **HTML | Preview**: *HTML* to see the markup generated from your Markdown text, *Preview* to see how it looks like",
 							"",
+							"### Most useful shortcuts",
+							"",
+							"- `CTRL + O` to open files",
+							"- `CTRL + T` to open a new tab",
+							"- `CTRL + S` to save the current file or tab",
+							"",
 							"### Privacy",
 							"",
 							"- No data is sent to any server – everything you type stays inside your application",
-							"- The editor automatically saves what you write locally for further use.  ",
-							"  If using a public computer, empty the left panel before leaving the editor"
+							"- The editor automatically saves what you write locally for future use.  ",
+							"  If using a public computer, close all tabs before leaving the editor"
 						].join("\n");
 						
 						populateNewFile(welcomeMsg);
