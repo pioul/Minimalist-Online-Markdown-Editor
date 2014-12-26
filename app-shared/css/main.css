@@ -26,6 +26,10 @@ div.full-height {
 	display: block;
 }
 
+html {
+	height: 100%;
+}
+
 body {
 	width: 100%;
 	height: 100%;
@@ -42,10 +46,12 @@ h1, h2, h3, h4, h5, h6 {
 	line-height: 1em;
 }
 
-pre,
-code {
+pre, code, kbd {
 	background: #e7e7e7;
-	padding: 1px 5px 1px 5px;
+}
+
+code, kbd {
+	padding: 1px 5px;
 }
 
 pre {
@@ -75,11 +81,12 @@ hr {
 #right-column {
 	float: left;
 	width: 50%;
+	height: 100%;
 }
 
 .wrapper {
 	position: relative;
-	padding: 27px 0 20px 10px;
+	padding: 22px 0 20px 10px;
 }
 
 #left-column .wrapper {
@@ -176,10 +183,11 @@ hr {
 #left-column #markdown,
 #right-column #html {
 	display: block;
+	box-sizing: border-box;
 	width: 100%;
 	resize: none;
 	margin: 0;
-	padding: 0;
+	padding: 5px 0 0;
 	border: 0;
 	-moz-tab-size: 4;
 	-o-tab-size: 4;
@@ -191,10 +199,16 @@ hr {
 	outline: none;
 }
 
+#left-column #top_panels_container {
+	max-height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
 #left-column #top_panels_container .top_panel {
 	display: none;
 	position: relative;
-	padding: 20px;
+	padding: 10px 20px;
 	background: #f0f0f0;
 	border-bottom: 2px solid #f0f0f0;
 }
@@ -205,23 +219,25 @@ hr {
 
 #left-column #top_panels_container .top_panel .close {
 	position: absolute;
-	top: 20px;
-	right: 20px;
+	top: 15px;
+	right: 15px;
 	width: 14px;
 	height: 14px;
-	padding: 3px;
 	line-height: 14px;
 	font-size: 14px;
 	text-align: center;
 	color: #999;
 	cursor: pointer;
+	border-radius: 7px;
 }
 
 #left-column #top_panels_container .top_panel .close:hover {
-	color: #666;
+	color: #777;
+	background: #d7d7d7;
 }
 
-#quick-reference {
+#quick-reference table,
+#quick-reference > p {
 	font-size: 12px;
 	line-height: 1.25em;
 }
