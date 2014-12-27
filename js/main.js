@@ -53,9 +53,12 @@ $document.ready(function() {
 		save: function(key, value) {
 			// Hijack saving to convert the key/value pair to a more complex format
 			if (key == "markdown") {
-				let file = fileSystem.getActiveFile();
-				file.undoManager.save(file.cache.tempContents, value);
+				let file = fileSystem.getActiveFile(),
+					caretPos = editor.getMarkdownSourceCaretPos();
+
+				file.undoManager.save(file.cache.tempContents, value, file.cache.caretPos, caretPos);
 				file.cache.tempContents = value;
+				file.cache.caretPos = caretPos;
 				fileMenu.updateItemChangesVisualCue(file);
 
 				return;
@@ -195,6 +198,7 @@ $document.ready(function() {
 						this._entryId = null;
 						this._origContents = "";
 						this._tempContents = "";
+						this._caretPos = null;
 					},
 
 					setFileCacheProp = function(name, val) {
@@ -202,22 +206,30 @@ $document.ready(function() {
 						cache.save(cache.saveThe.filesCache);
 					};
 
-				Object.defineProperty(FileCache.prototype, "entryId", {
-					enumerable: true,
-					get: function() { return this._entryId },
-					set: function(newVal) { setFileCacheProp.call(this, "_entryId", newVal) }
-				});
+				Object.defineProperties(FileCache.prototype, {
+					entryId: {
+						enumerable: true,
+						get: function() { return this._entryId },
+						set: function(newVal) { setFileCacheProp.call(this, "_entryId", newVal) }
+					},
 
-				Object.defineProperty(FileCache.prototype, "origContents", {
-					enumerable: true,
-					get: function() { return this._origContents },
-					set: function(newVal) { setFileCacheProp.call(this, "_origContents", newVal) }
-				});
+					origContents: {
+						enumerable: true,
+						get: function() { return this._origContents },
+						set: function(newVal) { setFileCacheProp.call(this, "_origContents", newVal) }
+					},
 
-				Object.defineProperty(FileCache.prototype, "tempContents", {
-					enumerable: true,
-					get: function() { return this._tempContents },
-					set: function(newVal) { setFileCacheProp.call(this, "_tempContents", newVal) }
+					tempContents: {
+						enumerable: true,
+						get: function() { return this._tempContents },
+						set: function(newVal) { setFileCacheProp.call(this, "_tempContents", newVal) }
+					},
+
+					caretPos: {
+						enumerable: true,
+						get: function() { return this._caretPos },
+						set: function(newVal) { setFileCacheProp.call(this, "_caretPos", newVal) }
+					}
 				});
 
 				return {
@@ -655,7 +667,7 @@ $document.ready(function() {
 		// to be saved when propagated from the editor
 		File.prototype.loadInEditor = function() { console.log("loadInEditor file:", this);
 			this.undoManager.freeze();
-			editor.updateMarkdownSource(this.cache.tempContents);
+			editor.updateMarkdownSource(this.cache.tempContents, this.cache.caretPos);
 			this.undoManager.unfreeze();
 			if (!this.isTempFile()) this.checkDiskContents();
 		};
@@ -1053,7 +1065,8 @@ $document.ready(function() {
 			this.isFrozen = false; // Freeze UndoManager instance when undoing/redoing to avoid polluting the stack
 			this.saveData = {
 				timer: null,
-				firstOldVal: null
+				firstOldVal: null,
+				firstOldCaretPos: null
 			};
 		};
 
@@ -1069,16 +1082,22 @@ $document.ready(function() {
 			});
 		};
 
-		UndoManager.prototype.save = function(oldVal, newVal) {
+		UndoManager.prototype.save = function(oldVal, newVal, oldCaretPos, newCaretPos) {
 			if (this.isFrozen) return;
 
+			// Save oldVal through subsequent calls to save()
 			if (this.saveData.firstOldVal === null) this.saveData.firstOldVal = oldVal;
 				else oldVal = this.saveData.firstOldVal;
 
+			// Save oldCaretPos through subsequent calls to save()
+			if (this.saveData.firstOldCaretPos === null) this.saveData.firstOldCaretPos = oldCaretPos;
+				else oldCaretPos = this.saveData.firstOldCaretPos;
+
+			// Only save after 250 ms of inactivity
 			clearTimeout(this.saveData.timer);
 			this.saveData.timer = setTimeout(function() {
-				this.stack.execute(new FileSaveCommand(oldVal, newVal));
-				this.saveData.firstOldVal = null;
+				this.stack.execute(new FileSaveCommand(oldVal, newVal, oldCaretPos, newCaretPos));
+				this.saveData.firstOldVal = this.saveData.firstOldCaretPos = null;
 			}.bind(this), 250);
 		};
 
@@ -1107,19 +1126,21 @@ $document.ready(function() {
 		};
 
 		var FileSaveCommand = Undo.Command.extend({
-			constructor: function(oldVal, newVal) {
+			constructor: function(oldVal, newVal, oldCaretPos, newCaretPos) {
 				this.oldVal = oldVal;
 				this.newVal = newVal;
+				this.oldCaretPos = oldCaretPos;
+				this.newCaretPos = newCaretPos;
 			},
 
 			execute: function() {},
 
 			undo: function() {
-				editor.updateMarkdownSource(this.oldVal);
+				editor.updateMarkdownSource(this.oldVal, this.oldCaretPos);
 			},
 			
 			redo: function() {
-				editor.updateMarkdownSource(this.newVal);
+				editor.updateMarkdownSource(this.newVal, this.newCaretPos);
 			}
 		});
 
