@@ -148,26 +148,56 @@ $document.ready(function() {
 		},
 
 		// Programmatically add Markdown text to the textarea
-		// position = { start: Number, end: Number }
-		addToMarkdownSource: function(markdown, position) {
-			var markdownSourceValue = this.markdown;
-			if (typeof position == "undefined") { // Add text at the end
-				var newMarkdownSourceValue =
-					(markdownSourceValue.length? markdownSourceValue + "\n\n" : "") +
-					markdown;
-			} else { // Add text at a given position
-				var newMarkdownSourceValue =
-					markdownSourceValue.substring(0, position.start) +
+		// pos = { start: Number, end: Number }
+		addToMarkdownSource: function(markdown, pos) {
+			var markdownSourceVal = this.markdown;
+
+			// Add text at the end of the input
+			if (typeof pos == "undefined") {
+				if (markdownSourceVal.length) markdown = "\n\n"+ markdown;
+				this.updateMarkdownSource(markdownSourceVal + markdown);
+			// Add text at a given position
+			} else {
+				var newMarkdownSourceVal =
+					markdownSourceVal.substring(0, pos.start) +
 					markdown +
-					markdownSourceValue.substring(position.end);
+					markdownSourceVal.substring(pos.end);
+
+				pos.start = pos.end = pos.start + markdown.length;
+
+				this.updateMarkdownSource(newMarkdownSourceVal, pos);
 			}
-			this.updateMarkdownSource(newMarkdownSourceValue);
 		},
 
 		// Programmatically update the Markdown textarea with new Markdown text
-		updateMarkdownSource: function(markdown) {
+		updateMarkdownSource: function(markdown, caretPos) {
 			this.markdownSource.val(markdown);
+			if (caretPos) this.setMarkdownSourceCaretPos(caretPos);
+
 			this.onInput();
+		},
+
+		// Doesn't work in IE<9
+		getMarkdownSourceCaretPos: function() {
+			var markdownSourceEl = this.markdownSource[0];
+
+			if (typeof markdownSourceEl.selectionStart != "number" || typeof markdownSourceEl.selectionEnd != "number") return;
+			
+			return {
+				start: markdownSourceEl.selectionStart,
+				end: markdownSourceEl.selectionEnd
+			};
+		},
+
+		// Doesn't work in IE<9
+		setMarkdownSourceCaretPos: function(pos) {
+			var markdownSourceEl = this.markdownSource[0];
+
+			if (!("setSelectionRange" in markdownSourceEl)) return;
+
+			markdownSourceEl.blur(); // Force auto-scroll to the caret's position by blurring then focusing the input
+			markdownSourceEl.setSelectionRange(pos.start, pos.end);
+			markdownSourceEl.focus();
 		},
 
 		// Switch between editor panels
@@ -290,19 +320,13 @@ $document.ready(function() {
 		},
 
 		// Insert a tab character when the tab key is pressed (instead of focusing the next form element)
-		// Doesn't work in IE<9
 		handleTabKeyPress: function(e) {
-			var markdownSourceElement = this.markdownSource[0],
-				tabInsertPosition = {
-					start: markdownSourceElement.selectionStart,
-					end: markdownSourceElement.selectionEnd
-				};
-			if (typeof tabInsertPosition.start == "number" && typeof tabInsertPosition.end == "number") {
-				e.preventDefault();
-				this.addToMarkdownSource("\t", tabInsertPosition);
-				var cursorPosition = tabInsertPosition.start + 1;
-				markdownSourceElement.setSelectionRange(cursorPosition, cursorPosition);
-			}
+			var caretPos = this.getMarkdownSourceCaretPos();
+			if (!caretPos) return;
+
+			e.preventDefault();
+
+			this.addToMarkdownSource("\t", caretPos);
 		},
 
 		// Count the words in the Markdown output and update the word count in the corresponding
