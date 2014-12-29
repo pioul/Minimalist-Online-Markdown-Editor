@@ -40,10 +40,11 @@ $document.ready(function() {
 
 		// Receive messages sent to this window (from the iframe)
 		receiveMessage: function(e) {
-			var e = e.originalEvent;
+			var data = e.originalEvent.data;
 			
-			if (e.data.hasOwnProperty("height")) this.updateMarkdownPreviewIframeHeight(e.data.height);
-			if (e.data.hasOwnProperty("text")) editor.updateWordCount(e.data.text);
+			if (data.hasOwnProperty("height")) this.updateMarkdownPreviewIframeHeight(data.height);
+			if (data.hasOwnProperty("text")) editor.updateWordCount(data.text);
+			if (data.keydownEventObj) this.markdownPreviewIframe.trigger(data.keydownEventObj);
 		},
 
 		// Save a key/value pair in chrome.storage (either Markdown text or enabled features)
@@ -102,7 +103,7 @@ $document.ready(function() {
 			// Retrieve locally stored data to be handled by the app.
 			// Restore "openFilesIds", "filesCache" and "activeFileMenuItemId", in that order and while making sure the previous item has been restored before restoring the next.
 			// Also try to restore "markdown" to update from an old version of the app that used the "markdown" key to store its contents.
-			chrome.storage.local.get(["openFilesIds", "filesCache", "activeFileMenuItemId", "markdown"], function(restoredItems) { console.log("restoredItems", restoredItems);
+			chrome.storage.local.get(["openFilesIds", "filesCache", "activeFileMenuItemId", "markdown"], function(restoredItems) {
 				if (restoredItems.openFilesIds) fileSystem.restoreFiles(restoredItems.openFilesIds);
 				if (restoredItems.filesCache) fileSystem.cache.restoreFilesCachedProps(restoredItems.filesCache);
 
@@ -361,9 +362,7 @@ $document.ready(function() {
 						
 						var file = fileSystem.getActiveFile();
 						file.save()
-							.then(function() { console.log("SAVE SUCCESSFUL", fileSystem.getActiveFile(), arguments)})
 							.catch(function(reason) {
-								console.log("SAVE UNSUCCESSFUL", fileSystem.getActiveFile(), arguments);
 								if ([fileSystem.File.SAVE_REJECTION_MSG, fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG].indexOf(reason) == -1) throw reason;
 							})
 							.done();
@@ -374,9 +373,7 @@ $document.ready(function() {
 
 						var file = fileSystem.getActiveFile();
 						file.saveAs()
-							.then(function() { console.log("SAVEAS SUCCESSFUL", fileSystem.getActiveFile(), arguments)})
 							.catch(function(reason) {
-								console.log("SAVEAS UNSUCCESSFUL", fileSystem.getActiveFile(), arguments);
 								if (reason != fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) throw reason;
 							})
 							.done();
@@ -629,7 +626,6 @@ $document.ready(function() {
 			File = function(id) {
 				this.id = id;
 				this.name = fileSystem.File.DEFAULT_NAME;
-				console.log("File constructor:", this, id);
 				this.cache = cache.addFile(this.id);
 				this.undoManager = new UndoManager();
 				fileSystem.setFile(this.id, this);
@@ -692,7 +688,7 @@ $document.ready(function() {
 		// Also read from the file to see if the cached contents are different from the file's
 		// The file's undo manager is frozen because its contents won't change, while the editor's will: we don't these non-changes
 		// to be saved when propagated from the editor
-		File.prototype.loadInEditor = function() { console.log("loadInEditor file:", this);
+		File.prototype.loadInEditor = function() {
 			this.undoManager.freeze();
 			editor.updateMarkdownSource(this.cache.tempContents, this.cache.caretPos);
 			this.undoManager.unfreeze();
@@ -968,8 +964,6 @@ $document.ready(function() {
 					}
 
 					if (id == this.activeItemId) return;
-
-					console.log("fileMenu items", items);
 
 					this.forEachItem(function(menuItem, itemId) {
 						if (id == itemId) {

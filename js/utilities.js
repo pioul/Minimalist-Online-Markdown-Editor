@@ -70,7 +70,6 @@ var Modal, confirm, normalizeNewlines, shortcutManager, limitStrLen;
 		Modal.prototype.close = function() {
 			this.el.trigger("close.modal").remove();
 			openModals.splice(openModals.length - 1, 1);
-			// [todo] force gc
 		};
 
 		// Used to enforce the fact that modals are blocking: event handlers that aren't "blocked/disabled" by the modals' transparent overlay

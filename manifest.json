@@ -23,7 +23,7 @@
 	"offline_enabled": true,
 	"sandbox": {
 		"pages": [
-			"sandbox.html"
+			"sandbox/preview.html"
 		]
 	}
 }
