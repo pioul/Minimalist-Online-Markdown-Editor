@@ -137,3 +137,33 @@ body:before {
 .topbar .buttons-container .button.icon-chevron-right:before {
 	content: "\25BA";
 }
+
+#drag-mask,
+#drag-mask > span {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+#drag-mask {
+	display: none;
+	z-index: 200;
+	background-color: rgba(255, 255, 255, .8);
+}
+
+#drag-mask.visible {
+	display: block;
+}
+
+#drag-mask > span {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 20px;
+	font-size: 30px;
+	color: #999;
+	border: 4px dashed #ddd;
+	pointer-events: none;
+}

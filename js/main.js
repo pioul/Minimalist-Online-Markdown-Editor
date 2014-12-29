@@ -7,6 +7,7 @@ $document.ready(function() {
 
 		// Chrome app variables
 		markdownPreviewIframe: $("#preview-iframe"),
+		dragMask: document.getElementById("drag-mask"),
 		isMarkdownPreviewIframeLoaded: false,
 		markdownPreviewIframeLoadEventCallbacks: $.Callbacks(),
 
@@ -386,44 +387,7 @@ $document.ready(function() {
 						fileSystem.getActiveFile().close();
 					});
 
-					editor.body.on({
-						// Indicate the body is a valid drop target
-						"dragenter dragover": function(e) {
-							if (e.originalEvent.dataTransfer.types.indexOf("Files") != -1) {
-								e.preventDefault();
-							}
-						},
-
-						drop: function(e) {
-							var dt = e.originalEvent.dataTransfer;
-
-							if (dt.types.indexOf("Files") != -1) {
-								e.preventDefault();
-							}
-
-							if (dt.files.length) {
-								Array.prototype.forEach.call(dt.files, function(file) {
-									// Only accept files that are some type of text (most commonly "text/plain") or of unknown type (such as .md as of today)
-									if (!file.type || file.type.indexOf("text/") == 0) {
-										var reader = new FileReader();
-										reader.onload = function() {
-											console.log(reader.result);
-											// PUT THE FILE CONTENTS IN THE MD PANEL HERE
-											// Find a way to do this in a DRY way: replace md contents, trigger change event?, save in localstorage?, convert md
-										};
-										reader.onerror = function() {
-											console.log("failed reading file");
-										};
-										reader.readAsText(file);
-									}
-								});
-							}
-
-							// console.log(e);
-							var a = JSON.stringify(e.originalEvent.dataTransfer);
-							console.log(a);
-						}
-					});
+					editor.body.on("dragenter dragover dragleave drop", fileSystem.dndHandler.bind(fileSystem));
 				},
 
 				chooseEntries: function() {
@@ -438,37 +402,100 @@ $document.ready(function() {
 						function(entries) {
 							if (typeof entries == "undefined") return; // undefined when user closes dialog
 
-							var promisedPermFilesBeingCreated = [],
-								lastChosenAlreadyOpenFile = null,
-								wereNewFilesSuccessfullyOpen = false;
-
-							for (let i = 0, ln = entries.length; i < ln; i++) {
-								let entry = entries[i];
-								
-								let promise = fileSystem.getEntryDisplayPath(entry).then(function(displayPath) {
-									var fileId = fileSystem.getEntriesDisplayPathsMap(displayPath);
-
-									// If the display path has already been saved, hence the file has already been opened,
-									// save that file's id in order to switch to the file's tab later if necessary.
-									if (fileId) {
-										lastChosenAlreadyOpenFile = fileId;
-									} else {
-										return fileSystem.createPermFile(entry).then(function() {
-											wereNewFilesSuccessfullyOpen = true;
-										});
-									}
-								});
-
-								promisedPermFilesBeingCreated.push(promise);
-							}
-
-							// Switch to the latest open file. If the selected FS entries didn't result in any new file being open,
-							// switch to the latest of the files that were both selected and already open.
-							Promise.all(promisedPermFilesBeingCreated).then(function() {
-								fileMenu.switchToItem(wereNewFilesSuccessfullyOpen? null : lastChosenAlreadyOpenFile);
-							}).done();
+							fileSystem.importEntries(entries);
 						}
 					);
+				},
+
+				// Drag & drop events handler
+				dndHandler: (function() {
+					var isDragging = false,
+
+						onDragEnd = function(e) {
+							if (!isDragging || e.target != app.dragMask) return;
+
+							app.dragMask.classList.remove("visible");
+							isDragging = false;
+						},
+
+						isValidDtType = function(e) {
+							return e.originalEvent.dataTransfer.types.indexOf("Files") != -1;
+						};
+
+					return function(e) {
+						switch(e.type) {
+							case "dragenter":
+								if (isDragging || !isValidDtType(e)) return;
+
+								app.dragMask.classList.add("visible");
+								isDragging = true;
+								break;
+
+							case "dragover":
+								if (isValidDtType(e)) e.preventDefault(); // Indicate the body is a valid drop target
+								break;
+
+							case "dragleave":
+								onDragEnd(e);
+								break;
+
+							case "drop":
+								onDragEnd(e);
+								fileSystem.chooseEntriesByDrop(e);
+								break;
+						}
+					};
+				})(),
+
+				chooseEntriesByDrop: function(e) {
+					var dt = e.originalEvent.dataTransfer;
+
+					if (dt.types.indexOf("Files") == -1) return;
+					
+					e.preventDefault();
+					var entries = [];
+
+					for (let i = 0, dtItem; dtItem = dt.items[i]; i++) {
+						// Only accept files that are some type of text (most commonly "text/plain") or of unknown type (such as .md as of today)
+						if (dtItem.kind != "file" || dtItem.type && dtItem.type.indexOf("text/") != 0) return;
+
+						entries.push(dtItem.webkitGetAsEntry());
+					}
+
+					fileSystem.importEntries(entries);
+				},
+
+				// Transform entries into perm files, hence opening them into the editor
+				importEntries: function(entries) {
+					var promisedPermFilesBeingCreated = [],
+						lastChosenAlreadyOpenFile = null,
+						wereNewFilesSuccessfullyOpen = false;
+
+					for (let i = 0, entry; entry = entries[i]; i++) {
+						if (!entry.isFile) continue;
+
+						let promise = fileSystem.getEntryDisplayPath(entry).then(function(displayPath) {
+							var fileId = fileSystem.getEntriesDisplayPathsMap(displayPath);
+
+							// If the display path has already been saved, hence the file has already been opened,
+							// save that file's id in order to switch to the file's tab later if necessary.
+							if (fileId) {
+								lastChosenAlreadyOpenFile = fileId;
+							} else {
+								return fileSystem.createPermFile(entry).then(function() {
+									wereNewFilesSuccessfullyOpen = true;
+								});
+							}
+						});
+
+						promisedPermFilesBeingCreated.push(promise);
+					}
+
+					// Switch to the latest open file. If the selected FS entries didn't result in any new file being open,
+					// switch to the latest of the files that were both selected and already open.
+					Promise.all(promisedPermFilesBeingCreated).then(function() {
+						fileMenu.switchToItem(wereNewFilesSuccessfullyOpen? null : lastChosenAlreadyOpenFile);
+					}).done();
 				},
 
 				// chrome.fileSystem.getDisplayPath doesn't work reliably with symlinks

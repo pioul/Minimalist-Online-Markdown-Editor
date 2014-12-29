@@ -124,11 +124,12 @@
 					<div class="buttons-container clearfix">
 						<a href="#" class="button icon-chevron-left file-menu-control" data-file-menu-control="scroll-left"></a>
 					</div>
-					<div class="file-menu"></div>
+					<div class="file-menu" title="Double-click to open new tab"></div>
 				</div>
 				<textarea id="markdown" class="full-height" placeholder="Write Markdown"></textarea>
 			</div>
 		</div>
+
 		<div id="right-column">
 			<div class="wrapper">
 				<div class="topbar hidden-when-fullscreen">
@@ -150,6 +151,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="topbar visible-when-fullscreen">
 			<div class="buttons-container clearfix">
 				<a href="#" class="button icon-chevron-right file-menu-control" data-file-menu-control="scroll-right"></a>
@@ -165,8 +167,13 @@
 			</div>
 			<div class="file-menu"></div>
 		</div>
+
 		<div class="bottom-bar visible-when-fullscreen clearfix">
 			<div class="word-count"></div>
+		</div>
+
+		<div id="drag-mask">
+			<span>Drop files here</span>
 		</div>
 	</body>
 </html>
