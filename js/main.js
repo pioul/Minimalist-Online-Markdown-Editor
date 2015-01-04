@@ -782,6 +782,10 @@ $document.ready(function() {
 				.then(function() {
 					file.cache.origContents = file.cache.tempContents;
 					fileMenu.updateItemChangesVisualCue(file);
+				})
+				.catch(function(reason) { // Unknown error: display "save failed" message, and rethrow error as if it was uncaught
+					alert("Changes couldn't be saved to the file.");
+					throw reason;
 				});
 		};
 
@@ -796,6 +800,13 @@ $document.ready(function() {
 					return file.makePermanent(entry).then(function() {
 						fileMenu.updateItemName(file);
 					});
+				})
+				.catch(function(reason) {
+					if (reason == fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) return;
+
+					// Unknown error: display "save failed" message, and rethrow error as if it was uncaught
+					alert("Changes couldn't be saved to the file.");
+					throw reason;
 				});
 		};
 

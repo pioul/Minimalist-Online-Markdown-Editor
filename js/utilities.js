@@ -1,4 +1,4 @@
-var Modal, confirm, normalizeNewlines, shortcutManager, limitStrLen;
+var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 
 (function() {
 	"use strict";
@@ -151,6 +151,27 @@ var Modal, confirm, normalizeNewlines, shortcutManager, limitStrLen;
 
 		return Button;
 	})();
+
+	alert = function(text) {
+		var modal = new Modal({
+			content: text,
+			buttons: new confirm.Button(confirm.Button.OK_BUTTON),
+
+			onInit: function() {
+				var modal = this,
+					button = modal.el.find(".buttons .button");
+
+				button
+					.on("click", function(e) {
+						e.preventDefault();
+						modal.close();
+					})
+					.focus();
+			}
+		});
+
+		modal.show();
+	};
 
 	// The editor regularly compares files' contents to detect changes, and different line break format will mess with the result.
 	// Chrome (and all browsers) already normalize line breaks as LF characters inside a form element's API value (which is 
