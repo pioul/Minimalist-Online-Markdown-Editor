@@ -200,7 +200,7 @@ $document.ready(function() {
 						this._entryId = null;
 						this._origContents = "";
 						this._tempContents = "";
-						this._caretPos = null;
+						this._caretPos = { start: 0, end: 0 };
 					},
 
 					setFileCacheProp = function(name, val) {
