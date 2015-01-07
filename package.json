@@ -1,0 +1,12 @@
+{
+  "name": "minimalist-markdown-editor-for-chrome",
+  "version": "2.1.1",
+  "scripts": {
+    "build": "gulp"
+  },
+  "devDependencies": {
+    "del": "^1.1.1",
+    "gulp": "^3.8.10",
+    "gulp-6to5": "^2.0.0"
+  }
+}
