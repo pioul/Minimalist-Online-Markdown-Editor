@@ -582,7 +582,10 @@ $document.ready(function() {
 						fileMenu.addItem(file);
 
 						return file.read().then(function(fileContents) {
+							var contentsLength = fileContents.length;
+
 							file.cache.tempContents = fileContents;
+							file.cache.caretPos = { start: contentsLength, end: contentsLength };
 							fileMenu.updateItemChangesVisualCue(file);
 						});
 					});
