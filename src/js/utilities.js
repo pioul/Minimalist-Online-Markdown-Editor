@@ -20,7 +20,12 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 		6: 54,
 		7: 55,
 		8: 56,
-		9: 57
+		9: 57,
+		F4: 115,
+		PGUP: 33,
+		PGDOWN: 34,
+		ARROWLEFT: 37,
+		ARROWRIGHT: 39
 	});
 
 	Modal = (function() {
@@ -209,12 +214,14 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 			},
 
 			// Run the handler registered with the detected shortcut
+			// For the purposes of this app, META (WIN on Win, CMD on Mac) mirrors CTRL
 			runMatchingHandler = function(e) {
-				if (!e.ctrlKey || e.altKey) return; // All shortcuts currently use CTRL, and none use ALT
+				if (!e.ctrlKey && !e.metaKey) return; // All shortcuts currently use CTRL (mirrored by META)
 
 				var shortcut, handler, sequence = ["CTRL"];
 
 				if (e.shiftKey) sequence.push("SHIFT");
+				if (e.altKey) sequence.push("ALT"); // (Option on Mac)
 
 				sequence.push(e.keyCode);
 				shortcut = sequence.join(sequenceSeparator);

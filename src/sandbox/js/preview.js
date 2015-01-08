@@ -63,6 +63,7 @@ $window.on("load", function() {
 					type: e.type,
 					keyCode: e.keyCode,
 					ctrlKey: e.ctrlKey,
+					metaKey: e.metaKey,
 					altKey: e.altKey,
 					shiftKey: e.shiftKey
 				}
@@ -72,8 +73,8 @@ $window.on("load", function() {
 			// However, the original event isn't posted, so all keydown events that are cancelled by the app
 			// to prevent their default action must be cancelled by hand here too. That solution isn't DRY,
 			// but it's the best one around.
-			// Currently applies to: CTRL + W
-			if (e.ctrlKey && e.keyCode == 87) e.preventDefault();
+			// Currently applies to: CTRL (mirrored by META) + W
+			if ((e.ctrlKey || e.metaKey) && e.keyCode == 87) e.preventDefault();
 		}
 	});
 	

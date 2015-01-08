@@ -379,7 +379,7 @@ $document.ready(function() {
 							.done();
 					});
 
-					shortcutManager.register("CTRL + W", function(e) {
+					shortcutManager.register(["CTRL + W", "CTRL + F4"], function(e) {
 						e.preventDefault();
 						fileSystem.getActiveFile().close();
 					});
@@ -892,12 +892,12 @@ $document.ready(function() {
 						fileMenu.controlNav($(this).data("fileMenuControl"));
 					});
 
-					shortcutManager.register("CTRL + TAB", function(e) {
+					shortcutManager.register(["CTRL + TAB", "CTRL + PGDOWN", "CTRL + ALT + ARROWRIGHT"], function(e) {
 						e.preventDefault();
 						fileMenu.controlNav("jump-right");
 					});
 
-					shortcutManager.register("CTRL + SHIFT + TAB", function(e) {
+					shortcutManager.register(["CTRL + SHIFT + TAB", "CTRL + PGUP", "CTRL + ALT + ARROWLEFT"], function(e) {
 						e.preventDefault();
 						fileMenu.controlNav("jump-left");
 					});
