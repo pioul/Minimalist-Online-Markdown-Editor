@@ -29,12 +29,12 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 	});
 
 	Modal = (function() {
-		var generateModalMarkup = function(content, buttons) {
+		var generateModalMarkup = function(content, buttons) { // Decoys surround the modals' buttons to avoid issues when the prev/next tabbable element is out of the browsing context
 				return [
 					"<div class=\"modal-container\" style=\"display: none\">",
 						"<div class=\"modal\">",
 							"<div class=\"content\">"+ content +"</div>",
-							(buttons? "<div class=\"buttons clearfix\">"+ buttons +"</div>" : ""),
+							(buttons? "<div class=\"buttons\"><a href=\"#\" class=\"decoy\"></a>"+ buttons +"<a href=\"#\" class=\"decoy\"></a></div>" : ""),
 						"</div>",
 					"</div>"
 				].join("");
@@ -51,18 +51,48 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 				return false;
 			},
 
-			initBindings = function() {
+			initModalsBindings = function() {
 				$document.on("keydown.modal", function(e) {
 					if (e.keyCode == keyCode.ESCAPE) {
 						var didCloseAModal = closeLastOpenModal();
 						if (didCloseAModal) e.stopImmediatePropagation(); // If pressing ESC resulted in a modal being closed, don't propagate the event (we don't want something else to happen in addition to closing the modal). And yes, that variable is only here to make the code more legible. Yes, in addition to this comment. Yes.
 					}
 				});
+			},
+
+			keepFocusInsideModal = function(modal) {
+				var decoys = modal.el[0].getElementsByClassName("decoy"),
+					firstDecoy = decoys[0],
+					lastDecoy = decoys[1],
+					firstButton = modal.buttonsEls.first(),
+					lastButton = modal.buttonsEls.last();
+
+				modal.el.on("focusin", function(e) {
+					e.stopPropagation();
+
+					switch (e.target) {
+						case firstDecoy: // The decoy placed before the first button is about to be focused
+							lastButton.focus();
+							break;
+						case lastDecoy: // The decoy placed after the last button is about to be focused
+							firstButton.focus();
+							break;
+					}
+				});
 			};
 
 		var Modal = function(options) {
 			var modal = this;
+
 			modal.el = $(generateModalMarkup(options.content, options.buttons)).appendTo(editor.body);
+			modal.buttonsEls = options.buttons? modal.el.find(".buttons .button") : [];
+
+			if (modal.buttonsEls.length) {
+				keepFocusInsideModal(modal);
+				setTimeout(function() {
+					modal.buttonsEls.last().focus()
+				}, 0);
+			}
 
 			if (typeof options.onInit == "function") setTimeout(function() { options.onInit.call(modal) });
 		};
@@ -85,7 +115,7 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 
 		Modal.ifNoModalOpen.REJECTION_MSG = "A modal is currently open.";
 
-		initBindings();
+		initModalsBindings();
 
 		return Modal;
 	})();
@@ -94,31 +124,28 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 		return new Promise(function(resolvePromise, rejectPromise) {
 			rejectPromise = rejectPromise.bind(null, confirm.REJECTION_MSG);
 
-			if (typeof buttons == "undefined") buttons = [new confirm.Button(confirm.Button.OK_BUTTON), new confirm.Button(confirm.Button.CANCEL_BUTTON)];
+			if (typeof buttons == "undefined") buttons = [new confirm.Button(confirm.Button.CANCEL_BUTTON), new confirm.Button(confirm.Button.OK_BUTTON)];
 
 			var modal = new Modal({
 				content: text,
 				buttons: buttons.join(""),
 
 				onInit: function() {
-					var modal = this,
-						buttons = modal.el.find(".buttons .button");
+					var modal = this;
 
 					modal.el.on("close.modal", function() { rejectPromise() });
 
-					buttons.filter("[data-action=\"cancel\"]").on("click", function(e) {
+					modal.buttonsEls.filter("[data-action=\"cancel\"]").on("click", function(e) {
 						e.preventDefault();
 						rejectPromise();
 						modal.close();
 					});
 
-					buttons.filter("[data-action=\"confirm\"]")
-						.on("click", function(e) {
-							e.preventDefault();
-							resolvePromise($(e.target).data("value"));
-							modal.close();
-						})
-						.first().focus();
+					modal.buttonsEls.filter("[data-action=\"confirm\"]").on("click", function(e) {
+						e.preventDefault();
+						resolvePromise($(e.target).data("value"));
+						modal.close();
+					});
 				}
 			});
 
@@ -163,15 +190,12 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 			buttons: new confirm.Button(confirm.Button.OK_BUTTON),
 
 			onInit: function() {
-				var modal = this,
-					button = modal.el.find(".buttons .button");
+				var modal = this;
 
-				button
-					.on("click", function(e) {
-						e.preventDefault();
-						modal.close();
-					})
-					.focus();
+				modal.buttonsEls.on("click", function(e) {
+					e.preventDefault();
+					modal.close();
+				});
 			}
 		});
 

@@ -22,7 +22,8 @@ $document.ready(function() {
 		initBindings: function() {
 			$window.on({
 				message: app.receiveMessage.bind(app),
-				focus: app.checkActiveFileForChanges.bind(app)
+				focus: app.checkActiveFileForChanges.bind(app),
+				"close.modal": app.focusMarkdownSource.bind(app)
 			});
 
 			// In the Chrome app, the preview panel requires to be in a sandboxed iframe, hence isn't loaded immediately with the rest of the document
@@ -45,6 +46,12 @@ $document.ready(function() {
 			if (data.hasOwnProperty("height")) this.updateMarkdownPreviewIframeHeight(data.height);
 			if (data.hasOwnProperty("text")) editor.updateWordCount(data.text);
 			if (data.keydownEventObj) this.markdownPreviewIframe.trigger(data.keydownEventObj);
+		},
+
+		focusMarkdownSource: function() {
+			setTimeout(function() {
+				editor.markdownSource.focus();
+			}, 0);
 		},
 
 		// Save a key/value pair in chrome.storage (either Markdown text or enabled features)
@@ -714,7 +721,10 @@ $document.ready(function() {
 						};
 
 						if (fileHasTempChanges) {
-							confirm("The file has changed on disk. Reload it?")
+							confirm("The file has changed on disk. Reload it?", [
+								new confirm.Button(confirm.Button.CANCEL_BUTTON),
+								new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Reload" }))
+							])
 								.then(updateEditorContents)
 								.catch(function(reason) {
 									if (reason != confirm.REJECTION_MSG) throw reason;
@@ -729,8 +739,8 @@ $document.ready(function() {
 					if (error.name != "NotFoundError") throw error;
 
 					confirm("Another program deleted that file. Keep its contents in the editor?", [
-						new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Keep in editor" })),
-						new confirm.Button(confirm.Button.CANCEL_BUTTON.extend({ text: "Close the file" }))
+						new confirm.Button(confirm.Button.CANCEL_BUTTON.extend({ text: "Close the file" })),
+						new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Keep in editor" }))
 					])
 						.then(file.makeTemporary.bind(file))
 						.catch(function(reason) {
@@ -754,9 +764,9 @@ $document.ready(function() {
 
 			if (file.hasTempChanges()) {
 				confirm("Save changes before closing?", [
-					new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Save changes", dataValue: "yes" })),
+					new confirm.Button(confirm.Button.CANCEL_BUTTON.extend({ text: "Don't close" })),
 					new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Discard", dataValue: "no" })),
-					new confirm.Button(confirm.Button.CANCEL_BUTTON.extend({ text: "Don't close" }))
+					new confirm.Button(confirm.Button.OK_BUTTON.extend({ text: "Save changes", dataValue: "yes" }))
 				])
 					.then(function(value) {
 						if (value == "yes") return file.save(); // Can throw fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG if saveAs() is called and the "save as" dialog is closed
@@ -805,10 +815,12 @@ $document.ready(function() {
 					});
 				})
 				.catch(function(reason) {
-					if (reason == fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) return;
+					// Unknown error: display "save failed" message
+					if (reason != fileSystem.USER_CLOSED_DIALOG_REJECTION_MSG) {
+						alert("Changes couldn't be saved to the file.");
+					}
 
-					// Unknown error: display "save failed" message, and rethrow error as if it was uncaught
-					alert("Changes couldn't be saved to the file.");
+					// Rethrow all errors as if theyre were uncaught
 					throw reason;
 				});
 		};
