@@ -34,7 +34,7 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 					"<div class=\"modal-container\" style=\"display: none\">",
 						"<div class=\"modal\">",
 							"<div class=\"content\">"+ content +"</div>",
-							(buttons? "<div class=\"buttons\"><a href=\"#\" class=\"decoy\"></a>"+ buttons +"<a href=\"#\" class=\"decoy\"></a></div>" : ""),
+							"<div class=\"buttons\"><a href=\"#\" class=\"decoy\"></a>"+ buttons +"<a href=\"#\" class=\"decoy\"></a></div>",
 						"</div>",
 					"</div>"
 				].join("");
