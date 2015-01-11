@@ -502,7 +502,7 @@ $document.ready(function() {
 					}).done();
 				},
 
-				// chrome.fileSystem.getDisplayPath doesn't work reliably with symlinks
+				// chrome.fileSystem.getDisplayPath doesn't work reliably with symlinks (see "Edge cases" in README.md)
 				getEntryDisplayPath: function(entry) {
 					return new Promise(function(resolvePromise) {
 						chrome.fileSystem.getDisplayPath(entry, function(displayPath) {

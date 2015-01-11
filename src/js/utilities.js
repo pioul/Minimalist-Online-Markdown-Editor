@@ -219,7 +219,7 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 	// One issue with this implementation is that keeping track of chaining can be become hard when storing promises inside variables to pick up chaining somewhere 
 	// else. You'll have to make the effort to keep track of that and end all chains with .done() nonetheless. Mozilla's approach is superior in that it hooks to GC to 
 	// keep track of promises even outside of a chain, but you need access to the innards of a browser for that.
-	// One other implementation idea would be to create a wrapper around promises in the form of a regular object with isResolved and isRejected properties, intarnally 
+	// One other implementation idea would be to create a wrapper around promises in the form of a regular object with isResolved and isRejected properties, internally 
 	// updated by the wrapper's .then() and .catch() methods. That'd allow to Object.observe() these changes and keep an eye on all promises without boilerplate method 
 	// like .done() and without access to the browser's internals.
 	Promise.prototype.done = function() {
