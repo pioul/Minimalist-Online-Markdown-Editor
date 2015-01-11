@@ -461,7 +461,7 @@ $document.ready(function() {
 
 					for (let i = 0, dtItem; dtItem = dt.items[i]; i++) {
 						// Only accept files that are some type of text (most commonly "text/plain") or of unknown type (such as .md as of today)
-						if (dtItem.kind != "file" || dtItem.type && dtItem.type.indexOf("text/") != 0) return;
+						if (dtItem.kind != "file" || dtItem.type && dtItem.type.indexOf("text/") != 0) continue;
 
 						entries.push(dtItem.webkitGetAsEntry());
 					}
