@@ -46,6 +46,10 @@ $document.ready(function() {
 				editor.fitHeight();
 			});
 
+			$("#markdown").on("scroll", function(e) {
+			    if (editor.isAutoScrolling) editor.syncScroll();
+			});
+
 			this.markdownSource.on("keydown", function(e) {
 				if (!e.ctrlKey && e.keyCode == keyCode.TAB) editor.handleTabKeyPress(e);
 			});
@@ -265,10 +269,7 @@ $document.ready(function() {
 			if (!this.isAutoScrolling) {
 				this.markdownPreview
 					.on("updated.editor", function() {
-						var markdownPreview = this;
-						setTimeout(function() {
-							markdownPreview.scrollTop = markdownPreview.scrollHeight;
-						}, 0);
+						editor.syncScroll();
 					})
 					.trigger("updated.editor");
 			} else {
@@ -305,6 +306,15 @@ $document.ready(function() {
 			}
 			this.save("isFullscreen", this.isFullscreen? "y" : "n");
 			this.body.trigger("fullscreen.editor", [this.isFullscreen]);
+		},
+
+		// Synchronize the scroll position of the preview panel with the source editor
+		syncScroll: function() {
+			editor.markdownPreview.scrollTop(
+				( document.getElementById("preview").scrollHeight - editor.markdownPreview.height() )
+				* editor.markdownSource.scrollTop() / 
+				( document.getElementById("markdown").scrollHeight - $("#markdown").height())
+			);
 		},
 
 		// Subtle fade-in effect
