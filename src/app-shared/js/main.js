@@ -13,10 +13,12 @@ $document.ready(function() {
 		body: $(document.body),
 		fitHeightElements: $(".full-height"),
 		wrappersMargin: $("#left-column > .wrapper:first").outerHeight(true) - $("#left-column > .wrapper:first").height(),
-		markdownConverter: new Showdown.converter(),
+		previewMarkdownConverter: window.markdownit({ html: true }).use(window.markdownitMapLines),
+		cleanHtmlMarkdownConverter: window.markdownit({ html: true }),
 		columns: $("#left-column, #right-column"),
 		markdown: "",
 		markdownSource: $("#markdown"),
+		markdownHtml: document.getElementById("html"),
 		markdownPreview: $("#preview"),
 		markdownTargets: $("#html, #preview"),
 		buttonsContainers: buttonsContainers,
@@ -26,8 +28,9 @@ $document.ready(function() {
 		quickReferencePreText: $("#quick-reference pre"),
 		featuresTriggers: buttonsContainers.find(".feature"),
 		wordCountContainers: $(".word-count"),
-		isAutoScrolling: false,
+		isSyncScrollDisabled: true,
 		isFullscreen: false,
+		activePanel: null,
 		
 		// Initiate editor
 		init: function() {
@@ -44,10 +47,6 @@ $document.ready(function() {
 		initBindings: function() {
 			$window.on("resize", function() {
 				editor.fitHeight();
-			});
-
-			$("#markdown").on("scroll", function(e) {
-			    if (editor.isAutoScrolling) editor.syncScroll();
 			});
 
 			this.markdownSource.on("keydown", function(e) {
@@ -135,7 +134,7 @@ $document.ready(function() {
 		restoreState: function(c) {
 			app.restoreState(function(restoredItems) {
 				if (restoredItems.markdown) editor.markdownSource.val(restoredItems.markdown);
-				if (restoredItems.isAutoScrolling == "y") editor.toggleFeature("auto-scroll");
+				if (restoredItems.isSyncScrollDisabled != "y") editor.toggleFeature("sync-scroll");
 				if (restoredItems.isFullscreen == "y") editor.toggleFeature("fullscreen");
 				editor.switchToPanel(restoredItems.activePanel || "preview");
 
@@ -143,12 +142,21 @@ $document.ready(function() {
 			});
 		},
 
-		// Convert Markdown to HTML using showdown.js
+		// Convert Markdown to HTML and update active panel
 		convertMarkdown: function() {
-			var html = this.markdownConverter.makeHtml(this.markdown);
-			document.getElementById("html").value = html;
-			app.updateMarkdownPreview(html);
-			this.markdownPreview.trigger("updated.editor");
+			if (this.activePanel != "preview" && this.activePanel != "html") return;
+
+			var html;
+
+			if (this.activePanel == "preview") {
+				html = this.previewMarkdownConverter.render(this.markdown);
+				app.updateMarkdownPreview(html);
+
+				this.markdownPreview.trigger("updated.editor");
+			} else if (this.activePanel == "html") {
+				html = this.cleanHtmlMarkdownConverter.render(this.markdown);
+				this.markdownHtml.value = html;
+			}
 		},
 
 		// Programmatically add Markdown text to the textarea
@@ -204,24 +212,41 @@ $document.ready(function() {
 			markdownSourceEl.focus();
 		},
 
+		// Return the line where the character at position pos is situated in the source
+		getMarkdownSourceLineFromPos: function(pos) {
+			var sourceBeforePos = this.markdown.slice(0, pos.start);
+			return sourceBeforePos.split("\n").length - 1;
+		},
+
+		getMarkdownSourceLineCount: function(pos) {
+			return this.markdown.split("\n").length;
+		},
+
 		// Switch between editor panels
 		switchToPanel: function(which) {
 			var target = $("#"+ which),
 				targetTrigger = this.markdownTargetsTriggers.filter("[data-switchto="+ which +"]");
+
 			if (!this.isFullscreen || which != "markdown") this.markdownTargets.not(target).hide();
 			target.show();
+
 			this.markdownTargetsTriggers.not(targetTrigger).removeClass("active");
 			targetTrigger.addClass("active");
+
 			if (which != "markdown") this.featuresTriggers.filter("[data-feature=fullscreen][data-tofocus]").last().data("tofocus", which);
+
 			if (this.isFullscreen) {
 				var columnToShow = (which == "markdown")? this.markdownSource.closest(this.columns) : this.markdownPreview.closest(this.columns);
+
 				columnToShow.show();
 				this.columns.not(columnToShow).hide();
 			}
-			if (this.isAutoScrolling && which == "preview") {
-				this.markdownPreview.trigger("updated.editor"); // Auto-scroll on switch since it wasn't possible earlier due to the preview being hidden
-			}
-			this.save("activePanel", which);
+
+			this.activePanel = which;
+			this.save("activePanel", this.activePanel);
+
+			// If one of the two panels displaying the Markdown output becomes visible, convert Markdown for that panel
+			if (this.activePanel == "preview" || this.activePanel == "html") this.convertMarkdown();
 		},
 
 		// Toggle a top panel's visibility
@@ -255,8 +280,8 @@ $document.ready(function() {
 		toggleFeature: function(which, featureData) {
 			var featureTrigger = this.featuresTriggers.filter("[data-feature="+ which +"]");
 			switch (which) {
-				case "auto-scroll":
-					this.toggleAutoScroll();
+				case "sync-scroll":
+					this.toggleSyncScroll();
 					break;
 				case "fullscreen":
 					this.toggleFullscreen(featureData);
@@ -265,19 +290,27 @@ $document.ready(function() {
 			featureTrigger.toggleClass("active");
 		},
 
-		toggleAutoScroll: function() {
-			if (!this.isAutoScrolling) {
-				this.markdownPreview
-					.on("updated.editor", function() {
-						editor.syncScroll();
-					})
-					.trigger("updated.editor");
-			} else {
-				this.markdownPreview.off("updated.editor");
-			}
-			this.isAutoScrolling = !this.isAutoScrolling;
-			this.save("isAutoScrolling", this.isAutoScrolling? "y" : "n");
-		},
+		toggleSyncScroll: (function() {
+			var boundSyncScroll = function(e) {
+				var scrollAccordingTo = (e && e.type == "updated")? "caret" : "scrollbar";
+				editor.syncScroll(scrollAccordingTo);
+			};
+
+			return function() {
+				if (this.isSyncScrollDisabled) {
+					this.markdownPreview.on("updated.editor", boundSyncScroll);
+					this.markdownSource.on("scroll.syncScroll", boundSyncScroll);
+
+					boundSyncScroll();
+				} else {
+					this.markdownPreview.off("updated.editor");
+					this.markdownSource.off("scroll.syncScroll");
+				}
+
+				this.isSyncScrollDisabled = !this.isSyncScrollDisabled;
+				this.save("isSyncScrollDisabled", this.isSyncScrollDisabled? "y" : "n");
+			};
+		})(),
 
 		toggleFullscreen: function(featureData) {
 			var toFocus = featureData && featureData.tofocus;
@@ -292,8 +325,8 @@ $document.ready(function() {
 				if (activeMarkdownTargetsTriggersSwichtoValue == "markdown") {
 					this.switchToPanel("preview");
 				}
-				// Auto-scroll when exiting fullscreen and "preview" is already active since it changes width
-				if (this.isAutoScrolling && activeMarkdownTargetsTriggersSwichtoValue == "preview") {
+				// Emit update when exiting fullscreen and "preview" is already active since it changes width
+				if (activeMarkdownTargetsTriggersSwichtoValue == "preview") {
 					this.markdownPreview.trigger("updated.editor");
 				}
 				$document.off("keydown.fullscreen");
@@ -308,13 +341,16 @@ $document.ready(function() {
 			this.body.trigger("fullscreen.editor", [this.isFullscreen]);
 		},
 
-		// Synchronize the scroll position of the preview panel with the source editor
-		syncScroll: function() {
-			editor.markdownPreview.scrollTop(
-				( document.getElementById("preview").scrollHeight - editor.markdownPreview.height() )
-				* editor.markdownSource.scrollTop() / 
-				( document.getElementById("markdown").scrollHeight - $("#markdown").height())
-			);
+		// Synchronize the scroll position of the preview panel with the source
+		syncScroll: function(accordingTo) {
+			var markdownPreview = this.markdownPreview[0],
+				markdownSource = this.markdownSource[0];
+
+			if (accordingTo == "scrollbar") {
+				markdownPreview.scrollTop = (markdownPreview.scrollHeight - markdownPreview.offsetHeight) * markdownSource.scrollTop / (markdownSource.scrollHeight  - markdownSource.offsetHeight);
+			} else { // accordingTo == "caret"
+				app.scrollMarkdownPreviewCaretIntoView();
+			}
 		},
 
 		// Subtle fade-in effect
