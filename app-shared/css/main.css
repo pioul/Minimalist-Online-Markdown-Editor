@@ -57,6 +57,7 @@ code, kbd {
 pre {
 	padding: 5px;
 	overflow-x: auto;
+	word-wrap: normal;
 }
 
 pre .highlight {
@@ -220,8 +221,12 @@ li p {
 	color: #888;
 }
 
-#left-column #markdown,
-#right-column #html {
+#preview {
+	word-wrap: break-word;
+}
+
+#markdown,
+#html {
 	display: block;
 	box-sizing: border-box;
 	width: 100%;
@@ -234,18 +239,18 @@ li p {
 	tab-size: 4;
 }
 
-#left-column #markdown:focus,
-#right-column #html:focus {
+#markdown:focus,
+#html:focus {
 	outline: none;
 }
 
-#left-column #top_panels_container {
+#top_panels_container {
 	max-height: 100%;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
 
-#left-column #top_panels_container .top_panel {
+#top_panels_container .top_panel {
 	display: none;
 	position: relative;
 	padding: 10px 20px;
@@ -253,11 +258,11 @@ li p {
 	border-bottom: 2px solid #f0f0f0;
 }
 
-#left-column #top_panels_container .top_panel a {
+#top_panels_container .top_panel a {
 	color: #333;
 }
 
-#left-column #top_panels_container .top_panel .close {
+#top_panels_container .top_panel .close {
 	position: absolute;
 	top: 15px;
 	right: 15px;
@@ -271,7 +276,7 @@ li p {
 	border-radius: 7px;
 }
 
-#left-column #top_panels_container .top_panel .close:hover {
+#top_panels_container .top_panel .close:hover {
 	color: #777;
 	background: #d7d7d7;
 }
@@ -322,8 +327,8 @@ li p {
 	border-left-color: transparent;
 }
 
-.fullscreen #left-column #markdown,
-.fullscreen #right-column #html {
+.fullscreen #markdown,
+.fullscreen #html {
 	max-width: 800px;
 	margin: 0 auto;
 }
