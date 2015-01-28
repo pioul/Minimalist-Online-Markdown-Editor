@@ -40,7 +40,25 @@ $(document).ready(function() {
 		updateMarkdownPreview: function(html) {
 			editor.markdownPreview.html(html);
 			editor.updateWordCount(editor.markdownPreview.text());
-		}
+		},
+
+		scrollMarkdownPreviewCaretIntoView: (function() {
+			var scrollParam = {
+				ref: editor.markdownPreview[0],
+				padding: 40
+			};
+
+			return function() {
+				var caretPos = editor.getMarkdownSourceCaretPos();
+				if (!caretPos) return;
+
+				var caretLine = editor.getMarkdownSourceLineFromPos(caretPos),
+					lineCount = editor.getMarkdownSourceLineCount();
+
+				scrollParam.elOffsets = preview.getSourceLineOffset(caretLine, lineCount);
+				scrollIntoView(scrollParam);
+			};
+		})()
 
 	};
 

@@ -7,12 +7,14 @@
 		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
 		<meta property="og:image" content="http://markdown.pioul.fr/images/markdown.png"/>
 		<link rel="stylesheet" href="app-shared/css/main.css" type="text/css">
-		<link rel="stylesheet" href="app-shared/css/ionicons.css" type="text/css">
+		<link rel="stylesheet" href="app-shared/css/icons.css" type="text/css">
 		<link rel="stylesheet" href="css/main.css" type="text/css">
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="app-shared/js/libs/markdown-it.min.js"></script>
+		<script src="app-shared/js/markdown-it-plugins/markdown-it-map-lines.js"></script>
 		<script src="app-shared/js/utilities.js"></script>
+		<script src="app-shared/js/preview.js"></script>
 		<script src="app-shared/js/main.js"></script>
-		<script src="app-shared/js/showdown.js"></script>
 		<script src="js/main.js"></script>
 	</head>
 	<body class="clearfix">
@@ -105,7 +107,7 @@ Second line.</code></pre>
 					<div class="buttons-container clearfix">
 						<a href="#" class="button toppanel" data-toppanel="quick-reference">Quick Reference</a>
 						<a href="#" class="button toppanel" data-toppanel="about">About</a>
-						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
+						<a href="#" class="button icon-fullscreen feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
 					</div>
 				</div>
 				<textarea id="markdown" class="full-height" placeholder="Write Markdown"># Minimalist Online Markdown Editor
@@ -139,8 +141,8 @@ Just start typing in the left panel.
 							<a href="#" class="button switch" data-switchto="html">HTML</a>
 							<a href="#" class="button switch" data-switchto="preview">Preview</a>
 						</div>
-						<a href="#" class="button icon-arrow-down-a feature" data-feature="auto-scroll" title="Toggle auto-scrolling to the bottom of the preview panel"></a>
-						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="" title="Go fullscreen"></a><!-- data-tofocus is set dynamically by the HTML/preview switch -->
+						<a href="#" class="button icon-sync-scroll feature" data-feature="sync-scroll" title="Toggle sync-scrolling (when enabled, the preview panel will automatically scroll with the left panel)"></a>
+						<a href="#" class="button icon-fullscreen feature" data-feature="fullscreen" data-tofocus="" title="Go fullscreen"></a><!-- data-tofocus is set dynamically by the HTML/preview switch -->
 					</div>
 				</div>
 				<div class="bottom-bar hidden-when-fullscreen clearfix">
@@ -157,7 +159,7 @@ Just start typing in the left panel.
 					<a href="#" class="button switch" data-switchto="html">HTML</a>
 					<a href="#" class="button switch" data-switchto="preview">Preview</a>
 				</div>
-				<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" title="Exit fullscreen"></a>
+				<a href="#" class="button icon-fullscreen feature" data-feature="fullscreen" title="Exit fullscreen"></a>
 			</div>
 		</div>
 		<div class="bottom-bar visible-when-fullscreen clearfix">
