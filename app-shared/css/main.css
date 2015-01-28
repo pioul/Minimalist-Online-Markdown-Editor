@@ -78,6 +78,32 @@ hr {
 	border-top: 1px solid #e7e7e7;
 }
 
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+table thead {
+	border-bottom: 2px solid #e7e7e7;
+}
+
+table tbody tr:nth-child(2n) {
+	background-color: #f8f8f8;
+}
+
+table th, table td {
+	padding: 6px 13px;
+	border: 1px solid #e7e7e7;
+}
+
+table th {
+	font-weight: bold;
+}
+
+li p {
+	margin: .5em 0;
+}
+
 #left-column,
 #right-column {
 	float: left;
@@ -115,6 +141,7 @@ hr {
 
 .topbar .buttons-container {
 	float: right;
+	background: #f0f0f0;
 }
 
 .topbar .buttons-container .button,
@@ -124,13 +151,13 @@ hr {
 
 .topbar .buttons-container .button {
 	height: 18px;
+	margin-left: 1px;
 	padding: 2px 6px 0;
 	line-height: 18px;
 	color: #888;
 	text-decoration: none;
 	font-size: 11px;
 	border-bottom: 2px solid transparent;
-	background: #f0f0f0;
 }
 
 .topbar .buttons-container .button:active {
@@ -164,12 +191,24 @@ hr {
 	content: none;
 }
 
-.topbar .buttons-container .button.icon-arrow-down-a {
-	width: 9px;
-	font-size: 12px;
+.topbar .buttons-container .button.icon-sync-scroll,
+.topbar .buttons-container .button.icon-fullscreen {
+	width: 22px;
+	padding-left: 0;
+	padding-right: 0;
+	text-align: center;
+}
+	
+.topbar .buttons-container .button.icon-sync-scroll {
+	width: 18px;
+}
+	
+.topbar .buttons-container .button.icon-sync-scroll:before {
+	display: inline-block;
+	margin-top: 1px;
 }
 
-.topbar .buttons-container .button.icon-arrow-expand {
+.topbar .buttons-container .button.icon-fullscreen {
 	font-size: 16px;
 }
 
@@ -243,13 +282,13 @@ hr {
 	line-height: 1.25em;
 }
 
-#quick-reference table {
-	border-collapse: collapse;
-	border-spacing: 0;
+#quick-reference table tr {
+	background: transparent;
 }
 
 #quick-reference table td {
 	padding: 1px 0;
+	border: 0;
 }
 
 #quick-reference table td:first-child {
