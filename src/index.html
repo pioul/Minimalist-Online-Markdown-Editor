@@ -5,13 +5,14 @@
 		<title>Minimalist Markdown Editor</title>
 		<meta name="description" content="This is the simplest and slickest Markdown editor. Just write Markdown and see what it looks like as you type. And convert it to HTML in one click."/>
 		<link rel="stylesheet" href="app-shared/css/main.css" type="text/css"/>
-		<link rel="stylesheet" href="app-shared/css/ionicons.css" type="text/css"/>
+		<link rel="stylesheet" href="app-shared/css/icons.css" type="text/css"/>
 		<link rel="stylesheet" href="css/utilities.css" type="text/css"/>
 		<link rel="stylesheet" href="css/main.css" type="text/css"/>
 		<script src="js/libs/jquery.min.js"></script>
+		<script src="app-shared/js/libs/markdown-it.min.js"></script>
+		<script src="app-shared/js/markdown-it-plugins/markdown-it-map-lines.js"></script>
 		<script src="app-shared/js/utilities.js"></script>
 		<script src="app-shared/js/main.js"></script>
-		<script src="app-shared/js/showdown.js"></script>
 		<script src="js/libs/undo.js"></script>
 		<script src="js/utilities.js"></script>
 		<script src="js/main.js"></script>
@@ -129,7 +130,7 @@ Second line.</code></pre>
 						<a href="#" class="button icon-chevron-right file-menu-control" data-file-menu-control="scroll-right"></a>
 						<a href="#" class="button toppanel" data-toppanel="quick-reference">Quick Reference</a>
 						<a href="#" class="button toppanel" data-toppanel="about">About</a>
-						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
+						<a href="#" class="button icon-fullscreen feature" data-feature="fullscreen" data-tofocus="markdown" title="Go fullscreen"></a>
 					</div>
 					<div class="buttons-container clearfix">
 						<a href="#" class="button icon-chevron-left file-menu-control" data-file-menu-control="scroll-left"></a>
@@ -148,8 +149,8 @@ Second line.</code></pre>
 							<a href="#" class="button switch" data-switchto="html">HTML</a>
 							<a href="#" class="button switch" data-switchto="preview">Preview</a>
 						</div>
-						<a href="#" class="button icon-arrow-down-a feature" data-feature="auto-scroll" title="Toggle auto-scrolling to the bottom of the preview panel"></a>
-						<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" data-tofocus="" title="Go fullscreen"></a><!-- data-tofocus is set dynamically by the HTML/preview switch -->
+						<a href="#" class="button icon-sync-scroll feature" data-feature="sync-scroll" title="Toggle sync-scrolling (when enabled, the preview panel will automatically scroll with the left panel)"></a>
+						<a href="#" class="button icon-fullscreen feature" data-feature="fullscreen" data-tofocus="" title="Go fullscreen"></a><!-- data-tofocus is set dynamically by the HTML/preview switch -->
 					</div>
 				</div>
 				<div class="bottom-bar hidden-when-fullscreen clearfix">
@@ -170,7 +171,7 @@ Second line.</code></pre>
 					<a href="#" class="button switch" data-switchto="html">HTML</a>
 					<a href="#" class="button switch" data-switchto="preview">Preview</a>
 				</div>
-				<a href="#" class="button icon-arrow-expand feature" data-feature="fullscreen" title="Exit fullscreen"></a>
+				<a href="#" class="button icon-fullscreen feature" data-feature="fullscreen" title="Exit fullscreen"></a>
 			</div>
 			<div class="buttons-container clearfix">
 				<a href="#" class="button icon-chevron-left file-menu-control" data-file-menu-control="scroll-left"></a>

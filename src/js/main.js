@@ -34,7 +34,6 @@ $document.ready(function() {
 		},
 
 		// Post messages to the iframe
-		// Currently only used to transfer HTML from this window to the iframe for display
 		postMessage: function(data) {
 			this.markdownPreviewIframe[0].contentWindow.postMessage(data, "*");
 		},
@@ -46,6 +45,7 @@ $document.ready(function() {
 			if (data.hasOwnProperty("height")) this.updateMarkdownPreviewIframeHeight(data.height);
 			if (data.hasOwnProperty("text")) editor.updateWordCount(data.text);
 			if (data.keydownEventObj) this.markdownPreviewIframe.trigger(data.keydownEventObj);
+			if (data.hasOwnProperty("scrollMarkdownPreviewIntoViewAtOffset")) this.scrollMarkdownPreviewIntoViewAtOffset(data.scrollMarkdownPreviewIntoViewAtOffset);
 		},
 
 		focusMarkdownSource: function() {
@@ -101,8 +101,8 @@ $document.ready(function() {
 				})();
 
 			// Retrieve locally stored data to be sent to editor
-			// In the same way the "markdown" key is hijacked when saving the editor's contents, it's not included here so that the app can handle the restoration of the editor's contents itself
-			chrome.storage.local.get(["isAutoScrolling", "isFullscreen", "activePanel"], function(restoredItems) {
+			// For the same reason the "markdown" key is hijacked when saving the editor's contents, it's not included here so that the app can handle the restoration of the editor's contents itself
+			chrome.storage.local.get(["isSyncScrollDisabled", "isFullscreen", "activePanel"], function(restoredItems) {
 				editorRestoredItems = restoredItems;
 				tryRunningCallback();
 			});
@@ -124,7 +124,7 @@ $document.ready(function() {
 						fileSystem.getActiveFile().undoManager.unfreeze();
 					};
 
-					// Updated from an older version of the editor: populate the new file with the old version's saved contents, and delete that key
+					// Updated from version < 3.0.0 of the editor: populate the new file with the old version's saved contents, and delete that key
 					if (restoredItems.markdown) {
 						populateNewFile(restoredItems.markdown);
 						chrome.storage.local.remove("markdown");
@@ -171,13 +171,35 @@ $document.ready(function() {
 
 		// Update the preview panel with new HTML
 		updateMarkdownPreview: function(html) {
-			this.postMessage(html);
+			this.postMessage({ html: html });
 		},
 
 		updateMarkdownPreviewIframeHeight: function(height) {
 			this.markdownPreviewIframe.css("height", height);
 			editor.markdownPreview.trigger("updated.editor");
 		},
+
+		scrollMarkdownPreviewCaretIntoView: function() {
+			var caretPos = fileSystem.getActiveFile().cache.caretPos;
+			if (!caretPos) return;
+
+			this.postMessage({
+				scrollLineIntoView: editor.getMarkdownSourceLineFromPos(caretPos),
+				lineCount: editor.getMarkdownSourceLineCount()
+			});
+		},
+
+		scrollMarkdownPreviewIntoViewAtOffset: (function() {
+			var param = {
+				ref: editor.markdownPreview[0],
+				padding: 40
+			};
+
+			return function(offsets) {
+				param.elOffsets = offsets;
+				scrollIntoView(param);
+			};
+		})(),
 
 		// Automatically check whether the active file has changed when the app window regains focus
 		checkActiveFileForChanges: function() {
@@ -280,6 +302,8 @@ $document.ready(function() {
 										file.cache[propKey] = propVal;
 									}
 								}
+
+								fileMenu.updateItemChangesVisualCue(file);
 							}
 						}
 					},
@@ -1006,29 +1030,20 @@ $document.ready(function() {
 					this.scrollActiveItemIntoView();
 				},
 
-				// Element.scrollIntoView() didn't do exactly what was wanted here
-				scrollActiveItemIntoView: function() {
-					if (!this.activeItemId) return;
+				scrollActiveItemIntoView: (function() {
+					var param = {
+						axis: "horizontal"
+					};
 
-					var fileMenuEl = getVisibleDOMEl(el),
-						menuItemEl = getVisibleDOMEl(this.getItem(this.activeItemId).el),
-						fileMenuElScrollLeft = fileMenuEl.scrollLeft,
-						menuItemElOffsetLeft = menuItemEl.offsetLeft;
-					
-					// Align to left
-					if (fileMenuElScrollLeft > menuItemElOffsetLeft) {
-						fileMenuEl.scrollLeft = menuItemElOffsetLeft;
-						return;
-					}
+					return function() {
+						if (!this.activeItemId) return;
 
-					// Or align to right
-					var fileMenuElOffsetWidth = fileMenuEl.offsetWidth,
-						menuItemElOffsetWidth = menuItemEl.offsetWidth,
-						diff = (menuItemElOffsetLeft + menuItemElOffsetWidth) - (fileMenuElScrollLeft + fileMenuElOffsetWidth);
-					if (diff > 0) fileMenuEl.scrollLeft += diff;
-
-					// Or do nothing
-				},
+						param.ref = getVisibleDOMEl(el);
+						param.el = getVisibleDOMEl(this.getItem(this.activeItemId).el);
+						
+						scrollIntoView(param);
+					};
+				})(),
 
 				updateNavControlsVis: function() {
 					var fileMenuEl = getVisibleDOMEl(el),

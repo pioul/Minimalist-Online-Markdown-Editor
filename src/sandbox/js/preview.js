@@ -5,8 +5,17 @@ $window.on("load", function() {
 	
 	var body = $(document.body),
 
+		// Post messages to the parent window
 		postMessage = function(data) {
 			parent.postMessage(data, "*");
+		},
+
+		// Receive messages sent to this iframe (from the parent window)
+		receiveMessage = function(e) {
+			var data = e.originalEvent.data;
+			
+			if (data.hasOwnProperty("html")) updateHtml(data.html);
+			if (data.hasOwnProperty("scrollLineIntoView")) scrollLineIntoView(data.scrollLineIntoView, data.lineCount);
 		},
 
 		// Send the iframe's height to the parent window
@@ -20,15 +29,10 @@ $window.on("load", function() {
 				height: body.height(),
 				text: body.text()
 			});
-		};
-	
-	$window.on({
-		resize: postHeight,
+		},
 
-		// Listen to messages coming from the parent window
-		// Currently only used to transfer HTML from the parent window to the iframe for display
-		message: function(e) {
-			body.html(e.originalEvent.data);
+		updateHtml = function(html) {
+			body.html(html);
 
 			postAll();
 			
@@ -55,6 +59,19 @@ $window.on("load", function() {
 				});
 			}
 		},
+
+		// When scrolling a line into view, the parent window is the one doing the job.
+		// The iframe is only sollicited to run the numbers and post back the top and
+		// bottom offsets of the element(s) surrounding the given source line, since
+		// it requires access to the preview's DOM for that.
+		scrollLineIntoView = function(line, lineCount) {
+			var offsets = preview.getSourceLineOffset(line, lineCount);
+			postMessage({ scrollMarkdownPreviewIntoViewAtOffset: offsets });
+		};
+	
+	$window.on({
+		resize: postHeight,
+		message: receiveMessage,
 
 		keydown: function(e) {
 			postMessage({
