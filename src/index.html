@@ -6,16 +6,23 @@
 		<meta name="description" content="This is the simplest and slickest online Markdown editor. Just write Markdown and see what it looks like as you type. And convert it to HTML in one click."/>
 		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
 		<meta property="og:image" content="http://markdown.pioul.fr/images/markdown.png"/>
-		<link rel="stylesheet" href="app-shared/css/main.css" type="text/css">
-		<link rel="stylesheet" href="app-shared/css/icons.css" type="text/css">
-		<link rel="stylesheet" href="css/main.css" type="text/css">
+
+		<!-- build:css -->
+			<link rel="stylesheet" href="app-shared/css/main.css" type="text/css">
+			<link rel="stylesheet" href="app-shared/css/icons.css" type="text/css">
+			<link rel="stylesheet" href="css/main.css" type="text/css">
+		<!-- endbuild -->
+
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+		<!-- build:js -->
 		<script src="app-shared/js/libs/markdown-it.min.js"></script>
 		<script src="app-shared/js/markdown-it-plugins/markdown-it-map-lines.js"></script>
 		<script src="app-shared/js/utilities.js"></script>
 		<script src="app-shared/js/preview.js"></script>
 		<script src="app-shared/js/main.js"></script>
 		<script src="js/main.js"></script>
+		<!-- endbuild -->
 	</head>
 	<body class="clearfix">
 		<div id="left-column">
