@@ -27,7 +27,7 @@ $(document).ready(function() {
 				// Even if localStorage is supported, using it can still throw an exception if disabled
 				try {
 					restoredItems.markdown = localStorage.getItem("markdown");
-					restoredItems.isAutoScrolling = localStorage.getItem("isAutoScrolling");
+					restoredItems.isSyncScrollDisabled = localStorage.getItem("isSyncScrollDisabled");
 					restoredItems.isFullscreen = localStorage.getItem("isFullscreen");
 					restoredItems.activePanel = localStorage.getItem("activePanel");
 				} catch (e) {}
@@ -37,9 +37,13 @@ $(document).ready(function() {
 		},
 
 		// Update the preview panel with new HTML
-		updateMarkdownPreview: function(html) {
+		updateMarkdownPreview: function(html, isAfterUserInput) {
 			editor.markdownPreview.html(html);
 			editor.updateWordCount(editor.markdownPreview.text());
+			
+			preview.onImagesLoad(function() {
+				editor.triggerEditorUpdatedEvent(isAfterUserInput);
+			});
 		},
 
 		scrollMarkdownPreviewCaretIntoView: (function() {

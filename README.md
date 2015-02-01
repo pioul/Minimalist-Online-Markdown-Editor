@@ -35,6 +35,6 @@ That's really all there is to know about this project's Git workflow, so fork aw
 
 ### Target env
 
-We aim at compatibility down to IE8.
+We aim at compatibility down to IE9.
 
 The source for this app is currently authored in ES5, with ES5 polyfills when needed. I'm thinking about authoring in ES6+ and transpiling + polyfilling, but that'd require lots of carefully picked ES6+ polyfills to run in most browsers, so I'm waiting for a good reason to do so.
