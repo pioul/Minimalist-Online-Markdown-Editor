@@ -1,7 +1,10 @@
 var preview;
 
-(function() {
+$(document).ready(function() {
 	"use strict";
+
+	var $body = $(document.body),
+		markdownPreview = document.getElementById("preview");
 
 	preview = {
 		// Return the top and bottom offsets of the previewed DOM element(s) surrounding
@@ -62,7 +65,7 @@ var preview;
 
 						// Reached bottom of doc
 						if (lookAtLine >= lineCount) {
-							offsets[1] = document.body.scrollHeight;
+							offsets[1] = markdownPreview.scrollHeight;
 							keepLooking[1] = false;
 						// Inspect el at line below
 						} else {
@@ -78,7 +81,26 @@ var preview;
 
 				return offsets;
 			};
-		})()
+		})(),
+
+		onImagesLoad: function(c) {
+			var onImageLoad,
+				images = $body.find("img"),
+				imageCount = images.length;
+
+			if (!imageCount) return;
+
+			onImageLoad = function() {
+				if (--imageCount <= 0) c();
+			};
+
+			images.each(function() {
+				var image = $(this);
+
+				if (image.complete) onImageLoad();
+					else image.on("load", onImageLoad);
+			});
+		}
 	};
 
-})();
+});

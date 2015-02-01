@@ -55,11 +55,11 @@ $document.ready(function() {
 
 			if (doesSupportInputEvent) {
 				this.markdownSource.on("input", function() {
-					editor.onInput();
+					editor.onInput(true);
 				});
 			} else {
 				var onInput = function() {
-					editor.onInput();
+					editor.onInput(true);
 				};
 
 				this.markdownSource.on({
@@ -97,18 +97,18 @@ $document.ready(function() {
 			});
 		},
 
-		onInput: function() {
+		onInput: function(isUserInput) {
 			var updatedMarkdown = this.markdownSource.val();
 
 			if (updatedMarkdown != this.markdown) {
 				this.markdown = updatedMarkdown;
-				this.onChange();
+				this.onChange(isUserInput);
 			}
 		},
 
-		onChange: function() {
+		onChange: function(isAfterUserInput) {
 			this.save("markdown", this.markdown);
-			this.convertMarkdown();
+			this.convertMarkdown(isAfterUserInput);
 		},
 
 		// Resize some elements to make the editor fit inside the window
@@ -143,34 +143,45 @@ $document.ready(function() {
 		},
 
 		// Convert Markdown to HTML and update active panel
-		convertMarkdown: function() {
-			if (this.activePanel != "preview" && this.activePanel != "html") return;
-
+		convertMarkdown: function(isAfterUserInput) {
 			var html;
+
+			if (this.activePanel != "preview" && this.activePanel != "html") return;
 
 			if (this.activePanel == "preview") {
 				html = this.previewMarkdownConverter.render(this.markdown);
-				app.updateMarkdownPreview(html);
+				app.updateMarkdownPreview(html, isAfterUserInput);
 
-				this.markdownPreview.trigger("updated.editor");
+				this.triggerEditorUpdatedEvent(isAfterUserInput);
 			} else if (this.activePanel == "html") {
 				html = this.cleanHtmlMarkdownConverter.render(this.markdown);
 				this.markdownHtml.value = html;
 			}
 		},
 
+		triggerEditorUpdatedEvent: function(isAfterUserInput) {
+			editor.markdownPreview.trigger("updated.editor", [{
+				syncScrollReference: isAfterUserInput? editor.syncScroll.ref.CARET : editor.syncScroll.ref.SCROLLBAR
+			}]);
+		},
+
 		// Programmatically add Markdown text to the textarea
 		// pos = { start: Number, end: Number }
 		addToMarkdownSource: function(markdown, pos) {
-			var markdownSourceVal = this.markdown;
+			var newMarkdownSourceVal, newMarkdownSourceLength,
+				markdownSourceVal = this.markdown;
 
 			// Add text at the end of the input
 			if (typeof pos == "undefined") {
 				if (markdownSourceVal.length) markdown = "\n\n"+ markdown;
-				this.updateMarkdownSource(markdownSourceVal + markdown);
+
+				newMarkdownSourceVal = markdownSourceVal + markdown;
+				newMarkdownSourceLength = newMarkdownSourceVal.length;
+
+				this.updateMarkdownSource(newMarkdownSourceVal, { start: newMarkdownSourceLength, end: newMarkdownSourceLength });
 			// Add text at a given position
 			} else {
-				var newMarkdownSourceVal =
+				newMarkdownSourceVal =
 					markdownSourceVal.substring(0, pos.start) +
 					markdown +
 					markdownSourceVal.substring(pos.end);
@@ -182,11 +193,11 @@ $document.ready(function() {
 		},
 
 		// Programmatically update the Markdown textarea with new Markdown text
-		updateMarkdownSource: function(markdown, caretPos) {
+		updateMarkdownSource: function(markdown, caretPos, isUserInput) {
 			this.markdownSource.val(markdown);
 			if (caretPos) this.setMarkdownSourceCaretPos(caretPos);
 
-			this.onInput();
+			this.onInput(isUserInput);
 		},
 
 		// Doesn't work in IE<9
@@ -207,7 +218,12 @@ $document.ready(function() {
 
 			if (!("setSelectionRange" in markdownSourceEl)) return;
 
-			markdownSourceEl.blur(); // Force auto-scroll to the caret's position by blurring then focusing the input
+			// Force auto-scroll to the caret's position by blurring then focusing the input (doesn't work in IE)
+			// When calling setSelectionRange, Firefox will properly scroll to the range into view. Chrome doesn't,
+			// but we can hack our way around by blurring and focusing the input to force auto-scroll to the caret's
+			// position. Neither the proper behavior nor the hack work in IE. Not a big issue, and it'll be solved
+			// when implementing "perfect" sync-scrolling.
+			markdownSourceEl.blur();
 			markdownSourceEl.setSelectionRange(pos.start, pos.end);
 			markdownSourceEl.focus();
 		},
@@ -291,20 +307,32 @@ $document.ready(function() {
 		},
 
 		toggleSyncScroll: (function() {
-			var boundSyncScroll = function(e) {
-				var scrollAccordingTo = (e && e.type == "updated")? "caret" : "scrollbar";
-				editor.syncScroll(scrollAccordingTo);
-			};
+			var isMdSourceKeyPressed,
+
+				refSyncScroll = function(e, arg) {
+					var reference;
+
+					if (e && e.type == "updated") reference = arg.syncScrollReference;
+						else reference = isMdSourceKeyPressed? editor.syncScroll.ref.CARET : editor.syncScroll.ref.SCROLLBAR;
+
+					editor.syncScroll(reference);
+				};
 
 			return function() {
 				if (this.isSyncScrollDisabled) {
-					this.markdownPreview.on("updated.editor", boundSyncScroll);
-					this.markdownSource.on("scroll.syncScroll", boundSyncScroll);
+					this.markdownPreview.on("updated.editor", refSyncScroll);
+					this.markdownSource.on({
+						"scroll.syncScroll": refSyncScroll,
+						"keydown.syncScroll": function() { isMdSourceKeyPressed = true }
+					});
+					this.body.on("keyup.syncScroll", function() { isMdSourceKeyPressed = false });
 
-					boundSyncScroll();
+					refSyncScroll();
+					isMdSourceKeyPressed = false;
 				} else {
 					this.markdownPreview.off("updated.editor");
-					this.markdownSource.off("scroll.syncScroll");
+					this.markdownSource.off(".syncScroll");
+					this.body.off("keyup.syncScroll");
 				}
 
 				this.isSyncScrollDisabled = !this.isSyncScrollDisabled;
@@ -327,7 +355,7 @@ $document.ready(function() {
 				}
 				// Emit update when exiting fullscreen and "preview" is already active since it changes width
 				if (activeMarkdownTargetsTriggersSwichtoValue == "preview") {
-					this.markdownPreview.trigger("updated.editor");
+					this.triggerEditorUpdatedEvent();
 				}
 				$document.off("keydown.fullscreen");
 			// Enter fullscreen
@@ -342,16 +370,25 @@ $document.ready(function() {
 		},
 
 		// Synchronize the scroll position of the preview panel with the source
-		syncScroll: function(accordingTo) {
-			var markdownPreview = this.markdownPreview[0],
-				markdownSource = this.markdownSource[0];
+		syncScroll: (function() {
+			var syncScroll = function(reference) {
+				var markdownPreview = this.markdownPreview[0],
+					markdownSource = this.markdownSource[0];
 
-			if (accordingTo == "scrollbar") {
-				markdownPreview.scrollTop = (markdownPreview.scrollHeight - markdownPreview.offsetHeight) * markdownSource.scrollTop / (markdownSource.scrollHeight  - markdownSource.offsetHeight);
-			} else { // accordingTo == "caret"
-				app.scrollMarkdownPreviewCaretIntoView();
-			}
-		},
+				if (reference == editor.syncScroll.ref.SCROLLBAR) {
+					markdownPreview.scrollTop = (markdownPreview.scrollHeight - markdownPreview.offsetHeight) * markdownSource.scrollTop / (markdownSource.scrollHeight  - markdownSource.offsetHeight);
+				} else {
+					app.scrollMarkdownPreviewCaretIntoView();
+				}
+			};
+
+			syncScroll.ref = {
+				CARET: 0,
+				SCROLLBAR: 1
+			};
+
+			return syncScroll;
+		})(),
 
 		// Subtle fade-in effect
 		onloadEffect: function(step) {
