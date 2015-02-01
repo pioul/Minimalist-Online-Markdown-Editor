@@ -42,7 +42,7 @@ $document.ready(function() {
 		receiveMessage: function(e) {
 			var data = e.originalEvent.data;
 			
-			if (data.hasOwnProperty("height")) this.updateMarkdownPreviewIframeHeight(data.height);
+			if (data.hasOwnProperty("height")) this.updateMarkdownPreviewIframeHeight(data.height, data.isAfterUserInput);
 			if (data.hasOwnProperty("text")) editor.updateWordCount(data.text);
 			if (data.keydownEventObj) this.markdownPreviewIframe.trigger(data.keydownEventObj);
 			if (data.hasOwnProperty("scrollMarkdownPreviewIntoViewAtOffset")) this.scrollMarkdownPreviewIntoViewAtOffset(data.scrollMarkdownPreviewIntoViewAtOffset);
@@ -170,17 +170,22 @@ $document.ready(function() {
 		},
 
 		// Update the preview panel with new HTML
-		updateMarkdownPreview: function(html) {
-			this.postMessage({ html: html });
+		updateMarkdownPreview: function(html, isAfterUserInput) {
+			this.postMessage({
+				html: html,
+				isAfterUserInput: isAfterUserInput
+			});
 		},
 
-		updateMarkdownPreviewIframeHeight: function(height) {
+		updateMarkdownPreviewIframeHeight: function(height, isAfterUserInput) {
 			this.markdownPreviewIframe.css("height", height);
-			editor.markdownPreview.trigger("updated.editor");
+			editor.triggerEditorUpdatedEvent(isAfterUserInput);
 		},
 
 		scrollMarkdownPreviewCaretIntoView: function() {
-			var caretPos = fileSystem.getActiveFile().cache.caretPos;
+			// The active file's cached caret pos isn't used here since that cache is only updated when the 
+			// Markdown source is – and this use case requires the freshest pos available.
+			var caretPos = editor.getMarkdownSourceCaretPos();
 			if (!caretPos) return;
 
 			this.postMessage({
@@ -1198,11 +1203,11 @@ $document.ready(function() {
 			execute: function() {},
 
 			undo: function() {
-				editor.updateMarkdownSource(this.oldVal, this.oldCaretPos);
+				editor.updateMarkdownSource(this.oldVal, this.oldCaretPos, true);
 			},
 			
 			redo: function() {
-				editor.updateMarkdownSource(this.newVal, this.newCaretPos);
+				editor.updateMarkdownSource(this.newVal, this.newCaretPos, true);
 			}
 		});
 

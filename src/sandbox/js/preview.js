@@ -4,6 +4,7 @@ $window.on("load", function() {
 	"use strict";
 	
 	var body = $(document.body),
+		wasLastHtmlUpdateAfterUserInput = null,
 
 		// Post messages to the parent window
 		postMessage = function(data) {
@@ -14,50 +15,36 @@ $window.on("load", function() {
 		receiveMessage = function(e) {
 			var data = e.originalEvent.data;
 			
-			if (data.hasOwnProperty("html")) updateHtml(data.html);
+			if (data.hasOwnProperty("html")) updateHtml(data.html, data.isAfterUserInput);
 			if (data.hasOwnProperty("scrollLineIntoView")) scrollLineIntoView(data.scrollLineIntoView, data.lineCount);
 		},
 
 		// Send the iframe's height to the parent window
 		postHeight = function() {
-			postMessage({ height: body.height() });
+			postMessage({
+				height: body.height(),
+				isAfterUserInput: wasLastHtmlUpdateAfterUserInput
+			});
 		},
 
 		// Send the iframe's height and text to the parent window
 		postAll = function() {
 			postMessage({
 				height: body.height(),
-				text: body.text()
+				text: body.text(),
+				isAfterUserInput: wasLastHtmlUpdateAfterUserInput
 			});
 		},
 
-		updateHtml = function(html) {
+		updateHtml = function(html, isAfterUserInput) {
 			body.html(html);
+			wasLastHtmlUpdateAfterUserInput = isAfterUserInput;
 
 			postAll();
-			
+
 			// If there are images, the height of the iframe has to be manually updated to reflect the height of the images
 			// Thus, wait for all images to load, then send the actual height to the parent window
-			var images = body.find("img");
-
-			if (images.length) {
-				var loadedImages = 0,
-
-					tryPostingHeight = function() {
-						if (++loadedImages >= images.length) postHeight();
-					};
-
-				images.each(function() {
-					var image = $(this);
-					if (image.complete) {
-						tryPostingHeight();
-					} else {
-						image.on("load", function() {
-							tryPostingHeight();
-						});
-					}
-				});
-			}
+			preview.onImagesLoad(postHeight);
 		},
 
 		// When scrolling a line into view, the parent window is the one doing the job.

@@ -47,7 +47,7 @@ Summary:
 
 - Dev env (running `src/`, authored in ES6+, no polyfills): Chrome Canary with "Enable Experimental JavaScript" flag enabled
 - Target env (running `dist/`, transpiled to ES5, no polyfills): Chrome (browser or OS)
-- Target env in `app-shared/` (authored in ES5): all major browsers, down to IE8
+- Target env in `app-shared/` (authored in ES5): all major browsers, down to IE9
 
 ## Edge cases
 
