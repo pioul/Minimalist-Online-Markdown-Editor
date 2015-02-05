@@ -551,11 +551,10 @@ $document.ready(function() {
 								writer.onerror = onError;
 
 								writer.onwriteend = function() {
+									var blob = new Blob([text]);
+
 									writer.onwriteend = resolvePromise;
-									entry.file(function() {
-										var blob = new Blob([text]);
-										writer.write(blob, {type: "text/plain"});
-									});
+									writer.write(blob, {type: "text/plain"});
 								};
 
 								writer.truncate(0);
