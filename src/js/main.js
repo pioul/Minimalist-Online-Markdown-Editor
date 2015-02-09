@@ -480,22 +480,37 @@ $document.ready(function() {
 					};
 				})(),
 
+				// Entries acquired through webkitGetAsEntry() don't behave properly after being restored: they're not readable using
+				// entry.file(read) anymore (entry.file() does absolutely nothing). (This issue only appears when the app is closed,
+				// then re-opened. Reloading it or simulating browser restart through dev tools strangely doesn't yield the same results.)
+				// getWritableEntry() is called on these entries as a hack to retrieve "proper" entries that don't exhibit this issue.
 				chooseEntriesByDrop: function(e) {
-					var dt = e.originalEvent.dataTransfer;
+					var promisedWritableEntries,
+						dt = e.originalEvent.dataTransfer;
 
 					if (dt.types.indexOf("Files") == -1) return;
 					
 					e.preventDefault();
-					var entries = [];
+					promisedWritableEntries = [];
 
 					for (let i = 0, dtItem; dtItem = dt.items[i]; i++) {
 						// Only accept files that are some type of text (most commonly "text/plain") or of unknown type (such as .md as of today)
 						if (dtItem.kind != "file" || dtItem.type && dtItem.type.indexOf("text/") != 0) continue;
 
-						entries.push(dtItem.webkitGetAsEntry());
+						promisedWritableEntries.push(new Promise(function(resolvePromise) {
+							var entry = dtItem.webkitGetAsEntry();
+
+							chrome.fileSystem.getWritableEntry(entry, function(writableEntry) {
+								resolvePromise(writableEntry);
+							});
+						}));
 					}
 
-					fileSystem.importEntries(entries);
+					Promise.all(promisedWritableEntries)
+						.then(function(writableEntries) {
+							fileSystem.importEntries(writableEntries);
+						})
+						.done();
 				},
 
 				// Transform entries into perm files, hence opening them into the editor
