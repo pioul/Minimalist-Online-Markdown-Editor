@@ -242,7 +242,8 @@ var Modal, confirm, alert, normalizeNewlines, shortcutManager, limitStrLen;
 			runMatchingHandler = function(e) {
 				if (!e.ctrlKey && !e.metaKey) return; // All shortcuts currently use CTRL (mirrored by META)
 
-				var shortcut, handler, sequence = ["CTRL"];
+				var shortcut, handler,
+					sequence = ["CTRL"];
 
 				if (e.shiftKey) sequence.push("SHIFT");
 				if (e.altKey) sequence.push("ALT"); // (Option on Mac)
