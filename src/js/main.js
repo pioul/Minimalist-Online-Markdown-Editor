@@ -46,6 +46,7 @@ $document.ready(function() {
 			if (data.hasOwnProperty("text")) editor.updateWordCount(data.text);
 			if (data.keydownEventObj) this.markdownPreviewIframe.trigger(data.keydownEventObj);
 			if (data.hasOwnProperty("scrollMarkdownPreviewIntoViewAtOffset")) this.scrollMarkdownPreviewIntoViewAtOffset(data.scrollMarkdownPreviewIntoViewAtOffset);
+			if (data.hasOwnProperty("scrollMarkdownPreviewToOffset")) this.scrollMarkdownPreviewToOffset(data.scrollMarkdownPreviewToOffset);
 		},
 
 		focusMarkdownSource: function() {
@@ -205,6 +206,10 @@ $document.ready(function() {
 				scrollIntoView(param);
 			};
 		})(),
+
+		scrollMarkdownPreviewToOffset: function(offsetTop) {
+			editor.markdownPreview[0].scrollTop = offsetTop - 20;
+		},
 
 		// Automatically check whether the active file has changed when the app window regains focus
 		checkActiveFileForChanges: function() {

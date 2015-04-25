@@ -84,7 +84,32 @@ $window.on("load", function() {
 	
 	body.on("click", "a", function(e) {
 		e.preventDefault();
-		open($(e.target).attr("href"), "MME_external_link");
+
+		var href = $(e.target).attr("href"),
+			isAnchor = href.slice(0, 1) == "#";
+
+		// If the link is an anchor, manually scroll to the anchor target's position
+		if (isAnchor) {
+			let target = href.slice(1),
+				targetOffset = null;
+
+			if (target == "" || target == "top") {
+				targetOffset = 0;
+			} else {
+				let targetEl = document.getElementById(target);
+				if (targetEl) targetOffset = getElRefOffset(targetEl);
+			}
+
+			if (targetOffset != null) postMessage({ scrollMarkdownPreviewToOffset: targetOffset });
+		// Otherwise open the link in an external window
+		} else {
+			// If the URL is missing a scheme, add one
+			let validURIScheme = /^[a-z][a-z\d+.-]+:\/\//i;
+			if (!validURIScheme.test(href)) href = "http://"+ href;
+
+			open(href, "MME_external_link");
+		}
+		
 	});
 	
 });
