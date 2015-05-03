@@ -82,7 +82,9 @@ $window.on("load", function() {
 		}
 	});
 	
-	body.on("click", "a", function(e) {
+	body.on("click", function(e) {
+		if (e.target.nodeName != "A") return; // Not using jQuery for event delegation since it lead to an issue where middle mouse clicks didn't trigger "click" events
+
 		e.preventDefault();
 
 		var href = $(e.target).attr("href"),
