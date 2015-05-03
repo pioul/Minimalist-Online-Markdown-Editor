@@ -30,6 +30,8 @@ $document.ready(function() {
 			this.markdownPreviewIframe.on("load", function() {
 				app.isMarkdownPreviewIframeLoaded = true;
 				app.markdownPreviewIframeLoadEventCallbacks.fire();
+
+				app.markdownPreviewIframe.off("load");
 			});
 		},
 
