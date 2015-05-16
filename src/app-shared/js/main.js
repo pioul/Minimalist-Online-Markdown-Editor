@@ -167,7 +167,7 @@ $document.ready(function() {
 
 		// Programmatically add Markdown text to the textarea
 		// pos = { start: Number, end: Number }
-		addToMarkdownSource: function(markdown, pos) {
+		addToMarkdownSource: function(markdown, pos, destPos) {
 			var newMarkdownSourceVal, newMarkdownSourceLength,
 				markdownSourceVal = this.markdown;
 
@@ -186,7 +186,8 @@ $document.ready(function() {
 					markdown +
 					markdownSourceVal.substring(pos.end);
 
-				pos.start = pos.end = pos.start + markdown.length;
+				if (destPos) pos = destPos;
+					else pos.start = pos.end = pos.start + markdown.length;
 
 				this.updateMarkdownSource(newMarkdownSourceVal, pos);
 			}
@@ -403,13 +404,55 @@ $document.ready(function() {
 		},
 
 		// Insert a tab character when the tab key is pressed (instead of focusing the next form element)
+		// If multiple lines selected, indent them instead; or unindent on SHIFT + TAB
 		handleTabKeyPress: function(e) {
-			var caretPos = this.getMarkdownSourceCaretPos();
-			if (!caretPos) return;
+			var selectedText, selectedLines, precText, precTextLastNLIndex, destSelPos,
+				shouldIndentForward = !e.shiftKey,
+				selPos = this.getMarkdownSourceCaretPos();
+
+			if (!selPos) return;
+
+			selectedText = this.markdown.slice(selPos.start, selPos.end);
+			selectedLines = selectedText.split("\n");
+
+			// Indent/unindent lines
+			if (selectedLines.length > 1) {
+				destSelPos = $.extend({}, selPos);
+
+				// Extend selection to first new line char preceding the current selection
+				// (in other words, include the whole first selected line into the selection)
+				precText = this.markdown.slice(0, selPos.start);
+				precTextLastNLIndex = precText.lastIndexOf("\n");
+				selPos.start = precTextLastNLIndex + 1; // Index of char following \n if found, 0 otherwise
+				selectedLines[0] = precText.slice(selPos.start) + selectedLines[0];
+
+				// Insert/remove tabs at the beginning of all selected lines
+				// Also adjust text selection indices to leave the right portion of text selected
+				selectedLines = $.map(selectedLines, function(line, i) {
+					if (shouldIndentForward) {
+						if (i == 0) destSelPos.start++;
+						destSelPos.end++;
+
+						return "\t"+ line;
+					} else {
+						if (line.charAt(0) == "\t") {
+							if (i == 0) destSelPos.start--;
+							destSelPos.end--;
+
+							return line.slice(1);
+						} else {
+							return line;
+						}
+					}
+				});
+
+				this.addToMarkdownSource(selectedLines.join("\n"), selPos, destSelPos);
+			// Replace selection with tab char
+			} else {
+				this.addToMarkdownSource("\t", selPos);
+			}
 
 			e.preventDefault();
-
-			this.addToMarkdownSource("\t", caretPos);
 		},
 
 		// Count the words in the Markdown output and update the word count in the corresponding
