@@ -213,6 +213,10 @@ li p {
 	font-size: 16px;
 }
 
+.topbar .buttons-container .button.icon-settings {
+	font-size: 14px;
+}
+
 .bottom-bar .word-count {
 	float: right;
 	height: 20px;

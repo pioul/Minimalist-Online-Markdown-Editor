@@ -1,16 +1,17 @@
 @font-face {
 	font-family: "icons";
-	src:url("../fonts/icons/icons.eot?-cb8gia");
-	src:url("../fonts/icons/icons.eot?#iefix-cb8gia") format("embedded-opentype"),
-		url("../fonts/icons/icons.woff?-cb8gia") format("woff"),
-		url("../fonts/icons/icons.ttf?-cb8gia") format("truetype"),
-		url("../fonts/icons/icons.svg?-cb8gia#icons") format("svg");
+	src:url("../fonts/icons/icons.eot?-mfxpn4");
+	src:url("../fonts/icons/icons.eot?#iefix-mfxpn4") format("embedded-opentype"),
+		url("../fonts/icons/icons.woff?-mfxpn4") format("woff"),
+		url("../fonts/icons/icons.ttf?-mfxpn4") format("truetype"),
+		url("../fonts/icons/icons.svg?-mfxpn4#icons") format("svg");
 	font-weight: normal;
 	font-style: normal;
 }
 
 .icon-sync-scroll,
-.icon-fullscreen {
+.icon-fullscreen,
+.icon-settings {
 	display: inline-block;
 	font-family: "icons";
 	speak: none;
@@ -29,4 +30,8 @@
 
 .icon-fullscreen:before {
 	content: "\e601";
+}
+
+.icon-settings:before {
+	content: "\e602";
 }
