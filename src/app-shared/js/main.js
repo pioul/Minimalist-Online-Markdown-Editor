@@ -447,9 +447,15 @@ $document.ready(function() {
 				});
 
 				this.addToMarkdownSource(selectedLines.join("\n"), selPos, destSelPos);
-			// Replace selection with tab char
 			} else {
-				this.addToMarkdownSource("\t", selPos);
+				// Unindent line if no text selection and previous character is a tab
+				if (!shouldIndentForward && selPos.start == selPos.end && this.markdown.charAt(selPos.start - 1) == "\t") {
+					selPos.start--;
+					this.addToMarkdownSource("", selPos);
+				// Replace selection with tab char
+				} else {
+					this.addToMarkdownSource("\t", selPos);
+				}
 			}
 
 			e.preventDefault();
