@@ -227,6 +227,7 @@ li p {
 
 #preview {
 	word-wrap: break-word;
+	font-size: 1em;
 }
 
 #markdown,
@@ -241,6 +242,7 @@ li p {
 	-moz-tab-size: 4;
 	-o-tab-size: 4;
 	tab-size: 4;
+	font-size: .95em;
 }
 
 #markdown:focus,
@@ -285,6 +287,24 @@ li p {
 	background: #d7d7d7;
 }
 
+.top_panel .button {
+	padding: 5px 12px;
+	background: #e0e0e0;
+	border-radius: 3px;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.top_panel .button:active {
+	background: #d0d0d0;
+}
+
+.top_panel .button.disabled {
+	background: #d0d0d0;
+	opacity: .5;
+	cursor: not-allowed;
+}
+
 #quick-reference table,
 #quick-reference > p {
 	font-size: 12px;
@@ -315,6 +335,40 @@ li p {
 
 #quick-reference p {
 	margin-bottom: 0;
+}
+
+#settings #increase-font-size,
+#settings #decrease-font-size {
+	position: relative;
+	padding: 5px 9px 5px 19px;
+	line-height: 16px;
+}
+
+#settings #increase-font-size:before,
+#settings #decrease-font-size:before {
+	content: "A";
+	position: absolute;
+	top: 5px;
+	left: 9px;
+	height: 16px;
+	line-height: 16px;
+	font-family: monospace;
+}
+
+#settings #decrease-font-size:before {
+	font-size: 13px;
+}
+
+#settings #increase-font-size:before {
+	font-size: 17px;
+}
+
+#settings #decrease-font-size:after {
+	content: "-";
+}
+
+#settings #increase-font-size:after {
+	content: "+";
 }
 
 .fullscreen #left-column,
