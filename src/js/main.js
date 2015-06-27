@@ -30,6 +30,7 @@ $(document).ready(function() {
 					restoredItems.isSyncScrollDisabled = localStorage.getItem("isSyncScrollDisabled");
 					restoredItems.isFullscreen = localStorage.getItem("isFullscreen");
 					restoredItems.activePanel = localStorage.getItem("activePanel");
+					restoredItems.fontSizeFactor = localStorage.getItem("fontSizeFactor");
 				} catch (e) {}
 			}
 
@@ -62,7 +63,14 @@ $(document).ready(function() {
 				scrollParam.elOffsets = preview.getSourceLineOffset(caretLine, lineCount);
 				scrollIntoView(scrollParam);
 			};
-		})()
+		})(),
+
+		// Update the font size of the source, html, and preview panels
+		updateFontSize: function(cssIncrement) {
+			[editor.markdownSource, $(editor.markdownHtml), editor.markdownPreview].forEach(function(el) {
+				updateElFontSize(el, cssIncrement);
+			});	
+		}
 
 	};
 
