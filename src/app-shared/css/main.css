@@ -227,6 +227,7 @@ li p {
 
 #preview {
 	word-wrap: break-word;
+	line-height: normal;
 }
 
 #markdown,

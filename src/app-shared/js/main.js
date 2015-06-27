@@ -518,7 +518,8 @@ $document.ready(function() {
 
 		return {
 			restore: function(restoredSettings) {
-				if (typeof restoredSettings.fontSizeFactor != "undefined") fontSize.update(restoredSettings.fontSizeFactor);
+				// restoredSettings.fontSizeFactor can be null or undefined depending on the storage used; fortunately undefined == null
+				if (restoredSettings.fontSizeFactor != null) fontSize.update(+restoredSettings.fontSizeFactor);
 			},
 
 			initBindings: function() {
