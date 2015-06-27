@@ -41,6 +41,7 @@ $document.ready(function() {
 				editor.onInput();
 				editor.onloadEffect(1);
 			});
+			settings.initBindings();
 		},
 
 		// Handle events on several DOM elements
@@ -137,6 +138,10 @@ $document.ready(function() {
 				if (restoredItems.isSyncScrollDisabled != "y") editor.toggleFeature("sync-scroll");
 				if (restoredItems.isFullscreen == "y") editor.toggleFeature("fullscreen");
 				editor.switchToPanel(restoredItems.activePanel || "preview");
+
+				settings.restore({
+					fontSizeFactor: restoredItems.fontSizeFactor
+				});
 
 				c();
 			});
@@ -475,5 +480,58 @@ $document.ready(function() {
 		}
 		
 	};
+
+	var settings = (function() {
+		var settingsPanel = $("#settings"),
+
+			fontSize = {
+				buttons: {
+					inc: document.getElementById("increase-font-size"),
+					dec: document.getElementById("decrease-font-size"),
+					disabledClass: "is-disabled"
+				},
+
+				factor: 0,
+				factorBounds: [-3, 12],
+				cssStep: 1.2,
+
+				update: function(factor) {
+					var cssIncrement,
+						prevFactor = this.factor;
+
+					if (factor < this.factorBounds[0]) factor = this.factorBounds[0];
+						else if (factor > this.factorBounds[1]) factor = this.factorBounds[1];
+
+					if (factor == prevFactor) return;
+
+					cssIncrement = (factor - prevFactor) * this.cssStep;
+					this.factor = factor;
+					editor.save("fontSizeFactor", factor);
+
+					app.updateFontSize(cssIncrement);
+
+					// Update buttons' visual state
+					$(this.buttons.dec).toggleClass(this.buttons.disabledClass, factor == this.factorBounds[0]);
+					$(this.buttons.inc).toggleClass(this.buttons.disabledClass, factor == this.factorBounds[1]);
+				}
+			};
+
+		return {
+			restore: function(restoredSettings) {
+				if (typeof restoredSettings.fontSizeFactor != "undefined") fontSize.update(restoredSettings.fontSizeFactor);
+			},
+
+			initBindings: function() {
+				settingsPanel.on("click", function(e) {
+					e.preventDefault();
+
+					if (e.target == fontSize.buttons.inc || e.target == fontSize.buttons.dec) {
+						var factor = fontSize.factor + (e.target == fontSize.buttons.inc? 1 : -1);
+						fontSize.update(factor);
+					}
+				});
+			}
+		};
+	})();
 	
 });
