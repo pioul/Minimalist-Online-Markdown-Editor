@@ -1,4 +1,4 @@
-var keyCode, doesSupportInputEvent, scrollIntoView, getElRefOffset, escapeHtml;
+var keyCode, doesSupportInputEvent, scrollIntoView, getElRefOffset, escapeHtml, updateElFontSize;
 
 (function() {
 	"use strict";
@@ -121,4 +121,11 @@ var keyCode, doesSupportInputEvent, scrollIntoView, getElRefOffset, escapeHtml;
 			return str.replace(matchingChars, replaceCallback);
 		};
 	})();
+
+	// Update an element's font size by adding cssIncrement to the current computed size
+	updateElFontSize = function(el, cssIncrement) {
+		var fontSize = parseFloat(el.css("font-size"));
+		fontSize += cssIncrement;
+		el.css("font-size", fontSize);
+	};
 })();
