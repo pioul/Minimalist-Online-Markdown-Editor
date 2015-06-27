@@ -7,7 +7,7 @@ $window.on("load", function() {
 		wasLastHtmlUpdateAfterUserInput = null,
 
 		// Post messages to the parent window
-		postMessage = function(data) {
+		messageParent = function(data) {
 			parent.postMessage(data, "*");
 		},
 
@@ -17,11 +17,12 @@ $window.on("load", function() {
 			
 			if (data.hasOwnProperty("html")) updateHtml(data.html, data.isAfterUserInput);
 			if (data.hasOwnProperty("scrollLineIntoView")) scrollLineIntoView(data.scrollLineIntoView, data.lineCount);
+			if (data.hasOwnProperty("fontSizeCssIncrement")) updateFontSize(data.fontSizeCssIncrement);
 		},
 
 		// Send the iframe's height to the parent window
 		postHeight = function() {
-			postMessage({
+			messageParent({
 				height: body.height(),
 				isAfterUserInput: wasLastHtmlUpdateAfterUserInput
 			});
@@ -29,7 +30,7 @@ $window.on("load", function() {
 
 		// Send the iframe's height and text to the parent window
 		postAll = function() {
-			postMessage({
+			messageParent({
 				height: body.height(),
 				text: body.text(),
 				isAfterUserInput: wasLastHtmlUpdateAfterUserInput
@@ -53,7 +54,12 @@ $window.on("load", function() {
 		// it requires access to the preview's DOM for that.
 		scrollLineIntoView = function(line, lineCount) {
 			var offsets = preview.getSourceLineOffset(line, lineCount);
-			postMessage({ scrollMarkdownPreviewIntoViewAtOffset: offsets });
+			messageParent({ scrollMarkdownPreviewIntoViewAtOffset: offsets });
+		},
+
+		updateFontSize = function(cssIncrement) {
+			updateElFontSize(body, cssIncrement);
+			postHeight();
 		};
 	
 	$window.on({
@@ -61,7 +67,7 @@ $window.on("load", function() {
 		message: receiveMessage,
 
 		keydown: function(e) {
-			postMessage({
+			messageParent({
 				// Only post event props we care about
 				keydownEventObj: {
 					type: e.type,
@@ -102,7 +108,7 @@ $window.on("load", function() {
 				if (targetEl) targetOffset = getElRefOffset(targetEl);
 			}
 
-			if (targetOffset != null) postMessage({ scrollMarkdownPreviewToOffset: targetOffset });
+			if (targetOffset != null) messageParent({ scrollMarkdownPreviewToOffset: targetOffset });
 		// Otherwise open the link in an external window
 		} else {
 			// If the URL is missing a scheme, add one

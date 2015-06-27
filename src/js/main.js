@@ -36,7 +36,7 @@ $document.ready(function() {
 		},
 
 		// Post messages to the iframe
-		postMessage: function(data) {
+		messageSandbox: function(data) {
 			this.markdownPreviewIframe[0].contentWindow.postMessage(data, "*");
 		},
 
@@ -105,7 +105,7 @@ $document.ready(function() {
 
 			// Retrieve locally stored data to be sent to editor
 			// For the same reason the "markdown" key is hijacked when saving the editor's contents, it's not included here so that the app can handle the restoration of the editor's contents itself
-			chrome.storage.local.get(["isSyncScrollDisabled", "isFullscreen", "activePanel"], function(restoredItems) {
+			chrome.storage.local.get(["isSyncScrollDisabled", "isFullscreen", "activePanel", "fontSizeFactor"], function(restoredItems) {
 				editorRestoredItems = restoredItems;
 				tryRunningCallback();
 			});
@@ -174,7 +174,7 @@ $document.ready(function() {
 
 		// Update the preview panel with new HTML
 		updateMarkdownPreview: function(html, isAfterUserInput) {
-			this.postMessage({
+			this.messageSandbox({
 				html: html,
 				isAfterUserInput: isAfterUserInput
 			});
@@ -191,7 +191,7 @@ $document.ready(function() {
 			var caretPos = editor.getMarkdownSourceCaretPos();
 			if (!caretPos) return;
 
-			this.postMessage({
+			this.messageSandbox({
 				scrollLineIntoView: editor.getMarkdownSourceLineFromPos(caretPos),
 				lineCount: editor.getMarkdownSourceLineCount()
 			});
@@ -217,6 +217,17 @@ $document.ready(function() {
 		checkActiveFileForChanges: function() {
 			var activeFile = fileSystem.getActiveFile();
 			if (!activeFile.isTempFile()) activeFile.checkDiskContents();
+		},
+
+		// Update the font size of the source, html, and preview panels
+		updateFontSize: function(cssIncrement) {
+			[editor.markdownSource, $(editor.markdownHtml)].forEach(function(el) {
+				updateElFontSize(el, cssIncrement);
+			});
+
+			this.messageSandbox({
+				fontSizeCssIncrement: cssIncrement
+			});			
 		}
 
 	};
