@@ -1,6 +1,5 @@
 var editor,
-	$window = $(window),
-	$document = $(document);
+	$window = $(window);
 
 $document.ready(function() {
 	"use strict";
@@ -10,7 +9,6 @@ $document.ready(function() {
 	editor = {
 		
 		// Editor variables
-		body: $(document.body),
 		fitHeightElements: $(".full-height"),
 		wrappersMargin: $("#left-column > .wrapper:first").outerHeight(true) - $("#left-column > .wrapper:first").height(),
 		previewMarkdownConverter: window.markdownit({ html: true }).use(window.markdownitMapLines),
@@ -331,14 +329,14 @@ $document.ready(function() {
 						"scroll.syncScroll": refSyncScroll,
 						"keydown.syncScroll": function() { isMdSourceKeyPressed = true }
 					});
-					this.body.on("keyup.syncScroll", function() { isMdSourceKeyPressed = false });
+					$body.on("keyup.syncScroll", function() { isMdSourceKeyPressed = false });
 
 					refSyncScroll();
 					isMdSourceKeyPressed = false;
 				} else {
 					this.markdownPreview.off("updated.editor");
 					this.markdownSource.off(".syncScroll");
-					this.body.off("keyup.syncScroll");
+					$body.off("keyup.syncScroll");
 				}
 
 				this.isSyncScrollDisabled = !this.isSyncScrollDisabled;
@@ -349,7 +347,7 @@ $document.ready(function() {
 		toggleFullscreen: function(featureData) {
 			var toFocus = featureData && featureData.tofocus;
 			this.isFullscreen = !this.isFullscreen;
-			this.body.toggleClass("fullscreen");
+			$body.toggleClass("fullscreen");
 			if (toFocus) this.switchToPanel(toFocus);
 			// Exit fullscreen
 			if (!this.isFullscreen) {
@@ -372,7 +370,7 @@ $document.ready(function() {
 				});
 			}
 			this.save("isFullscreen", this.isFullscreen? "y" : "n");
-			this.body.trigger("fullscreen.editor", [this.isFullscreen]);
+			$body.trigger("fullscreen.editor", [this.isFullscreen]);
 		},
 
 		// Synchronize the scroll position of the preview panel with the source
@@ -400,10 +398,10 @@ $document.ready(function() {
 		onloadEffect: function(step) {
 			switch (step) {
 				case 0:
-					this.body.fadeTo(0, 0);
+					$body.fadeTo(0, 0);
 					break;
 				case 1:
-					this.body.fadeTo(1000, 1);
+					$body.fadeTo(1000, 1);
 					break;
 			}
 		},

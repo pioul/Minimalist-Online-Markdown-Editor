@@ -3,8 +3,7 @@ var preview;
 $(document).ready(function() {
 	"use strict";
 
-	var $body = $(document.body),
-		markdownPreview = document.getElementById("preview");
+	var markdownPreview = document.getElementById("preview");
 
 	preview = {
 		// Return the top and bottom offsets of the previewed DOM element(s) surrounding
