@@ -7,6 +7,7 @@
     "clean-css": "^3.0.7",
     "del": "^1.1.1",
     "gulp": "^3.8.10",
+    "gulp-babel": "^5.1.0",
     "gulp-concat": "^2.4.3",
     "gulp-html-replace": "^1.4.3",
     "gulp-rev": "^3.0.0",

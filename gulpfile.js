@@ -5,6 +5,7 @@ var gulp = require("gulp"),
 	through = require("through2"),
 	vinylMap = require("vinyl-map"), // through2 abstraction for accessing file contents only
 	path = require("path"),
+	babel = require("gulp-babel"),
 
 	paths = {
 		base: {
@@ -14,8 +15,12 @@ var gulp = require("gulp"),
 		},
 		js: {
 			srcGlob: [
+				"node_modules/gulp-babel/node_modules/babel-core/browser-polyfill.min.js",
 				"src/app-shared/js/libs/**",
-				"src/app-shared/js/**",
+				"src/app-shared/js/markdown-it-plugins/markdown-it-map-lines.js",
+				"src/app-shared/js/utilities.js",
+				"src/app-shared/js/preview.js",
+				"src/app-shared/js/main.js",
 				"src/js/**",
 			],
 			relDest: "js/all.js",
@@ -97,6 +102,7 @@ gulp.task("build-js", ["clean"], function() {
 	return gulp.src(paths.js.srcGlob, { base: paths.base.src })
 		.pipe(gulpPlugins.concat(paths.js.relDest))
 		.pipe(displayOriginalSize)
+		.pipe(babel())
 		.pipe(minifyJs)
 		.pipe(displayFinalSize)
 		.pipe(gulpPlugins.revision())
