@@ -134,6 +134,23 @@ $document.ready(function() {
 		el.css("font-size", fontSize);
 	};
 
+	// Since promises swallow uncaught errors and rejections, another way had to be found to keep an eye on them: .done()
+	// When using promises, you should *always* either return the promise (to continue chaining), or end the chain with .done()
+	// .done()'s sole purpose is to (re)throw errors for any uncaught error or rejection. It doesn't return anything so that you can only use it to end a chain.
+	// It's a temporary failsafe while the spec keeps evolving, hopefully in a way that solves this issue in the first place, like Mozilla has done with Promise.jsm.
+	// Make sure to throw errors and reject promises with Error objects to get a stack trace.
+	// One issue with this implementation is that keeping track of chaining can be become hard when storing promises inside variables to pick up chaining somewhere 
+	// else. You'll have to make the effort to keep track of that and end all chains with .done() nonetheless. Mozilla's approach is superior in that it hooks to GC to 
+	// keep track of promises even outside of a chain, but you need access to the innards of a browser for that.
+	// One other implementation idea would be to create a wrapper around promises in the form of a regular object with isResolved and isRejected properties, internally 
+	// updated by the wrapper's .then() and .catch() methods. That'd allow to Object.observe() these changes and keep an eye on all promises without boilerplate method 
+	// like .done() and without access to the browser's internals.
+	Promise.prototype.done = function() {
+		this.catch(function(e) {
+			console.error("Uncaught error or rejection inside Promise", e);
+		});
+	};
+
 	Modal = (function() {
 		var generateModalMarkup = function(content, buttons) { // Decoys surround the modals' buttons to avoid issues when the prev/next tabbable element is out of the browsing context
 				return [
