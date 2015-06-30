@@ -231,12 +231,8 @@ $document.ready(function() {
 		};
 
 		// Used to enforce the fact that modals are blocking: event handlers that aren't "blocked/disabled" by the modals' transparent overlay
-		// should go through this method before getting executed to make sure they're not executed while a modal is open (e.g., keyboard shortcuts handlers).
-		Modal.ifNoModalOpen = function() {
-			return openModals.length? Promise.reject(Modal.ifNoModalOpen.REJECTION_MSG) : Promise.resolve();
-		};
-
-		Modal.ifNoModalOpen.REJECTION_MSG = "A modal is currently open.";
+		// should call this method before going forward to make sure they're not executed while a modal is open (e.g., keyboard shortcuts handlers).
+		Modal.isModalOpen = () => !!openModals.length;
 
 		initModalsBindings();
 
@@ -269,13 +265,8 @@ $document.ready(function() {
 				handler = handlers.get(shortcut);
 				if (!handler) return;
 
-				Modal.ifNoModalOpen()
-					.then(handler.bind(null, e))
-					.catch(function(reason) {
-						e.preventDefault();
-						if (reason != Modal.ifNoModalOpen.REJECTION_MSG) throw reason;
-					})
-					.done();
+				if (!Modal.isModalOpen()) handler(e);
+					else e.preventDefault();
 			};
 
 		$document.ready(init);
