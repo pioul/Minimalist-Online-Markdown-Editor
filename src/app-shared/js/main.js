@@ -511,7 +511,10 @@ $document.ready(function() {
 					// Update buttons' visual state
 					$(this.buttons.dec).toggleClass(this.buttons.disabledClass, factor == this.factorBounds[0]);
 					$(this.buttons.inc).toggleClass(this.buttons.disabledClass, factor == this.factorBounds[1]);
-				}
+				},
+
+				increase: () => { fontSize.update(fontSize.factor + 1) },
+				decrease: () => { fontSize.update(fontSize.factor - 1) }
 			};
 
 		return {
@@ -528,6 +531,41 @@ $document.ready(function() {
 						var factor = fontSize.factor + (e.target == fontSize.buttons.inc? 1 : -1);
 						fontSize.update(factor);
 					}
+				});
+
+				shortcutManager.register([
+					"CTRL + PLUS",
+					"CTRL + PLUS_FF",
+					"CTRL + SHIFT + PLUS",
+					"CTRL + SHIFT + PLUS_FF",
+					"CTRL + NUMPADPLUS"
+				], function(e) {
+					e.preventDefault();
+					fontSize.increase();
+				});
+
+				shortcutManager.register([
+					"CTRL + MINUS",
+					"CTRL + MINUS_FF",
+					"CTRL + SHIFT + MINUS",
+					"CTRL + SHIFT + MINUS_FF",
+					"CTRL + NUMPADMINUS"
+				], function(e) {
+					e.preventDefault();
+					fontSize.decrease();
+				});
+
+				$document.on("wheel", function(e) {
+					var isScrollingUp;
+
+					e = e.originalEvent;
+					if ((!e.ctrlKey && !e.metaKey) || !e.deltaY) return;
+
+					e.preventDefault();
+
+					isScrollingUp = e.deltaY < 0;
+					if (isScrollingUp) fontSize.increase();
+						else fontSize.decrease();
 				});
 			}
 		};

@@ -10,7 +10,13 @@ $document.ready(function() {
 
 	keyCode = {
 		TAB: 9,
-		ESCAPE: 27
+		ESCAPE: 27,
+		MINUS: 189,
+		MINUS_FF: 173, // Firefox-specific
+		PLUS: 187,
+		PLUS_FF: 61, // Firefox-specific
+		NUMPADMINUS: 109,
+		NUMPADPLUS: 107
 	};
 
 	doesSupportInputEvent = (function() {
