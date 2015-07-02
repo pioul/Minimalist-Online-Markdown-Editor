@@ -558,10 +558,14 @@ $document.ready(function() {
 				$document.on("wheel", function(e) {
 					var isScrollingUp;
 
-					e = e.originalEvent;
+					// Clone deltaY onto the jQuery event object ourselves
+					if (!e.hasOwnProperty("deltaY")) e.deltaY = e.originalEvent.deltaY;
+
 					if ((!e.ctrlKey && !e.metaKey) || !e.deltaY) return;
 
 					e.preventDefault();
+
+					if (Modal.isModalOpen()) return;
 
 					isScrollingUp = e.deltaY < 0;
 					if (isScrollingUp) fontSize.increase();
