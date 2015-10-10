@@ -327,7 +327,7 @@ $document.ready(function() {
 					this.markdownPreview.on("updated.editor", refSyncScroll);
 					this.markdownSource.on({
 						"scroll.syncScroll": refSyncScroll,
-						"keydown.syncScroll": function() { isMdSourceKeyPressed = true }
+						"keydown.syncScroll": function(e) { isMdSourceKeyPressed = e.which < 91 || e.which > 93 }
 					});
 					$body.on("keyup.syncScroll", function() { isMdSourceKeyPressed = false });
 
