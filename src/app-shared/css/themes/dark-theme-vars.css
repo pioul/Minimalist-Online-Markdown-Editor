@@ -1,42 +1,42 @@
 :root {
 	/* General color properties */
 
-	--main-text-color: #333;
-	--secondary-text-color: #888;
+	--main-text-color: #ced0c2;
+	--secondary-text-color: #ababab;
 
-	--main-element-color: #e7e7e7;
-	--energetic-element-color: #b5b5b5;
-	--structural-element-color: #f0f0f0;
+	--main-element-color: #4b4b4b;
+	--energetic-element-color: #4d4d4d;
+	--structural-element-color: #424241;
 
-	--main-bg-color: #fff;
+	--main-bg-color: #222;
 
 	/* Elements color properties */
 
 	--column-border-color: var(--structural-element-color);
 
 	--body-color: var(--main-text-color);
-	--textarea-color: #111;
+	--textarea-color: #dee0d2;
 	--body-bg-color: var(--main-bg-color);
 
 	--top-panel-link-color: var(--main-text-color);
 	--top-panel-bg-color: var(--structural-element-color);
 	--top-panel-border-color: var(--structural-element-color);
 
-	--top-panel-close-color: #999;
-	--top-panel-close-hover-color: #777;
-	--top-panel-close-hover-bg-color: #d7d7d7;
+	--top-panel-close-color: #aaa;
+	--top-panel-close-hover-color: #bbb;
+	--top-panel-close-hover-bg-color: #5b5b5b;
 
-	--top-panel-btn-bg-color: #e0e0e0;
-	--top-panel-btn-active-bg-color: #d0d0d0;
-	--top-panel-btn-disabled-bg-color: #d0d0d0;
+	--top-panel-btn-bg-color: #525251;
+	--top-panel-btn-active-bg-color: #626261;
+	--top-panel-btn-disabled-bg-color: #626261;
 
 	--top-bar-button-color: var(--secondary-text-color);
 	--top-bar-button-bg-color: var(--structural-element-color);
 	--top-bar-button-active-bg-color: var(--main-element-color);
-	--top-bar-button-enabled-border-color: var(--energetic-element-color);
+	--top-bar-button-enabled-border-color: #5e5e5e;
 
-	--top-bar-arrow-bg-color: #eaeaea;
-	--top-bar-arrow-active-bg-color: #e1e1e1;
+	--top-bar-arrow-bg-color: #4c4c4b;
+	--top-bar-arrow-active-bg-color: #555555;
 
 	--bottom-bar-word-count-color: var(--secondary-text-color);
 
@@ -50,22 +50,22 @@
 	--file-menu-item-edited-close-bg-color: var(--energetic-element-color);
 	--file-menu-item-edited-close-border-color: var(--main-bg-color);
 
-	--modal-bg-color: var(--main-bg-color);
+	--modal-bg-color: #252525;
 	--modal-border-color: var(--energetic-element-color);
 
 	--modal-button-color: var(--secondary-text-color);
 	--modal-button-border-color: var(--energetic-element-color);
 	--modal-button-primary-color: var(--main-text-color);
 	--modal-button-primary-border-color: var(--secondary-text-color);
-	--modal-button-active-bg-color: #f7f7f7;
+	--modal-button-active-bg-color: #3b3b3b;
 
 	--drag-mask-color: #999;
-	--drag-mask-bg-color: rgba(255, 255, 255, .8);
-	--drag-mask-border-color: #ddd;
+	--drag-mask-bg-color: rgba(255, 255, 255, .15);
+	--drag-mask-border-color: #999;
 
 	--quote-border-color: var(--main-element-color);
 	--hr-border-color: var(--main-element-color);
 	--table-border-color: var(--main-element-color);
 	--pre-text-bg-color: var(--main-element-color);
-	--pre-text-highlighted-bg-color: #d7d7d7;
+	--pre-text-highlighted-bg-color: #5b5b5b;
 }
