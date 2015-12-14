@@ -1,0 +1,70 @@
+:root {
+	/* General color properties */
+
+	--main-text-color: #333;
+	--secondary-text-color: #888;
+
+	--main-element-color: #e7e7e7;
+	--energetic-element-color: #b5b5b5;
+	--structural-element-color: #f0f0f0;
+
+	--main-bg-color: #fff;
+
+	/* Elements color properties */
+
+	--column-border-color: var(--structural-element-color);
+
+	--body-color: var(--main-text-color);
+	--body-bg-color: var(--main-bg-color);
+
+	--top-panel-link-color: var(--main-text-color);
+	--top-panel-bg-color: var(--structural-element-color);
+	--top-panel-border-color: var(--structural-element-color);
+
+	--top-panel-close-color: #999;
+	--top-panel-close-hover-color: #777;
+	--top-panel-close-hover-bg-color: #d7d7d7;
+
+	--top-panel-btn-bg-color: #e0e0e0;
+	--top-panel-btn-active-bg-color: #d0d0d0;
+	--top-panel-btn-disabled-bg-color: #d0d0d0;
+
+	--top-bar-button-color: var(--secondary-text-color);
+	--top-bar-button-bg-color: var(--structural-element-color);
+	--top-bar-button-active-bg-color: var(--main-element-color);
+	--top-bar-button-enabled-border-color: var(--energetic-element-color);
+
+	--top-bar-arrow-bg-color: #eaeaea;
+	--top-bar-arrow-active-bg-color: #e1e1e1;
+
+	--bottom-bar-word-count-color: var(--secondary-text-color);
+
+	--file-menu-item-color: var(--secondary-text-color);
+	--file-menu-item-border-color: var(--main-element-color);
+	--file-menu-item-enabled-border-color: var(--energetic-element-color);
+	
+	--file-menu-item-close-color: var(--energetic-element-color);
+	--file-menu-item-close-hover-color: var(--secondary-text-color);
+	--file-menu-item-close-hover-bg-color: var(--main-element-color);
+	--file-menu-item-edited-close-bg-color: var(--energetic-element-color);
+	--file-menu-item-edited-close-border-color: var(--main-bg-color);
+
+	--modal-bg-color: var(--main-bg-color);
+	--modal-border-color: var(--energetic-element-color);
+
+	--modal-button-color: var(--secondary-text-color);
+	--modal-button-border-color: var(--energetic-element-color);
+	--modal-button-primary-color: var(--main-text-color);
+	--modal-button-primary-border-color: var(--secondary-text-color);
+	--modal-button-active-bg-color: #f7f7f7;
+
+	--drag-mask-color: #999;
+	--drag-mask-bg-color: rgba(255, 255, 255, .8);
+	--drag-mask-border-color: #ddd;
+
+	--quote-border-color: var(--main-element-color);
+	--hr-border-color: var(--main-element-color);
+	--table-border-color: var(--main-element-color);
+	--pre-text-bg-color: var(--main-element-color);
+	--pre-text-highlighted-bg-color: #d7d7d7;
+}

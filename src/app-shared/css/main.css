@@ -38,8 +38,9 @@ body {
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 	font-size: 14px;
 	line-height: 20px;
-	color: #333;
+	color: var(--body-color);
 	overflow: hidden;
+	background: var(--body-bg-color);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -47,7 +48,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 pre, code, kbd {
-	background: #e7e7e7;
+	background: var(--pre-text-bg-color);
 }
 
 code, kbd {
@@ -61,7 +62,7 @@ pre {
 }
 
 pre .highlight {
-	background: #d7d7d7;
+	background: var(--pre-text-highlighted-bg-color);
 }
 
 pre code {
@@ -69,14 +70,14 @@ pre code {
 }
 
 blockquote {
-	border-left: 5px solid #e7e7e7;
+	border-left: 5px solid var(--quote-border-color);
 	margin: 1em 0;
 	padding-left: 10px;
 }
 
 hr {
 	border: 0;
-	border-top: 1px solid #e7e7e7;
+	border-top: 1px solid var(--hr-border-color);
 }
 
 table {
@@ -85,7 +86,7 @@ table {
 }
 
 table thead {
-	border-bottom: 2px solid #e7e7e7;
+	border-bottom: 2px solid var(--table-border-color);
 }
 
 table tbody tr:nth-child(2n) {
@@ -94,7 +95,7 @@ table tbody tr:nth-child(2n) {
 
 table th, table td {
 	padding: 6px 13px;
-	border: 1px solid #e7e7e7;
+	border: 1px solid var(--table-border-color);
 }
 
 table th {
@@ -118,12 +119,12 @@ li p {
 }
 
 #left-column .wrapper {
-	border-right: 1px solid #f0f0f0;
+	border-right: 1px solid var(--column-border-color);
 }
 
 #right-column .wrapper {
 	padding-left: 9px;
-	border-left: 1px solid #f0f0f0;
+	border-left: 1px solid var(--column-border-color);
 }
 
 .topbar,
@@ -142,7 +143,7 @@ li p {
 
 .topbar .buttons-container {
 	float: right;
-	background: #f0f0f0;
+	
 }
 
 .topbar .buttons-container .button,
@@ -152,21 +153,21 @@ li p {
 
 .topbar .buttons-container .button {
 	height: 18px;
-	margin-left: 1px;
 	padding: 2px 6px 0;
 	line-height: 18px;
-	color: #888;
+	color: var(--top-bar-button-color);
 	text-decoration: none;
 	font-size: 11px;
 	border-bottom: 2px solid transparent;
+	background: var(--top-bar-button-bg-color);
 }
 
 .topbar .buttons-container .button:active {
-	background: #e7e7e7;
+	background: var(--top-bar-button-active-bg-color);
 }
 
 .topbar .buttons-container .button.active {
-	border-bottom-color: #b5b5b5;
+	border-bottom-color: var(--top-bar-button-enabled-border-color);
 }
 
 .topbar .buttons-container .button-group .button.switch {
@@ -222,7 +223,7 @@ li p {
 	height: 20px;
 	line-height: 20px;
 	font-size: 11px;
-	color: #888;
+	color: var(--bottom-bar-word-count-color);
 }
 
 #preview {
@@ -242,6 +243,7 @@ li p {
 	-moz-tab-size: 4;
 	-o-tab-size: 4;
 	tab-size: 4;
+	background-color: transparent;
 }
 
 #markdown:focus,
@@ -259,12 +261,12 @@ li p {
 	display: none;
 	position: relative;
 	padding: 10px 20px;
-	background: #f0f0f0;
-	border-bottom: 2px solid #f0f0f0;
+	background: var(--top-panel-bg-color);
+	border-bottom: 2px solid var(--top-panel-border-color);
 }
 
 #top_panels_container .top_panel a {
-	color: #333;
+	color: var(--top-panel-link-color);
 }
 
 #top_panels_container .top_panel .close {
@@ -276,30 +278,30 @@ li p {
 	line-height: 14px;
 	font-size: 14px;
 	text-align: center;
-	color: #999;
+	color: var(--top-panel-close-color);
 	cursor: pointer;
 	border-radius: 7px;
 }
 
 #top_panels_container .top_panel .close:hover {
-	color: #777;
-	background: #d7d7d7;
+	color: var(--top-panel-close-hover-color);
+	background: var(--top-panel-close-hover-bg-color);
 }
 
 .top_panel .button {
 	padding: 5px 12px;
-	background: #e0e0e0;
+	background: var(--top-panel-btn-bg-color);
 	border-radius: 3px;
 	cursor: pointer;
 	text-decoration: none;
 }
 
 .top_panel .button:active {
-	background: #d0d0d0;
+	background: var(--top-panel-btn-active-bg-color);
 }
 
 .top_panel .button.is-disabled {
-	background: #d0d0d0;
+	background: var(--top-panel-btn-disabled-bg-color);
 	opacity: .5;
 	cursor: not-allowed;
 }
