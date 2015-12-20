@@ -6,6 +6,7 @@ var gulp = require("gulp"),
 	vinylMap = require("vinyl-map"), // through2 abstraction for accessing file contents only
 	path = require("path"),
 	babel = require("gulp-babel"),
+	cssnext = require("gulp-cssnext")
 
 	paths = {
 		base: {
@@ -29,8 +30,14 @@ var gulp = require("gulp"),
 		css: {
 			srcGlob: "src/app-shared/css/**",
 			srcDir: "src/app-shared/css/",
-			relDest: "css/all.css",
-			relRevDest: null
+			relDest: {
+				light: "css/bundle-light-theme.css",
+				dark: "css/bundle-dark-theme.css"
+			},
+			relRevDest: {
+				light: null,
+				dark: null
+			}
 		},
 		html: {
 			src: "src/index.html"
@@ -56,7 +63,7 @@ var gulp = require("gulp"),
 		revision: require("gulp-rev"),
 		htmlReplace: require("gulp-html-replace"),
 
-		saveRevFileName: function(assetType) {
+		saveRevFileName: function(assetType, theme) {
 			var getRevFileName = function(file) {
 					var sep = "/",
 						fileBase = file.base.split(path.sep).join(sep), // Replace all without having to escape special regex chars
@@ -69,7 +76,11 @@ var gulp = require("gulp"),
 				},
 
 				write = function(file, enc, cb) {
-					paths[assetType].relRevDest = getRevFileName(file);
+					var revFileName = getRevFileName(file);
+
+					if (assetType == "js") paths[assetType].relRevDest = revFileName;
+						else paths[assetType].relRevDest[theme] = revFileName;
+
 					cb(null, file);
 				};
 
@@ -110,41 +121,48 @@ gulp.task("build-js", ["clean"], function() {
 		.pipe(gulp.dest(paths.base.dest));
 });
 
-// CSS files: concat + minify + cache-bust
-gulp.task("build-css", ["clean"], function() {
+// CSS files: concat + minify + cache-bust, and generate one bundle per theme
+var buildThemedCss = function(theme) {
 	var displayOriginalSize = gulpPlugins.size({
-			title: "Original CSS size"
-		}),
+		title: "Original CSS size"
+	});
 
-		displayFinalSize = gulpPlugins.size({
-			title: "Minified + gzipped CSS size",
-			gzip: true
-		}),
+	var displayFinalSize = gulpPlugins.size({
+		title: "Minified + gzipped CSS size",
+		gzip: true
+	});
 
-		minifyCss = vinylMap(function (contents) {
-			return new CleanCss({
-				relativeTo: paths.css.srcDir, // Path to resolve relative URLs
-				target: paths.base.src + paths.css.relDest // Path to a folder or an output file to which rebase all URLs; has to use the same paths.base as relativeTo to avoid confusing CleanCss
-			}).minify(contents.toString()).styles;
-		});
+	var minifyCss = vinylMap(function (contents) {
+		return new CleanCss({
+			relativeTo: "src/css/", // Path to resolve relative URLs
+		}).minify(contents.toString()).styles;
+	});
 
-	return gulp.src(paths.css.srcGlob, { base: paths.base.src })
+	return gulp.src([
+			paths.css.srcGlob,
+			"!src/app-shared/css/themes/**/!(" + theme + "-theme-vars.css)"
+		], { base: paths.base.src })
 		.pipe(displayOriginalSize)
 		.pipe(minifyCss)
-		.pipe(gulpPlugins.concat(paths.css.relDest))
+		.pipe(gulpPlugins.concat(paths.css.relDest[theme]))
+		.pipe(cssnext())
 		.pipe(displayFinalSize)
 		.pipe(gulpPlugins.revision())
-		.pipe(gulpPlugins.saveRevFileName("css"))
+		.pipe(gulpPlugins.saveRevFileName("css", theme))
 		.pipe(gulp.dest(paths.base.dest));
-});
+};
+
+gulp.task("build-css-theme-light", ["clean"], buildThemedCss.bind(null, "light"));
+gulp.task("build-css-theme-dark", ["clean"], buildThemedCss.bind(null, "dark"));
 
 // Revise assets' references. Currently only bothers to do that in index.html, since JS and CSS are the only
 // revised assets; will have to extend to CSS files once fonts and images are also revised.
-gulp.task("revise-assets-refs", ["build-js", "build-css"], function() {
+gulp.task("revise-assets-refs", ["build-js", "build-css-theme-light", "build-css-theme-dark"], function() {
 	return gulp.src(paths.html.src, { base: paths.base.src })
 		.pipe(gulpPlugins.htmlReplace({
 			js: paths.js.relRevDest,
-			css: paths.css.relRevDest
+			cssLightTheme: paths.css.relRevDest.light,
+			cssDarkTheme: paths.css.relRevDest.dark
 		}))
 		.pipe(gulp.dest(paths.base.dest));
 });
@@ -162,4 +180,4 @@ gulp.task("copy", ["clean"], function() {
 		.pipe(gulp.dest(paths.base.dest));
 });
 
-gulp.task("default", ["build-js", "build-css", "revise-assets-refs", "copy"]);
+gulp.task("default", ["build-js", "build-css-theme-light", "build-css-theme-dark", "revise-assets-refs", "copy"]);
