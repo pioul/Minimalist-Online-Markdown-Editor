@@ -33,6 +33,7 @@ $(document).ready(function() {
 					restoredItems.isFullscreen = localStorage.getItem("isFullscreen");
 					restoredItems.activePanel = localStorage.getItem("activePanel");
 					restoredItems.fontSizeFactor = localStorage.getItem("fontSizeFactor");
+					restoredItems.theme = localStorage.getItem("theme");
 				} catch (e) {}
 			}
 

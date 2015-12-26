@@ -161,8 +161,18 @@ gulp.task("revise-assets-refs", ["build-js", "build-css-theme-light", "build-css
 	return gulp.src(paths.html.src, { base: paths.base.src })
 		.pipe(gulpPlugins.htmlReplace({
 			js: paths.js.relRevDest,
-			cssLightTheme: paths.css.relRevDest.light,
-			cssDarkTheme: paths.css.relRevDest.dark
+			cssDefaultTheme: {
+				src: paths.css.relRevDest.light,
+				tpl: '<link id="theme-default" href="%s" rel="stylesheet" type="text/css"/>'
+			},
+			cssLightThemeRef: {
+				src: paths.css.relRevDest.light,
+				tpl: '<link id="theme-light-ref" data-href="%s" rel="stylesheet" type="text/css"/>'
+			},
+			cssDarkThemeRef: {
+				src: paths.css.relRevDest.dark,
+				tpl: '<link id="theme-dark-ref" data-href="%s" rel="stylesheet" type="text/css"/>'
+			}
 		}))
 		.pipe(gulp.dest(paths.base.dest));
 });

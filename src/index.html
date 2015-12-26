@@ -8,8 +8,11 @@
 		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
 		<meta property="og:image" content="http://markdown.pioul.fr/images/markdown.png"/>
 
-		<!-- build:cssLightTheme --><!-- endbuild -->
-		<!-- build:cssDarkTheme --><!-- endbuild -->
+		<!-- build:cssDefaultTheme --><!-- endbuild -->
+		<link id="theme" href="" rel="stylesheet" type="text/css"/>
+
+		<!-- build:cssLightThemeRef --><!-- endbuild -->
+		<!-- build:cssDarkThemeRef --><!-- endbuild -->
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
@@ -117,6 +120,18 @@ Second line.</code></pre>
 						<label>Text size</label>
 						<a href="#" class="button" id="decrease-font-size"></a>
 						<a href="#" class="button" id="increase-font-size"></a>
+					</p>
+
+					<p>
+						<label>Theme</label>
+						<span class="theme-control theme-control-dark">
+							Light
+							<a href="#" class="button" id="use-dark-theme">Change to Dark Theme</a>
+						</span>
+						<span class="theme-control theme-control-light">
+							Dark
+							<a href="#" class="button" id="use-light-theme">Change to Light Theme</a>
+						</span>
 					</p>
 
 					<h2>Shortcuts</h2>
