@@ -138,7 +138,8 @@ $document.ready(function() {
 				editor.switchToPanel(restoredItems.activePanel || "preview");
 
 				settings.restore({
-					fontSizeFactor: restoredItems.fontSizeFactor
+					fontSizeFactor: restoredItems.fontSizeFactor,
+					theme: restoredItems.theme
 				});
 
 				c();
@@ -515,12 +516,33 @@ $document.ready(function() {
 
 				increase: () => { fontSize.update(fontSize.factor + 1) },
 				decrease: () => { fontSize.update(fontSize.factor - 1) }
+			},
+
+			theme = {
+				buttons: {
+					light: document.getElementById("use-light-theme"),
+					dark: document.getElementById("use-dark-theme")
+				},
+
+				stylesheets: {
+					themeSelector: document.getElementById("theme"),
+					lightThemeRef: document.getElementById("theme-light-ref"),
+					darkThemeRef: document.getElementById("theme-dark-ref")
+				},
+
+				use: function(theme) {
+					editor.save("theme", theme);
+					this.stylesheets.themeSelector.setAttribute("href", this.stylesheets[theme + "ThemeRef"].getAttribute("data-href"));
+				}
 			};
 
 		return {
 			restore: function(restoredSettings) {
 				// restoredSettings.fontSizeFactor can be null or undefined depending on the storage used; fortunately undefined == null
 				if (restoredSettings.fontSizeFactor != null) fontSize.update(+restoredSettings.fontSizeFactor);
+
+				// Restore theme if saved, otherwise default to light theme
+				theme.use(restoredSettings.theme || "light");
 			},
 
 			initBindings: function() {
@@ -530,6 +552,14 @@ $document.ready(function() {
 					if (e.target == fontSize.buttons.inc || e.target == fontSize.buttons.dec) {
 						var factor = fontSize.factor + (e.target == fontSize.buttons.inc? 1 : -1);
 						fontSize.update(factor);
+					}
+
+					if (e.target == theme.buttons.light) {
+						theme.use("light");
+					}
+
+					if (e.target == theme.buttons.dark) {
+						theme.use("dark");
 					}
 				});
 

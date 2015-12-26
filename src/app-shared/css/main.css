@@ -373,6 +373,20 @@ li p {
 	content: "+";
 }
 
+#settings .theme-control .button {
+	margin-left: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+#settings .theme-control.theme-control-light {
+	display: var(--settings-light-theme-control);
+}
+
+#settings .theme-control.theme-control-dark {
+	display: var(--settings-dark-theme-control);
+}
+
 #settings label {
 	padding-right: 20px;
 }
