@@ -410,3 +410,62 @@ li p {
 	max-width: 800px;
 	margin: 0 auto;
 }
+
+::-webkit-scrollbar {
+	width: var(--scrollbar-size);
+	height: var(--scrollbar-size);
+}
+
+
+::-webkit-scrollbar-button {
+	width: var(--scrollbar-button-size);
+	height: var(--scrollbar-button-size);
+	display: var(--scrollbar-button-display);
+}
+
+
+::-webkit-scrollbar-corner {
+	background-color: var(--scrollbar-corner-bg-color);
+}
+
+
+::-webkit-scrollbar-track {
+	background-color: var(--scrollbar-track-bg-color);
+}
+
+::-webkit-scrollbar-track:vertical,
+::-webkit-scrollbar-thumb:vertical {
+	border-left: var(--scrollbar-bar-border);
+}
+
+::-webkit-scrollbar-track:horizontal,
+::-webkit-scrollbar-thumb:horizontal {
+	border-top: var(--scrollbar-bar-border);
+	border-bottom: var(--scrollbar-bar-border);
+}
+
+::-webkit-scrollbar-thumb {
+	background-clip: var(--scrollbar-thumb-bg-clip);
+}
+
+::-webkit-scrollbar-thumb:vertical {
+	min-height: var(--scrollbar-thumb-min-size);
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+	min-width: var(--scrollbar-thumb-min-size);
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--scrollbar-thumb-bg-color);
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+	background-color: var(--scrollbar-thumb-hover-bg-color);
+}
+
+
+::-webkit-scrollbar-thumb:active {
+	background-color: var(--scrollbar-thumb-active-bg-color);
+}

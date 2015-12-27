@@ -71,4 +71,17 @@
 
 	--settings-light-theme-control: none;
 	--settings-dark-theme-control: inline;
+
+	/* Invalid values to prevent changing the property */
+	--scrollbar-size: null;
+	--scrollbar-button-size: null;
+	--scrollbar-button-display: null;
+	--scrollbar-corner-bg-color: null;
+	--scrollbar-track-bg-color: null;
+	--scrollbar-bar-border: null;
+	--scrollbar-thumb-bg-clip: null;
+	--scrollbar-thumb-min-size: null;
+	--scrollbar-thumb-bg-color: null;
+	--scrollbar-thumb-hover-bg-color: null;
+	--scrollbar-thumb-active-bg-color: null;
 }

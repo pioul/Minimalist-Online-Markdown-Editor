@@ -71,4 +71,16 @@
 
 	--settings-dark-theme-control: none;
 	--settings-light-theme-control: inline;
+
+	--scrollbar-size: 16px;
+	--scrollbar-button-size: 0;
+	--scrollbar-button-display: none;
+	--scrollbar-corner-bg-color: transparent;
+	--scrollbar-track-bg-color: var(--structural-element-color);
+	--scrollbar-bar-border: 2px solid transparent;
+	--scrollbar-thumb-bg-clip: padding-box;
+	--scrollbar-thumb-min-size: 28px;
+	--scrollbar-thumb-bg-color: hsl(0, 0%, 62%);
+	--scrollbar-thumb-hover-bg-color: hsl(0, 0%, 73%);
+	--scrollbar-thumb-active-bg-color: hsl(0, 0%, 77%);
 }
