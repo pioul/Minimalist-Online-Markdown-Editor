@@ -29,6 +29,7 @@ $document.ready(function() {
 		isSyncScrollDisabled: true,
 		isFullscreen: false,
 		activePanel: null,
+		themeSelector: document.getElementById("theme"),
 		
 		// Initiate editor
 		init: function() {
@@ -525,14 +526,13 @@ $document.ready(function() {
 				},
 
 				stylesheets: {
-					themeSelector: document.getElementById("theme"),
 					lightThemeRef: document.getElementById("theme-light-ref"),
 					darkThemeRef: document.getElementById("theme-dark-ref")
 				},
 
 				use: function(theme) {
 					editor.save("theme", theme);
-					this.stylesheets.themeSelector.setAttribute("href", this.stylesheets[theme + "ThemeRef"].getAttribute("data-href"));
+					app.useTheme(this.stylesheets[theme + "ThemeRef"].getAttribute("data-href"));
 				}
 			};
 
