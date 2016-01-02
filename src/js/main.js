@@ -73,6 +73,10 @@ $(document).ready(function() {
 			[editor.markdownSource, $(editor.markdownHtml), editor.markdownPreview].forEach(function(el) {
 				updateElFontSize(el, cssIncrement);
 			});	
+		},
+
+		useTheme: function(stylesheet) {
+			editor.themeSelector.setAttribute("href", stylesheet);
 		}
 
 	};
