@@ -43,6 +43,10 @@ body {
 	background: var(--body-bg-color);
 }
 
+a {
+	color: var(--link-color);
+}
+
 h1, h2, h3, h4, h5, h6 {
 	line-height: 1em;
 }
@@ -90,7 +94,7 @@ table thead {
 }
 
 table tbody tr:nth-child(2n) {
-	background-color: #f8f8f8;
+	background-color: var(--table-row-even-bg-color);
 }
 
 table th, table td {

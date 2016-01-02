@@ -10,11 +10,12 @@
 
 	--main-bg-color: #222;
 
-	/* Elements color properties */
+	/* Elements properties */
 
 	--column-border-color: var(--structural-element-color);
 
 	--body-color: var(--main-text-color);
+	--link-color: var(--main-text-color);
 	--textarea-color: #dee0d2;
 	--body-bg-color: var(--main-bg-color);
 
@@ -66,6 +67,7 @@
 	--quote-border-color: var(--main-element-color);
 	--hr-border-color: var(--main-element-color);
 	--table-border-color: var(--main-element-color);
+	--table-row-even-bg-color: #333;
 	--pre-text-bg-color: var(--main-element-color);
 	--pre-text-highlighted-bg-color: #5b5b5b;
 

@@ -10,11 +10,16 @@
 
 	--main-bg-color: #fff;
 
-	/* Elements color properties */
+	/* Other properties */
+
+	--use-default: null; /* Invalid value to prevent changing the property */
+
+	/* Elements properties */
 
 	--column-border-color: var(--structural-element-color);
 
 	--body-color: var(--main-text-color);
+	--link-color: var(--use-default);
 	--textarea-color: #111;
 	--body-bg-color: var(--main-bg-color);
 
@@ -66,22 +71,22 @@
 	--quote-border-color: var(--main-element-color);
 	--hr-border-color: var(--main-element-color);
 	--table-border-color: var(--main-element-color);
+	--table-row-even-bg-color: #f8f8f8;
 	--pre-text-bg-color: var(--main-element-color);
 	--pre-text-highlighted-bg-color: #d7d7d7;
 
 	--settings-light-theme-control: none;
 	--settings-dark-theme-control: inline;
 
-	/* Invalid values to prevent changing the property */
-	--scrollbar-size: null;
-	--scrollbar-button-size: null;
-	--scrollbar-button-display: null;
-	--scrollbar-corner-bg-color: null;
-	--scrollbar-track-bg-color: null;
-	--scrollbar-bar-border: null;
-	--scrollbar-thumb-bg-clip: null;
-	--scrollbar-thumb-min-size: null;
-	--scrollbar-thumb-bg-color: null;
-	--scrollbar-thumb-hover-bg-color: null;
-	--scrollbar-thumb-active-bg-color: null;
+	--scrollbar-size: var(--use-default);
+	--scrollbar-button-size: var(--use-default);
+	--scrollbar-button-display: var(--use-default);
+	--scrollbar-corner-bg-color: var(--use-default);
+	--scrollbar-track-bg-color: var(--use-default);
+	--scrollbar-bar-border: var(--use-default);
+	--scrollbar-thumb-bg-clip: var(--use-default);
+	--scrollbar-thumb-min-size: var(--use-default);
+	--scrollbar-thumb-bg-color: var(--use-default);
+	--scrollbar-thumb-hover-bg-color: var(--use-default);
+	--scrollbar-thumb-active-bg-color: var(--use-default);
 }
