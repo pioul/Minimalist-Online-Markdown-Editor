@@ -1,21 +1,7 @@
 {
-  "name": "minimalist-online-markdown-editor",
+  "name": "minimalist-markdown-editor",
   "scripts": {
     "build": "gulp"
   },
-  "devDependencies": {
-    "clean-css": "^3.0.7",
-    "del": "^1.1.1",
-    "gulp": "^3.8.10",
-    "gulp-babel": "^5.1.0",
-    "gulp-concat": "^2.4.3",
-    "gulp-cssnext": "^1.0.1",
-    "gulp-html-replace": "^1.4.3",
-    "gulp-rev": "^3.0.0",
-    "gulp-size": "^1.2.0",
-    "path": "^0.11.14",
-    "through2": "^0.6.3",
-    "uglify-js": "^2.4.16",
-    "vinyl-map": "^1.0.1"
-  }
+  "devDependencies": {}
 }
