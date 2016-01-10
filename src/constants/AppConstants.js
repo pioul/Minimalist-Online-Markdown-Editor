@@ -7,7 +7,8 @@
 import keyMirror from 'keymirror';
 
 const ActionTypes = keyMirror({
-  MARKDOWN_SOURCE_UPDATE: null
+  MARKDOWN_SOURCE_UPDATE: null,
+  HTML_UPDATE: null
 });
 
 export { ActionTypes };

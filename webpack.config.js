@@ -41,6 +41,11 @@ var config = {
           'autoprefixer-loader?{browsers: ["last 2 versions", "> 1%", "ie 9", "firefox >= 21", "safari >= 5"], cascade: false}'
         ].join('!'))
       },
+      // Simply allow JSON to be loaded
+      {
+        test: /\.json$/,
+        loader: 'json-loader',
+      }
     ]
   },
 
