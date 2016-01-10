@@ -1,7 +1,27 @@
 {
   "name": "minimalist-markdown-editor",
   "scripts": {
-    "build": "gulp"
+    "build": "webpack -d",
+    "deploy": "webpack -p --optimize-dedupe --config webpack.production.config.js"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-core": "^6.4.0",
+    "babel-loader": "^6.2.1",
+    "babel-plugin-transform-runtime": "^6.4.0",
+    "babel-polyfill": "^6.3.14",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "babel-runtime": "^6.3.19",
+    "clean-webpack-plugin": "^0.1.6",
+    "copy-webpack-plugin": "^0.3.3",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "flux": "^2.1.1",
+    "keymirror": "^0.1.1",
+    "postcss-calc": "^5.2.0",
+    "postcss-custom-properties": "^5.0.0",
+    "react": "^0.14.6",
+    "react-dom": "^0.14.6",
+    "webpack": "^1.12.10"
+  }
 }
