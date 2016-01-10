@@ -6,6 +6,8 @@
  */
 import keyMirror from 'keymirror';
 
-const ActionTypes = keyMirror({});
+const ActionTypes = keyMirror({
+  MARKDOWN_SOURCE_UPDATE: null
+});
 
 export { ActionTypes };

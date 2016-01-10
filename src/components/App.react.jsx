@@ -2,9 +2,12 @@
 
 import React from 'react';
 import AppStore from '../stores/AppStore';
+import MarkdownSource from '../components/MarkdownSource.react.jsx';
 
 function getAppState() {
-  return {};
+  return {
+    markdown: AppStore.getMarkdown()
+  };
 }
 
 class App extends React.Component {
@@ -20,7 +23,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        Hey!
+        <MarkdownSource markdown={this.state.markdown}/>
       </div>
     );
   }
