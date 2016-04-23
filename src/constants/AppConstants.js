@@ -11,4 +11,10 @@ const ActionTypes = keyMirror({
   HTML_UPDATE: null
 });
 
-export { ActionTypes };
+const PanelTypes = keyMirror({
+  MARKDOWN_SOURCE: null,
+  MARKDOWN_PREVIEW: null,
+  HTML_SOURCE: null
+});
+
+export { ActionTypes, PanelTypes };

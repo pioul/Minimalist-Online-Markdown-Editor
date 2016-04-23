@@ -2,13 +2,17 @@
 
 import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { ActionTypes } from '../constants/AppConstants';
+import { ActionTypes, PanelTypes } from '../constants/AppConstants';
 
 var CHANGE_EVENT = 'change';
 
 var state = {
   markdown: '',
-  html: ''
+  html: '',
+
+  appState: {
+    visiblePanels: [PanelTypes.MARKDOWN_SOURCE, PanelTypes.MARKDOWN_PREVIEW]
+  }
 };
 
 var AppStore = Object.assign({}, EventEmitter.prototype, {
@@ -17,7 +21,8 @@ var AppStore = Object.assign({}, EventEmitter.prototype, {
   removeChangeListener: (callback) => AppStore.removeListener(CHANGE_EVENT, callback),
 
   getMarkdown: () => state.markdown,
-  getHtml: () => state.html
+  getHtml: () => state.html,
+  getAppState: () => state.appState
 });
 
 var updateMdSource = (md) => state.markdown = md;

@@ -2,13 +2,14 @@
 
 import React from 'react';
 import AppStore from '../stores/AppStore';
-import MarkdownSource from '../components/MarkdownSource.react.jsx';
-import MarkdownPreview from '../components/MarkdownPreview.react.jsx';
+import Panel from '../components/Panel.react.jsx';
 
 function getAppState() {
   return {
     markdown: AppStore.getMarkdown(),
     html: AppStore.getHtml(),
+
+    appState: AppStore.getAppState()
   };
 }
 
@@ -23,10 +24,12 @@ class App extends React.Component {
   onStoreChange = () => this.setState(getAppState());
 
   render() {
+    var { appState, markdown, html } = this.state;
+
     return (
       <div>
-        <MarkdownSource markdown={this.state.markdown}/>
-        <MarkdownPreview html={this.state.html}/>
+        { appState.visiblePanels.map((panelType) =>
+          <Panel type={panelType} markdown={markdown} html={html} />) }
       </div>
     );
   }
