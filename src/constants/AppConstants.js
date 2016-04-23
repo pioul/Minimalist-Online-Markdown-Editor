@@ -8,7 +8,8 @@ import keyMirror from 'keymirror';
 
 const ActionTypes = keyMirror({
   MARKDOWN_SOURCE_UPDATE: null,
-  HTML_UPDATE: null
+  HTML_UPDATE: null,
+  TOGGLE_FULLSCREEN: null
 });
 
 const PanelTypes = keyMirror({

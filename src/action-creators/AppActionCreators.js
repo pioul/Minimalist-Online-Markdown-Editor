@@ -18,6 +18,13 @@ var AppActionCreators = {
           html: html
         });
       });
+  },
+
+  toggleFullscreen: (panelType) => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.TOGGLE_FULLSCREEN,
+      panelType: panelType
+    });
   }
 };
 
