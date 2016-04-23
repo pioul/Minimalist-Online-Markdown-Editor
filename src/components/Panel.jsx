@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { PanelTypes } from '../constants/AppConstants';
-import TopBar from '../components/TopBar.react.jsx';
-import MarkdownSource from '../components/MarkdownSource.react.jsx';
-import MarkdownPreview from '../components/MarkdownPreview.react.jsx';
-import HtmlSource from '../components/HtmlSource.react.jsx';
+import TopBar from '../components/TopBar.jsx';
+import MarkdownSource from '../components/MarkdownSource.jsx';
+import MarkdownPreview from '../components/MarkdownPreview.jsx';
+import HtmlSource from '../components/HtmlSource.jsx';
 
 class Panel extends React.Component {
   static propTypes = {

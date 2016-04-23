@@ -2,7 +2,7 @@
 
 import React from 'react';
 import AppStore from '../stores/AppStore';
-import Panel from '../components/Panel.react.jsx';
+import Panel from '../components/Panel.jsx';
 
 function getAppState() {
   return {
