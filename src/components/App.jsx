@@ -2,6 +2,9 @@ import React from 'react';
 import AppStore from '../stores/AppStore';
 import Panel from '../components/Panel.jsx';
 
+import './css/global-styles/document-styles.css';
+import styles from './css/App.css';
+
 function getAppState() {
   return {
     markdown: AppStore.getMarkdown(),
@@ -25,7 +28,7 @@ class App extends React.Component {
     var { appState, markdown, html } = this.state;
 
     return (
-      <div>
+      <div className={styles.app}>
         { appState.visiblePanels.map((panelType) =>
           <Panel type={panelType} markdown={markdown} html={html} appState={appState} />) }
       </div>

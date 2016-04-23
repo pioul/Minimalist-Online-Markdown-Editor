@@ -37,7 +37,6 @@ var config = {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract('style-loader', [
           'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
-          'postcss-loader',
           'autoprefixer-loader?{browsers: ["last 2 versions", "> 1%", "ie 9", "firefox >= 21", "safari >= 5"], cascade: false}'
         ].join('!'))
       },
@@ -49,15 +48,6 @@ var config = {
     ]
   },
 
-  // PostCSS plugins
-  // Note: CSS preprocessing comes with limitations, and generally only applies to
-  // what can be determined or calculated ahead of time (e.g. what isn't dependent
-  // on the page's dimensions)
-  postcss: [
-    require('postcss-custom-properties'), // Enable CSS custom props preprocessing
-    require('postcss-calc') // Preprocess calc() functions
-  ],
-
   plugins: [
     // Clean dist
     new CleanPlugin(['dist/**/*.*']),
@@ -66,6 +56,8 @@ var config = {
     new CopyPlugin([
       { from: 'src/index.html' },
       { from: 'src/favicon.ico' },
+      { from: 'src/components/css/global-styles/light-theme-vars.css' },
+      { from: 'src/components/css/global-styles/dark-theme-vars.css' }
     ]),
 
     // Output CSS to a separate, CSS-only bundle
