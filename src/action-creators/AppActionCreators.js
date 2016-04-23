@@ -18,10 +18,16 @@ var AppActionCreators = {
       });
   },
 
-  toggleFullscreen: (panelType) => {
+  makePanelEnterFullscreen: (panelType) => {
     AppDispatcher.dispatch({
-      actionType: ActionTypes.TOGGLE_FULLSCREEN,
+      actionType: ActionTypes.PANEL_ENTER_FULLSCREEN,
       panelType: panelType
+    });
+  },
+
+  makePanelExitFullscreen: () => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.PANEL_EXIT_FULLSCREEN
     });
   },
 

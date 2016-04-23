@@ -13,7 +13,8 @@ class TopBar extends React.Component {
     AppActionCreators.switchPanel(currentPanelType, newPanelType);
   };
 
-  onFullscreenButtonClick = (panelType) => AppActionCreators.toggleFullscreen(panelType);
+  onEnterFullscreenButtonClick = (panelType) => AppActionCreators.makePanelEnterFullscreen(panelType);
+  onExitFullscreenButtonClick = () => AppActionCreators.makePanelExitFullscreen();
 
   getFullscreenTopBarContents = () => {
     return (
@@ -27,7 +28,7 @@ class TopBar extends React.Component {
         <button onClick={this.onPanelSwitchClick.bind(this, PanelTypes.MARKDOWN_PREVIEW)}>
           {PanelNames.MARKDOWN_PREVIEW}
         </button>
-        <button className="icon-fullscreen" onClick={this.onFullscreenButtonClick}/>
+        <button className="icon-fullscreen" onClick={this.onExitFullscreenButtonClick}/>
       </div>
     );
   };
@@ -37,7 +38,7 @@ class TopBar extends React.Component {
       case PanelTypes.MARKDOWN_SOURCE:
         return (
           <button className="icon-fullscreen"
-            onClick={this.onFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_SOURCE)} />
+            onClick={this.onEnterFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_SOURCE)} />
         );
 
       case PanelTypes.MARKDOWN_PREVIEW:
@@ -50,7 +51,7 @@ class TopBar extends React.Component {
               {PanelNames.MARKDOWN_PREVIEW}
             </button>
             <button className="icon-fullscreen"
-              onClick={this.onFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_PREVIEW)} />
+              onClick={this.onEnterFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_PREVIEW)} />
           </div>
         );
 
@@ -64,7 +65,7 @@ class TopBar extends React.Component {
               {PanelNames.MARKDOWN_PREVIEW}
             </button>
             <button className="icon-fullscreen"
-              onClick={this.onFullscreenButtonClick.bind(this, PanelTypes.HTML_SOURCE)} />
+              onClick={this.onEnterFullscreenButtonClick.bind(this, PanelTypes.HTML_SOURCE)} />
           </div>
         );
     }

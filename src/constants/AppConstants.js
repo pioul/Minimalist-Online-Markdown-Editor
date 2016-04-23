@@ -7,7 +7,8 @@ import keyMirror from 'keymirror';
 const ActionTypes = keyMirror({
   MARKDOWN_SOURCE_UPDATE: null,
   HTML_UPDATE: null,
-  TOGGLE_FULLSCREEN: null,
+  PANEL_ENTER_FULLSCREEN: null,
+  PANEL_EXIT_FULLSCREEN: null,
   SWITCH_PANEL: null
 });
 

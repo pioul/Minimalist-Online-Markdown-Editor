@@ -26,24 +26,20 @@ var AppStore = Object.assign({}, EventEmitter.prototype, {
 var updateMdSource = (md) => state.markdown = md;
 var updateHtml = (html) => state.html = html;
 
-var toggleFullscreen = (panelType) => {
-  var isAlreadyFullscreen = state.appState.visiblePanels.length === 1;
+var makePanelEnterFullscreen = (panelType) => state.appState.visiblePanels = [panelType];
+
+var makePanelExitFullscreen = () => {
+  var currentVisiblePanel = state.appState.visiblePanels[0];
   var newVisiblePanels;
 
-  // If not fullscreen already, make that panel fullscreen
-  if (!isAlreadyFullscreen) {
-    newVisiblePanels = [panelType];
-  // If fullscreen already, go back to displaying two panels
-  } else {
-    switch (panelType) {
-      case PanelTypes.MARKDOWN_SOURCE:
-      case PanelTypes.MARKDOWN_PREVIEW:
-        newVisiblePanels = [PanelTypes.MARKDOWN_SOURCE, PanelTypes.MARKDOWN_PREVIEW];
-        break;
-      case PanelTypes.HTML_SOURCE:
-        newVisiblePanels = [PanelTypes.MARKDOWN_SOURCE, PanelTypes.HTML_SOURCE];
-        berak;
-    }
+  switch (currentVisiblePanel) {
+    case PanelTypes.MARKDOWN_SOURCE:
+    case PanelTypes.MARKDOWN_PREVIEW:
+      newVisiblePanels = [PanelTypes.MARKDOWN_SOURCE, PanelTypes.MARKDOWN_PREVIEW];
+      break;
+    case PanelTypes.HTML_SOURCE:
+      newVisiblePanels = [PanelTypes.MARKDOWN_SOURCE, PanelTypes.HTML_SOURCE];
+      break;
   }
 
   state.appState.visiblePanels = newVisiblePanels;
@@ -66,8 +62,12 @@ var onDispatchedPayload = (payload) => {
       updateHtml(payload.html);
       break;
 
-    case ActionTypes.TOGGLE_FULLSCREEN:
-      toggleFullscreen(payload.panelType);
+    case ActionTypes.PANEL_ENTER_FULLSCREEN:
+      makePanelEnterFullscreen(payload.panelType);
+      break;
+
+    case ActionTypes.PANEL_EXIT_FULLSCREEN:
+      makePanelExitFullscreen();
       break;
 
     case ActionTypes.SWITCH_PANEL:
