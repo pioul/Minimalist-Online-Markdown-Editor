@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 import AppStore from '../stores/AppStore';
 import Panel from '../components/Panel.jsx';

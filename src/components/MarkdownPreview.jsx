@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 
 class MarkdownPreview extends React.Component {

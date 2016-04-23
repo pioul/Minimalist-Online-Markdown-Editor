@@ -1,5 +1,3 @@
-'use strict';
-
 import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes, PanelTypes } from '../constants/AppConstants';

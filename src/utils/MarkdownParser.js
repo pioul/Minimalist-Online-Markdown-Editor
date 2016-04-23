@@ -1,5 +1,3 @@
-'use strict';
-
 import MarkdownIt from 'markdown-it';
 
 class MarkdownParser {

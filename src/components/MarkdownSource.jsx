@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 import AppActionCreators from '../action-creators/AppActionCreators';
 

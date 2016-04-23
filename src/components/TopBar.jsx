@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 import { PanelTypes } from '../constants/AppConstants';
 import AppActionCreators from '../action-creators/AppActionCreators';

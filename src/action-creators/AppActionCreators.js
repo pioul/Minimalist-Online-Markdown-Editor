@@ -1,5 +1,3 @@
-'use strict';
-
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes } from '../constants/AppConstants';
 import MarkdownParser from '../utils/MarkdownParser';
