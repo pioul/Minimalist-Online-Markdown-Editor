@@ -9,7 +9,8 @@ class Panel extends React.Component {
   static propTypes = {
     type: React.PropTypes.string.isRequired,
     markdown: React.PropTypes.string.isRequired,
-    html: React.PropTypes.string.isRequired
+    html: React.PropTypes.string.isRequired,
+    appState: React.PropTypes.object.isRequired
   };
 
   render() {

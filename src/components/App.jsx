@@ -27,7 +27,7 @@ class App extends React.Component {
     return (
       <div>
         { appState.visiblePanels.map((panelType) =>
-          <Panel type={panelType} markdown={markdown} html={html} />) }
+          <Panel type={panelType} markdown={markdown} html={html} appState={appState} />) }
       </div>
     );
   }

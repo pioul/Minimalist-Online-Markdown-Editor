@@ -7,7 +7,8 @@ import keyMirror from 'keymirror';
 const ActionTypes = keyMirror({
   MARKDOWN_SOURCE_UPDATE: null,
   HTML_UPDATE: null,
-  TOGGLE_FULLSCREEN: null
+  TOGGLE_FULLSCREEN: null,
+  SWITCH_PANEL: null
 });
 
 const PanelTypes = keyMirror({
@@ -16,4 +17,10 @@ const PanelTypes = keyMirror({
   HTML_SOURCE: null
 });
 
-export { ActionTypes, PanelTypes };
+const PanelNames = {
+  MARKDOWN_SOURCE: 'Markdown',
+  MARKDOWN_PREVIEW: 'Preview',
+  HTML_SOURCE: 'HTML'
+};
+
+export { ActionTypes, PanelTypes, PanelNames };

@@ -49,6 +49,11 @@ var toggleFullscreen = (panelType) => {
   state.appState.visiblePanels = newVisiblePanels;
 };
 
+var switchPanel = (currentPanelType, newPanelType) => {
+  var visiblePanelIndex = state.appState.visiblePanels.indexOf(currentPanelType);
+  state.appState.visiblePanels[visiblePanelIndex] = newPanelType;
+};
+
 var onDispatchedPayload = (payload) => {
   var isPayloadInteresting = true;
 
@@ -63,6 +68,10 @@ var onDispatchedPayload = (payload) => {
 
     case ActionTypes.TOGGLE_FULLSCREEN:
       toggleFullscreen(payload.panelType);
+      break;
+
+    case ActionTypes.SWITCH_PANEL:
+      switchPanel(payload.currentPanelType, payload.newPanelType);
       break;
 
     default:

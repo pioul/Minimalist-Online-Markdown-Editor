@@ -7,7 +7,7 @@ class HtmlSource extends React.Component {
 
   render() {
     return (
-      <textarea value={this.props.html} />
+      <textarea value={this.props.html} readOnly />
     );
   }
 }

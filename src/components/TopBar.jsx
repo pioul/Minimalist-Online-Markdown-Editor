@@ -1,45 +1,81 @@
 import React from 'react';
-import { PanelTypes } from '../constants/AppConstants';
+import { PanelTypes, PanelNames } from '../constants/AppConstants';
 import AppActionCreators from '../action-creators/AppActionCreators';
 
 class TopBar extends React.Component {
   static propTypes = {
-    type: React.PropTypes.string.isRequired
+    type: React.PropTypes.string.isRequired,
+    appState: React.PropTypes.object.isRequired
+  };
+
+  onPanelSwitchClick = (newPanelType) => {
+    var currentPanelType = this.props.type;
+    AppActionCreators.switchPanel(currentPanelType, newPanelType);
   };
 
   onFullscreenButtonClick = (panelType) => AppActionCreators.toggleFullscreen(panelType);
 
-  render() {
-    var topBarContents;
+  getFullscreenTopBarContents = () => {
+    return (
+      <div>
+        <button onClick={this.onPanelSwitchClick.bind(this, PanelTypes.MARKDOWN_SOURCE)}>
+          {PanelNames.MARKDOWN_SOURCE}
+        </button>
+        <button onClick={this.onPanelSwitchClick.bind(this, PanelTypes.HTML_SOURCE)}>
+          {PanelNames.HTML_SOURCE}
+        </button>
+        <button onClick={this.onPanelSwitchClick.bind(this, PanelTypes.MARKDOWN_PREVIEW)}>
+          {PanelNames.MARKDOWN_PREVIEW}
+        </button>
+        <button className="icon-fullscreen" onClick={this.onFullscreenButtonClick}/>
+      </div>
+    );
+  };
 
-    switch (this.props.type) {
+  getPaneledTopbarContents = (topBarPlacement) => {
+    switch (topBarPlacement) {
       case PanelTypes.MARKDOWN_SOURCE:
-        topBarContents = (
+        return (
           <button className="icon-fullscreen"
             onClick={this.onFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_SOURCE)} />
         );
-        break;
 
       case PanelTypes.MARKDOWN_PREVIEW:
-        topBarContents = (
-          <button className="icon-fullscreen"
-            onClick={this.onFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_PREVIEW)} />
+        return (
+          <div>
+            <button onClick={this.onPanelSwitchClick.bind(this, PanelTypes.HTML_SOURCE)}>
+              {PanelNames.HTML_SOURCE}
+            </button>
+            <button onClick={this.onPanelSwitchClick.bind(this, PanelTypes.MARKDOWN_PREVIEW)}>
+              {PanelNames.MARKDOWN_PREVIEW}
+            </button>
+            <button className="icon-fullscreen"
+              onClick={this.onFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_PREVIEW)} />
+          </div>
         );
-        break;
 
       case PanelTypes.HTML_SOURCE:
-        topBarContents = (
-          <button className="icon-fullscreen"
-            onClick={this.onFullscreenButtonClick.bind(this, PanelTypes.HTML_SOURCE)} />
+        return (
+          <div>
+            <button onClick={this.onPanelSwitchClick.bind(this, PanelTypes.HTML_SOURCE)}>
+              {PanelNames.HTML_SOURCE}
+            </button>
+            <button onClick={this.onPanelSwitchClick.bind(this, PanelTypes.MARKDOWN_PREVIEW)}>
+              {PanelNames.MARKDOWN_PREVIEW}
+            </button>
+            <button className="icon-fullscreen"
+              onClick={this.onFullscreenButtonClick.bind(this, PanelTypes.HTML_SOURCE)} />
+          </div>
         );
-        break;
     }
+  };
 
-    return (
-      <div>
-        {topBarContents}
-      </div>
-    );
+  render() {
+    var isFullscreen = this.props.appState.visiblePanels.length === 1;
+
+    return isFullscreen ?
+      this.getFullscreenTopBarContents() :
+      this.getPaneledTopbarContents(this.props.type);
   }
 }
 

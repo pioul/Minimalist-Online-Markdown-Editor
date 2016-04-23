@@ -23,6 +23,14 @@ var AppActionCreators = {
       actionType: ActionTypes.TOGGLE_FULLSCREEN,
       panelType: panelType
     });
+  },
+
+  switchPanel: (currentPanelType, newPanelType) => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.SWITCH_PANEL,
+      currentPanelType: currentPanelType,
+      newPanelType: newPanelType
+    });
   }
 };
 
