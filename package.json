@@ -1,8 +1,8 @@
 {
   "name": "minimalist-markdown-editor",
   "scripts": {
-    "build": "webpack -d",
-    "deploy": "webpack -p --optimize-dedupe --config webpack.production.config.js"
+    "watch": "webpack -d --progress --colors --watch",
+    "build": "webpack -p --optimize-dedupe --config webpack.production.config.js"
   },
   "devDependencies": {
     "babel-core": "^6.4.0",
