@@ -1,5 +1,7 @@
 import React from 'react';
 
+import styles from './css/HtmlSource.css';
+
 class HtmlSource extends React.Component {
   static propTypes = {
     html: React.PropTypes.string.isRequired
@@ -7,7 +9,7 @@ class HtmlSource extends React.Component {
 
   render() {
     return (
-      <textarea value={this.props.html} readOnly />
+      <textarea className={styles.textarea} value={this.props.html} readOnly />
     );
   }
 }

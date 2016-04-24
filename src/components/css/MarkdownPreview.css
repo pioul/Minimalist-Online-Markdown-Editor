@@ -1,0 +1,6 @@
+.preview {
+  flex: 1;
+  word-wrap: break-word;
+  line-height: normal;
+  overflow: auto;
+}

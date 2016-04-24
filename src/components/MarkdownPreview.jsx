@@ -1,5 +1,7 @@
 import React from 'react';
 
+import styles from './css/MarkdownPreview.css';
+
 class MarkdownPreview extends React.Component {
   static propTypes = {
     html: React.PropTypes.string.isRequired
@@ -9,7 +11,7 @@ class MarkdownPreview extends React.Component {
 
   render() {
     return (
-      <div dangerouslySetInnerHTML={this.createPreviewMarkup()} />
+      <div className={styles.preview} dangerouslySetInnerHTML={this.createPreviewMarkup()} />
     );
   }
 }

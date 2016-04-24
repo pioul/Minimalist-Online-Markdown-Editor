@@ -1,6 +1,8 @@
 import React from 'react';
 import AppActionCreators from '../action-creators/AppActionCreators';
 
+import styles from './css/MarkdownSource.css';
+
 class MarkdownSource extends React.Component {
   onInput = (e) => AppActionCreators.updateMdSource(e.target.value);
 
@@ -10,7 +12,7 @@ class MarkdownSource extends React.Component {
 
   render() {
     return (
-      <textarea value={this.props.markdown} onChange={this.onInput} />
+      <textarea className={styles.textarea} value={this.props.markdown} onChange={this.onInput} />
     );
   }
 }

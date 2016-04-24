@@ -37,8 +37,10 @@ class TopBar extends React.Component {
     switch (topBarPlacement) {
       case PanelTypes.MARKDOWN_SOURCE:
         return (
-          <button className="icon-fullscreen"
-            onClick={this.onEnterFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_SOURCE)} />
+          <div>
+            <button className="icon-fullscreen"
+              onClick={this.onEnterFullscreenButtonClick.bind(this, PanelTypes.MARKDOWN_SOURCE)} />
+          </div>
         );
 
       case PanelTypes.MARKDOWN_PREVIEW:

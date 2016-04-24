@@ -1,0 +1,21 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  float: left;
+  width: 50%;
+  height: 100%;
+  padding: 22px 0 20px 9px;
+}
+
+.panel:first-child:not(:last-child) {
+  border-right: 1px solid var(--column-border-color);
+}
+
+.panel:last-child:not(:first-child) {
+  border-left: 1px solid var(--column-border-color);
+}
+
+.panel:first-child:last-child {
+  width: 100%;
+}

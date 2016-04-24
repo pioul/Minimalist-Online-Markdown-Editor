@@ -5,6 +5,8 @@ import MarkdownSource from '../components/MarkdownSource.jsx';
 import MarkdownPreview from '../components/MarkdownPreview.jsx';
 import HtmlSource from '../components/HtmlSource.jsx';
 
+import styles from '../components/css/Panel.css';
+
 class Panel extends React.Component {
   static propTypes = {
     type: React.PropTypes.string.isRequired,
@@ -31,12 +33,9 @@ class Panel extends React.Component {
     }
 
     return (
-      <div>
-        <div>
-          <TopBar {...this.props}/>
-
-          {panelContents}
-        </div>
+      <div className={styles.panel}>
+        <TopBar {...this.props}/>
+        {panelContents}
       </div>
     );
   }

@@ -1,0 +1,5 @@
+.textarea {
+  composes: textarea from './Textarea.css';
+
+  flex: 1;
+}
