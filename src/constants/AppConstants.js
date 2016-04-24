@@ -24,4 +24,10 @@ const PanelNames = {
   HTML_SOURCE: 'HTML'
 };
 
-export { ActionTypes, PanelTypes, PanelNames };
+const TopBarButtonTypes = keyMirror({
+  PANEL_SWITCH: null,
+  FULLSCREEN_ON: null,
+  FULLSCREEN_OFF: null
+});
+
+export { ActionTypes, PanelTypes, PanelNames, TopBarButtonTypes };

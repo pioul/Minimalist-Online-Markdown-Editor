@@ -41,10 +41,9 @@ var config = {
         ].join('!'))
       },
       // Simply allow JSON to be loaded
-      {
-        test: /\.json$/,
-        loader: 'json-loader',
-      }
+      { test: /\.json$/, loader: 'json-loader' },
+      // Load font icon files and embed them as data uris
+      { test: /\.(woff|ttf|eot|svg)$/, loader: 'url-loader' }
     ]
   },
 

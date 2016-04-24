@@ -38,7 +38,7 @@
 	--top-bar-button-color: var(--secondary-text-color);
 	--top-bar-button-bg-color: var(--structural-element-color);
 	--top-bar-button-active-bg-color: var(--main-element-color);
-	--top-bar-button-enabled-border-color: var(--energetic-element-color);
+	--top-bar-button-selected-border-color: var(--energetic-element-color);
 
 	--top-bar-arrow-bg-color: #eaeaea;
 	--top-bar-arrow-active-bg-color: #e1e1e1;

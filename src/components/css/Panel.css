@@ -1,4 +1,5 @@
 .panel {
+  position: relative;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -18,4 +19,11 @@
 
 .panel:first-child:last-child {
   width: 100%;
+}
+
+.topbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
 }

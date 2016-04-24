@@ -34,7 +34,7 @@ class Panel extends React.Component {
 
     return (
       <div className={styles.panel}>
-        <TopBar {...this.props}/>
+        <TopBar className={styles.topbar} {...this.props}/>
         {panelContents}
       </div>
     );
