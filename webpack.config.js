@@ -36,7 +36,7 @@ var config = {
       {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract('style-loader', [
-          'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+          'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]&-minifyFontValues',
           'autoprefixer-loader?{browsers: ["last 2 versions", "> 1%", "ie 9", "firefox >= 21", "safari >= 5"], cascade: false}'
         ].join('!'))
       },
