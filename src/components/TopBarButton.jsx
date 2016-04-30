@@ -1,5 +1,5 @@
 import React from 'react';
-import { PanelNames, TopBarButtonTypes } from '../constants/AppConstants';
+import { PanelNames, TopBarButtonTypes, TopPanelNames } from '../constants/AppConstants';
 import AppActionCreators from '../action-creators/AppActionCreators';
 
 import styles from '../components/css/TopBarButton.css';
@@ -7,16 +7,19 @@ import styles from '../components/css/TopBarButton.css';
 class TopBarButton extends React.Component {
   static propTypes = {
     type: React.PropTypes.string.isRequired,
+    appState: React.PropTypes.object.isRequired,
     panelType: React.PropTypes.string,
-    targetPanelType: React.PropTypes.string
+    targetPanelType: React.PropTypes.string,
+    topPanelType: React.PropTypes.string
   };
 
   onPanelSwitchClick = () => AppActionCreators.switchPanel(this.props.panelType, this.props.targetPanelType);
   onEnterFullscreenButtonClick = () => AppActionCreators.makePanelEnterFullscreen(this.props.panelType);
   onExitFullscreenButtonClick = () => AppActionCreators.makePanelExitFullscreen();
+  onTopPanelToggleButtonClick = () => AppActionCreators.toggleTopPanel(this.props.topPanelType);
 
   render() {
-    var { type: buttonType, panelType, targetPanelType } = this.props;
+    var { type: buttonType, appState, panelType, targetPanelType, topPanelType } = this.props;
     var buttonClassName;
 
     switch (buttonType) {
@@ -37,6 +40,16 @@ class TopBarButton extends React.Component {
         return (
           <button className={styles.selectedFullscreenIconButton} title="Exit fullscreen"
             onClick={this.onExitFullscreenButtonClick}/>
+        );
+
+      case TopBarButtonTypes.TOP_PANEL_TOGGLE:
+        buttonClassName =
+          appState.visibleTopPanel === topPanelType ? styles.selectedButton : styles.button;
+
+        return (
+          <button className={buttonClassName} onClick={this.onTopPanelToggleButtonClick}>
+            {TopPanelNames[topPanelType]}
+          </button>
         );
     }
   }

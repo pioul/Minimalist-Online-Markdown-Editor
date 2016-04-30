@@ -1,18 +1,11 @@
+import './css/global-styles/document-styles.css'; // Order of this import matters
+import styles from './css/App.css';
+
 import React from 'react';
 import AppStore from '../stores/AppStore';
 import Panel from '../components/Panel.jsx';
 
-import './css/global-styles/document-styles.css';
-import styles from './css/App.css';
-
-function getAppState() {
-  return {
-    markdown: AppStore.getMarkdown(),
-    html: AppStore.getHtml(),
-
-    appState: AppStore.getAppState()
-  };
-}
+var getAppState = () => AppStore.getState();
 
 class App extends React.Component {
   constructor(props) {
@@ -25,12 +18,13 @@ class App extends React.Component {
   onStoreChange = () => this.setState(getAppState());
 
   render() {
-    var { appState, markdown, html } = this.state;
+    var { appState, markdown, html, caretPos } = this.state;
 
     return (
       <div className={styles.app}>
         { appState.visiblePanels.map((panelType) =>
-          <Panel type={panelType} markdown={markdown} html={html} appState={appState} />) }
+          <Panel type={panelType} markdown={markdown} html={html}
+            caretPos={caretPos} appState={appState} />) }
       </div>
     );
   }

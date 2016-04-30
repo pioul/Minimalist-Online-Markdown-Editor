@@ -4,15 +4,28 @@ import AppActionCreators from '../action-creators/AppActionCreators';
 import styles from './css/MarkdownSource.css';
 
 class MarkdownSource extends React.Component {
-  onInput = (e) => AppActionCreators.updateMdSource(e.target.value);
-
   static propTypes = {
-    markdown: React.PropTypes.string.isRequired
+    markdown: React.PropTypes.string.isRequired,
+    caretPos: React.PropTypes.array.isRequired
+  };
+
+  componentDidUpdate() {
+    this.refs.textarea.setSelectionRange(...this.props.caretPos);
+    this.refs.textarea.focus();
+  }
+
+  onInput = (e) => {
+    var textarea = e.target;
+    var markdown = textarea.value;
+    var caretPos = [textarea.selectionStart, textarea.selectionEnd];
+
+    AppActionCreators.updateMarkdown(markdown, caretPos);
   };
 
   render() {
     return (
-      <textarea className={styles.textarea} value={this.props.markdown} onChange={this.onInput} />
+      <textarea className={styles.textarea} ref="textarea"
+        value={this.props.markdown} onChange={this.onInput} />
     );
   }
 }

@@ -1,0 +1,38 @@
+.topPanel {
+  position: relative;
+  padding: 10px 20px;
+  background: var(--top-panel-bg-color);
+  border-bottom: 2px solid var(--top-panel-border-color);
+}
+
+.closeButton {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	width: 14px;
+	height: 14px;
+  padding: 0;
+	line-height: 14px;
+	font-size: 14px;
+	text-align: center;
+	color: var(--top-panel-close-color);
+	cursor: pointer;
+	border-radius: 7px;
+  border: 0;
+  background: transparent;
+}
+
+.closeButton::before {
+  content: "×";
+  position: relative;
+  top: -1px;
+}
+
+.closeButton:hover {
+	color: var(--top-panel-close-hover-color);
+	background: var(--top-panel-close-hover-bg-color);
+}
+
+.closeButton:focus {
+	outline: none;
+}

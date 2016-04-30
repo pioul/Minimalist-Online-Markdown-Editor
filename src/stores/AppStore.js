@@ -1,15 +1,18 @@
 import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes, PanelTypes } from '../constants/AppConstants';
+import AppActionCreators from '../action-creators/AppActionCreators';
 
 var CHANGE_EVENT = 'change';
 
 var state = {
   markdown: '',
   html: '',
+  caretPos: [0, 0],
 
   appState: {
-    visiblePanels: [PanelTypes.MARKDOWN_SOURCE, PanelTypes.MARKDOWN_PREVIEW]
+    visiblePanels: [PanelTypes.MARKDOWN_SOURCE, PanelTypes.MARKDOWN_PREVIEW],
+    visibleTopPanel: null
   }
 };
 
@@ -18,13 +21,22 @@ var AppStore = Object.assign({}, EventEmitter.prototype, {
   addChangeListener: (callback) => AppStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => AppStore.removeListener(CHANGE_EVENT, callback),
 
-  getMarkdown: () => state.markdown,
-  getHtml: () => state.html,
-  getAppState: () => state.appState
+  getState: () => state
 });
 
-var updateMdSource = (md) => state.markdown = md;
+var updateMarkdown = (md, caretPos) => {
+  state.markdown = md;
+  state.caretPos = caretPos;
+};
+
 var updateHtml = (html) => state.html = html;
+
+var appendToMarkdownSource = (markdown) => {
+  state.markdown += markdown;
+  state.caretPos = [state.markdown.length, state.markdown.length];
+
+  AppActionCreators.parseMarkdown(state.markdown);
+};
 
 var makePanelEnterFullscreen = (panelType) => state.appState.visiblePanels = [panelType];
 
@@ -50,16 +62,35 @@ var switchPanel = (currentPanelType, newPanelType) => {
   state.appState.visiblePanels[visiblePanelIndex] = newPanelType;
 };
 
+var toggleTopPanel = (topPanelType) => {
+  var shouldDisableTopPanel = state.appState.visibleTopPanel === topPanelType;
+
+  if (shouldDisableTopPanel) disableTopPanel();
+    else enableTopPanel(topPanelType);
+};
+
+var enableTopPanel = (topPanelType) => {
+  state.appState.visibleTopPanel = topPanelType;
+};
+
+var disableTopPanel = () => {
+  state.appState.visibleTopPanel = null;
+};
+
 var onDispatchedPayload = (payload) => {
   var isPayloadInteresting = true;
 
   switch(payload.actionType) {
-    case ActionTypes.MARKDOWN_SOURCE_UPDATE:
-      updateMdSource(payload.md);
+    case ActionTypes.MARKDOWN_UPDATED:
+      updateMarkdown(payload.md, payload.caretPos);
       break;
 
-    case ActionTypes.HTML_UPDATE:
+    case ActionTypes.MARKDOWN_PARSED:
       updateHtml(payload.html);
+      break;
+
+    case ActionTypes.APPEND_TO_MARKDOWN_SOURCE:
+      appendToMarkdownSource(payload.markdown);
       break;
 
     case ActionTypes.PANEL_ENTER_FULLSCREEN:
@@ -72,6 +103,14 @@ var onDispatchedPayload = (payload) => {
 
     case ActionTypes.SWITCH_PANEL:
       switchPanel(payload.currentPanelType, payload.newPanelType);
+      break;
+
+    case ActionTypes.TOGGLE_TOP_PANEL:
+      toggleTopPanel(payload.topPanelType);
+      break;
+
+    case ActionTypes.DISABLE_TOP_PANEL:
+      disableTopPanel();
       break;
 
     default:

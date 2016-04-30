@@ -3,8 +3,8 @@
   box-sizing: border-box;
   width: 100%;
   resize: none;
-  margin: 0;
-  padding: 5px 0 0;
+  margin: 5px 0 0 9px;
+  padding: 0;
   border: 0;
   -moz-tab-size: 4;
   -o-tab-size: 4;

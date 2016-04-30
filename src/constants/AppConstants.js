@@ -5,11 +5,14 @@
 import keyMirror from 'keymirror';
 
 const ActionTypes = keyMirror({
-  MARKDOWN_SOURCE_UPDATE: null,
-  HTML_UPDATE: null,
+  MARKDOWN_UPDATED: null,
+  MARKDOWN_PARSED: null,
   PANEL_ENTER_FULLSCREEN: null,
   PANEL_EXIT_FULLSCREEN: null,
-  SWITCH_PANEL: null
+  SWITCH_PANEL: null,
+  TOGGLE_TOP_PANEL: null,
+  DISABLE_TOP_PANEL: null,
+  APPEND_TO_MARKDOWN_SOURCE: null
 });
 
 const PanelTypes = keyMirror({
@@ -27,7 +30,18 @@ const PanelNames = {
 const TopBarButtonTypes = keyMirror({
   PANEL_SWITCH: null,
   FULLSCREEN_ON: null,
-  FULLSCREEN_OFF: null
+  FULLSCREEN_OFF: null,
+  TOP_PANEL_TOGGLE: null
 });
 
-export { ActionTypes, PanelTypes, PanelNames, TopBarButtonTypes };
+const TopPanelTypes = keyMirror({
+  QUICK_REFERENCE: null,
+  ABOUT: null
+});
+
+const TopPanelNames = {
+  QUICK_REFERENCE: 'Quick Reference',
+  ABOUT: 'About'
+};
+
+export { ActionTypes, PanelTypes, PanelNames, TopBarButtonTypes, TopPanelTypes, TopPanelNames };

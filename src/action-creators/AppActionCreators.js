@@ -3,16 +3,21 @@ import { ActionTypes } from '../constants/AppConstants';
 import MarkdownParser from '../utils/MarkdownParser';
 
 var AppActionCreators = {
-  updateMdSource: (md) => {
+  updateMarkdown: (md, caretPos) => {
     AppDispatcher.dispatch({
-      actionType: ActionTypes.MARKDOWN_SOURCE_UPDATE,
-      md: md
+      actionType: ActionTypes.MARKDOWN_UPDATED,
+      md: md,
+      caretPos: caretPos
     });
 
+    AppActionCreators.parseMarkdown(md);
+  },
+
+  parseMarkdown: (md) => {
     MarkdownParser.render(md)
       .then((html) => {
         AppDispatcher.dispatch({
-          actionType: ActionTypes.HTML_UPDATE,
+          actionType: ActionTypes.MARKDOWN_PARSED,
           html: html
         });
       });
@@ -36,6 +41,26 @@ var AppActionCreators = {
       actionType: ActionTypes.SWITCH_PANEL,
       currentPanelType: currentPanelType,
       newPanelType: newPanelType
+    });
+  },
+
+  toggleTopPanel: (topPanelType) => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.TOGGLE_TOP_PANEL,
+      topPanelType: topPanelType
+    });
+  },
+
+  disableTopPanel: () => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.DISABLE_TOP_PANEL
+    });
+  },
+
+  appendToMarkdownSource: (markdown) => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.APPEND_TO_MARKDOWN_SOURCE,
+      markdown: markdown
     });
   }
 };

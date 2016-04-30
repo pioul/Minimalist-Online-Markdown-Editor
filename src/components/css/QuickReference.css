@@ -1,0 +1,35 @@
+.quickReference table,
+.p {
+	font-size: 12px;
+	line-height: 1.25em;
+}
+
+.p {
+  margin-bottom: 0;
+}
+
+.quickReference table tbody tr {
+	background: transparent;
+}
+
+.quickReference table tbody td {
+	padding: 1px 0;
+	border: 0;
+}
+
+.quickReference table tbody td:first-child {
+	cursor: pointer;
+}
+
+.quickReference table tbody td:last-child {
+	padding-left: 20px;
+}
+
+.quickReference table tbody td pre,
+.quickReference table td p {
+	margin: 0;
+}
+
+.highlightedCode {
+	background: var(--pre-text-highlighted-bg-color);
+}
