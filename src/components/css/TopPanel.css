@@ -6,20 +6,11 @@
 }
 
 .closeButton {
-	position: absolute;
-	top: 15px;
-	right: 15px;
-	width: 14px;
-	height: 14px;
-  padding: 0;
-	line-height: 14px;
-	font-size: 14px;
-	text-align: center;
-	color: var(--top-panel-close-color);
-	cursor: pointer;
-	border-radius: 7px;
-  border: 0;
-  background: transparent;
+  composes: closeButton from './CloseButton.css';
+
+  top: 15px;
+  right: 15px;
+  color: var(--top-panel-close-color);
 }
 
 .closeButton::before {
@@ -29,10 +20,10 @@
 }
 
 .closeButton:hover {
-	color: var(--top-panel-close-hover-color);
-	background: var(--top-panel-close-hover-bg-color);
+  color: var(--top-panel-close-hover-color);
+  background: var(--top-panel-close-hover-bg-color);
 }
 
 .closeButton:focus {
-	outline: none;
+  outline: none;
 }

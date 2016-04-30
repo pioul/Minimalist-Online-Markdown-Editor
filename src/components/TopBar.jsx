@@ -1,6 +1,7 @@
 import React from 'react';
 import { PanelTypes, TopBarButtonTypes, TopPanelTypes } from '../constants/AppConstants';
 import TopBarButton from '../components/TopBarButton.jsx';
+import FileMenu from '../components/FileMenu.jsx';
 
 import styles from '../components/css/TopBar.css';
 
@@ -8,6 +9,8 @@ class TopBar extends React.Component {
   static propTypes = {
     type: React.PropTypes.string.isRequired,
     appState: React.PropTypes.object.isRequired,
+    files: React.PropTypes.array.isRequired,
+    activeFile: React.PropTypes.object.isRequired,
     className: React.PropTypes.string
   };
 
@@ -28,6 +31,7 @@ class TopBar extends React.Component {
             targetPanelType={PanelTypes.MARKDOWN_PREVIEW} appState={this.props.appState}/>
           <TopBarButton type={TopBarButtonTypes.FULLSCREEN_OFF} appState={this.props.appState}/>
         </div>
+        <FileMenu files={this.props.files} activeFile={this.props.activeFile}/>
       </div>
     );
   };
@@ -50,6 +54,7 @@ class TopBar extends React.Component {
               <TopBarButton type={TopBarButtonTypes.FULLSCREEN_ON}
                 panelType={this.props.type} appState={this.props.appState}/>
             </div>
+            <FileMenu files={this.props.files} activeFile={this.props.activeFile}/>
           </div>
         );
 

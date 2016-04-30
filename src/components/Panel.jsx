@@ -14,7 +14,9 @@ class Panel extends React.Component {
     markdown: React.PropTypes.string.isRequired,
     html: React.PropTypes.string.isRequired,
     caretPos: React.PropTypes.array.isRequired,
-    appState: React.PropTypes.object.isRequired
+    appState: React.PropTypes.object.isRequired,
+    files: React.PropTypes.array.isRequired,
+    activeFile: React.PropTypes.object.isRequired
   };
 
   render() {

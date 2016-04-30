@@ -1,0 +1,75 @@
+.fileMenuItem {
+  position: relative;
+  display: inline-block;
+  height: 18px;
+  margin-right: 1px;
+  padding: 2px 20px 0 8px;
+  color: var(--file-menu-item-color);
+  font-size: 11px;
+  line-height: 18px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.fileMenuItem:last-of-type {
+  margin-right: 0;
+}
+
+.activeFileMenuItem {
+  composes: fileMenuItem;
+
+  border-bottom-color: var(--file-menu-item-enabled-border-color);
+}
+
+.fileMenuItem::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: -1px;
+  bottom: 2px;
+  width: 1px;
+  background: var(--file-menu-item-border-color);
+}
+
+.fileMenuItem:last-of-type::before {
+  content: none;
+}
+
+.fileName {
+  position: relative;
+  z-index: -1; /* Place .filename under .file-menu-item for click events to only fire on .file-menu-item; creating other stacking contexts around here or changing these properties might break the file menu on the JS side. */
+}
+
+.closeButton {
+  composes: closeButton from './CloseButton.css';
+
+  top: 5px;
+  right: 4px;
+  width: 13px;
+  height: 13px;
+  line-height: 12px;
+  font-size: 13px;
+  color: var(--file-menu-item-close-color);
+  text-indent: -1px;
+}
+
+.closeButton:hover {
+  color: var(--file-menu-item-close-hover-color);
+  background: var(--file-menu-item-close-hover-bg-color);
+}
+
+.dirtyFileCloseButton {
+  composes: closeButton;
+}
+
+.dirtyFileCloseButton:not(:hover)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 5px;
+  background: var(--file-menu-item-edited-close-bg-color);
+  border: 4px solid var(--file-menu-item-edited-close-border-color);
+  border-radius: 6.5px;
+}

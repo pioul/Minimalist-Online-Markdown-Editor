@@ -6,6 +6,7 @@ import FileActionCreators from '../action-creators/FileActionCreators';
 var CHANGE_EVENT = 'change';
 
 var getNewFile = () => ({
+  name: null,
   markdown: '',
   html: '',
   caretPos: [0, 0]

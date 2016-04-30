@@ -1,0 +1,6 @@
+.fileMenu {
+  position: relative;
+  margin-right: 10px;
+  overflow: hidden;
+  white-space: nowrap;
+}
