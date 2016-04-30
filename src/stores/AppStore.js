@@ -6,10 +6,6 @@ import AppActionCreators from '../action-creators/AppActionCreators';
 var CHANGE_EVENT = 'change';
 
 var state = {
-  markdown: '',
-  html: '',
-  caretPos: [0, 0],
-
   appState: {
     visiblePanels: [PanelTypes.MARKDOWN_SOURCE, PanelTypes.MARKDOWN_PREVIEW],
     visibleTopPanel: null
@@ -21,22 +17,8 @@ var AppStore = Object.assign({}, EventEmitter.prototype, {
   addChangeListener: (callback) => AppStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => AppStore.removeListener(CHANGE_EVENT, callback),
 
-  getState: () => state
+  getAppState: () => state.appState
 });
-
-var updateMarkdown = (md, caretPos) => {
-  state.markdown = md;
-  state.caretPos = caretPos;
-};
-
-var updateHtml = (html) => state.html = html;
-
-var appendToMarkdownSource = (markdown) => {
-  state.markdown += markdown;
-  state.caretPos = [state.markdown.length, state.markdown.length];
-
-  AppActionCreators.parseMarkdown(state.markdown);
-};
 
 var makePanelEnterFullscreen = (panelType) => state.appState.visiblePanels = [panelType];
 
@@ -81,18 +63,6 @@ var onDispatchedPayload = (payload) => {
   var isPayloadInteresting = true;
 
   switch(payload.actionType) {
-    case ActionTypes.MARKDOWN_UPDATED:
-      updateMarkdown(payload.md, payload.caretPos);
-      break;
-
-    case ActionTypes.MARKDOWN_PARSED:
-      updateHtml(payload.html);
-      break;
-
-    case ActionTypes.APPEND_TO_MARKDOWN_SOURCE:
-      appendToMarkdownSource(payload.markdown);
-      break;
-
     case ActionTypes.PANEL_ENTER_FULLSCREEN:
       makePanelEnterFullscreen(payload.panelType);
       break;

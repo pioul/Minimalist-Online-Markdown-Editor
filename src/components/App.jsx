@@ -3,22 +3,38 @@ import styles from './css/App.css';
 
 import React from 'react';
 import AppStore from '../stores/AppStore';
+import FileStore from '../stores/FileStore';
 import Panel from '../components/Panel.jsx';
 
-var getAppState = () => AppStore.getState();
+var getAppStoreState = () => ({ appState: AppStore.getAppState() });
+var getFileStoreState = () => ({ fileState: FileStore.getState() });
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = getAppState();
+
+    this.state = Object.assign({},
+      getAppStoreState(),
+      getFileStoreState()
+    );
   }
 
-  componentDidMount = () => AppStore.addChangeListener(this.onStoreChange);
-  componentWillUnmount = () => AppStore.removeChangeListener(this.onStoreChange);
-  onStoreChange = () => this.setState(getAppState());
+  componentDidMount = () => {
+    AppStore.addChangeListener(this.onAppStoreChange);
+    FileStore.addChangeListener(this.onFileStoreChange);
+  };
+
+  componentWillUnmount = () => {
+    AppStore.removeChangeListener(this.onAppStoreChange);
+    FileStore.removeChangeListener(this.onFileStoreChange);
+  };
+
+  onAppStoreChange = () => this.setState(getAppStoreState());
+  onFileStoreChange = () => this.setState(getFileStoreState());
 
   render() {
-    var { appState, markdown, html, caretPos } = this.state;
+    var { appState, fileState } = this.state;
+    var { markdown, html, caretPos } = fileState.activeFile;
 
     return (
       <div className={styles.app}>

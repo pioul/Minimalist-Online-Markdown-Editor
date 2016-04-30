@@ -1,12 +1,12 @@
 import React from 'react';
-import AppActionCreators from '../action-creators/AppActionCreators';
+import FileActionCreators from '../action-creators/FileActionCreators';
 
 import styles from '../components/css/QuickReference.css';
 
 class QuickReference extends React.Component {
   onCodeSnippetClick = (e) => {
     var markdown = '\n\n' + e.currentTarget.textContent;
-    AppActionCreators.appendToMarkdownSource(markdown);
+    FileActionCreators.appendToMarkdownSource(markdown);
   };
 
   render() {

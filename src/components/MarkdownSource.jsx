@@ -1,5 +1,5 @@
 import React from 'react';
-import AppActionCreators from '../action-creators/AppActionCreators';
+import FileActionCreators from '../action-creators/FileActionCreators';
 
 import styles from './css/MarkdownSource.css';
 
@@ -19,7 +19,7 @@ class MarkdownSource extends React.Component {
     var markdown = textarea.value;
     var caretPos = [textarea.selectionStart, textarea.selectionEnd];
 
-    AppActionCreators.updateMarkdown(markdown, caretPos);
+    FileActionCreators.updateMarkdown(markdown, caretPos);
   };
 
   render() {
