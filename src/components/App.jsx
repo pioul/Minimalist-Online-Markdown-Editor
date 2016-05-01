@@ -5,6 +5,7 @@ import React from 'react';
 import AppStore from '../stores/AppStore';
 import FileStore from '../stores/FileStore';
 import Panel from '../components/Panel.jsx';
+import Modals from '../components/Modals.jsx';
 
 var getAppStoreState = () => ({ appState: AppStore.getAppState() });
 var getFileStoreState = () => ({ fileState: FileStore.getState() });
@@ -42,6 +43,8 @@ class App extends React.Component {
           <Panel type={panelType} markdown={markdown} html={html}
             caretPos={caretPos} appState={appState} files={fileState.files}
             activeFile={fileState.activeFile}/>) }
+
+        <Modals/>
       </div>
     );
   }

@@ -1,0 +1,58 @@
+.modalContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.modal {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  width: 300px;
+  margin-left: -150px;
+  background: var(--modal-bg-color);
+  border: 1px solid var(--modal-border-color);
+  border-radius: 2px;
+}
+
+.modalContent {
+  padding: 15px;
+}
+
+.buttonsContainer {
+	padding: 15px;
+	padding-top: 0;
+	text-align: right;
+}
+
+.button {
+	display: inline-block;
+	box-sizing: content-box;
+  height: 20px;
+	margin-left: 10px;
+	padding: 0 5px;
+	font-size: 12px;
+  line-height: 20px;
+	text-decoration: none;
+	color: var(--modal-button-color);
+	border-radius: 2px;
+	border: 1px solid var(--modal-button-border-color);
+  background: transparent;
+  cursor: pointer;
+}
+
+.primaryButton {
+  composes: button;
+
+	color: var(--modal-button-primary-color);
+	border-color: var(--modal-button-primary-border-color);
+	font-weight: bold;
+}
+
+.button:active,
+.button:focus {
+	background: var(--modal-button-active-bg-color);
+}

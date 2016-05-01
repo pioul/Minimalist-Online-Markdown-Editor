@@ -1,6 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
-import { ActionTypes } from '../constants/AppConstants';
+import { ActionTypes, ModalTypes } from '../constants/AppConstants';
 import MarkdownParser from '../utils/MarkdownParser';
+import ModalActionCreators from '../action-creators/ModalActionCreators';
 
 var FileActionCreators = {
   updateMarkdown: (md, caretPos) => {
@@ -27,6 +28,33 @@ var FileActionCreators = {
     AppDispatcher.dispatch({
       actionType: ActionTypes.APPEND_TO_MARKDOWN_SOURCE,
       markdown: markdown
+    });
+  },
+
+  updateActiveFile: (file) => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.UPDATE_ACTIVE_FILE,
+      file: file
+    });
+  },
+
+  closeFile: (file, shouldForceClose = false) => {
+    var isFileEmpty = file.markdown.length === 0;
+
+    if (!isFileEmpty && !shouldForceClose) {
+      ModalActionCreators.openModal(ModalTypes.CONFIRM_CLOSE_NON_EMPTY_FILE, { file: file });
+      return;
+    }
+
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.CLOSE_FILE,
+      file: file
+    });
+  },
+
+  createAndSelectNewFile: () => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.CREATE_AND_SELECT_NEW_FILE
     });
   }
 };

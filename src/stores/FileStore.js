@@ -44,6 +44,33 @@ var appendToMarkdownSource = (markdown) => {
   FileActionCreators.parseMarkdown(state.activeFile.markdown);
 };
 
+var updateActiveFile = (file) => state.activeFile = file;
+
+var closeFile = (file) => {
+  // Remove file from state
+  var fileIndex = state.files.indexOf(file);
+  state.files.splice(fileIndex, 1);
+
+  // Make sure at least one file is always open
+  if (state.files.length === 0) createFile();
+
+  // If the file that was just closed was active, make the next/prev one active
+  if (state.activeFile === file) {
+    let maxFileIndex = state.files.length - 1;
+    let newActiveFileIndex =
+      (fileIndex <= maxFileIndex) ? fileIndex : fileIndex - 1;
+
+    state.activeFile = state.files[newActiveFileIndex];
+  }
+};
+
+var createFile = () => state.files.push(getNewFile());
+
+var createAndSelectNewFile = () => {
+  createFile();
+  state.activeFile = state.files[state.files.length - 1];
+};
+
 var onDispatchedPayload = (payload) => {
   var isPayloadInteresting = true;
 
@@ -58,6 +85,18 @@ var onDispatchedPayload = (payload) => {
 
     case ActionTypes.APPEND_TO_MARKDOWN_SOURCE:
       appendToMarkdownSource(payload.markdown);
+      break;
+
+    case ActionTypes.UPDATE_ACTIVE_FILE:
+      updateActiveFile(payload.file);
+      break;
+
+    case ActionTypes.CLOSE_FILE:
+      closeFile(payload.file);
+      break;
+
+    case ActionTypes.CREATE_AND_SELECT_NEW_FILE:
+      createAndSelectNewFile(payload.file);
       break;
 
     default:

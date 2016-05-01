@@ -7,12 +7,16 @@ import keyMirror from 'keymirror';
 const ActionTypes = keyMirror({
   MARKDOWN_UPDATED: null,
   MARKDOWN_PARSED: null,
+  APPEND_TO_MARKDOWN_SOURCE: null,
   PANEL_ENTER_FULLSCREEN: null,
   PANEL_EXIT_FULLSCREEN: null,
   SWITCH_PANEL: null,
   TOGGLE_TOP_PANEL: null,
   DISABLE_TOP_PANEL: null,
-  APPEND_TO_MARKDOWN_SOURCE: null
+  UPDATE_ACTIVE_FILE: null,
+  CLOSE_FILE: null,
+  OPEN_MODAL: null,
+  CLOSE_MODAL: null
 });
 
 const PanelTypes = keyMirror({
@@ -44,4 +48,11 @@ const TopPanelNames = {
   ABOUT: 'About'
 };
 
-export { ActionTypes, PanelTypes, PanelNames, TopBarButtonTypes, TopPanelTypes, TopPanelNames };
+const ModalTypes = keyMirror({
+  CONFIRM_CLOSE_NON_EMPTY_FILE: null
+});
+
+export {
+  ActionTypes, PanelTypes, PanelNames, TopBarButtonTypes, TopPanelTypes,
+  TopPanelNames, ModalTypes
+};
