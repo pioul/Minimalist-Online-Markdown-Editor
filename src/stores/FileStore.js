@@ -9,17 +9,17 @@ var getNewFile = () => ({
   name: null,
   markdown: '',
   html: '',
-  caretPos: [0, 0]
+  caretPos: [0, 0],
 });
 
 var newFile = getNewFile(); // TODO: move init away from here
 
 var state = {
   files: [
-    newFile
+    newFile,
   ],
 
-  activeFile: newFile
+  activeFile: newFile,
 };
 
 var FileStore = Object.assign({}, EventEmitter.prototype, {
@@ -27,7 +27,7 @@ var FileStore = Object.assign({}, EventEmitter.prototype, {
   addChangeListener: (callback) => FileStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => FileStore.removeListener(CHANGE_EVENT, callback),
 
-  getState: () => state
+  getState: () => state,
 });
 
 var updateMarkdown = (md, caretPos) => {
@@ -46,6 +46,13 @@ var appendToMarkdownSource = (markdown) => {
 
 var updateActiveFile = (file) => state.activeFile = file;
 
+var createFile = () => state.files.push(getNewFile());
+
+var createAndSelectNewFile = () => {
+  createFile();
+  state.activeFile = state.files[state.files.length - 1];
+};
+
 var closeFile = (file) => {
   // Remove file from state
   var fileIndex = state.files.indexOf(file);
@@ -56,25 +63,18 @@ var closeFile = (file) => {
 
   // If the file that was just closed was active, make the next/prev one active
   if (state.activeFile === file) {
-    let maxFileIndex = state.files.length - 1;
-    let newActiveFileIndex =
+    const maxFileIndex = state.files.length - 1;
+    const newActiveFileIndex =
       (fileIndex <= maxFileIndex) ? fileIndex : fileIndex - 1;
 
     state.activeFile = state.files[newActiveFileIndex];
   }
 };
 
-var createFile = () => state.files.push(getNewFile());
-
-var createAndSelectNewFile = () => {
-  createFile();
-  state.activeFile = state.files[state.files.length - 1];
-};
-
 var onDispatchedPayload = (payload) => {
   var isPayloadInteresting = true;
 
-  switch(payload.actionType) {
+  switch (payload.actionType) {
     case ActionTypes.MARKDOWN_UPDATED:
       updateMarkdown(payload.md, payload.caretPos);
       break;

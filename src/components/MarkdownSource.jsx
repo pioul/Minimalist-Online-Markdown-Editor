@@ -6,7 +6,7 @@ import styles from './css/MarkdownSource.css';
 class MarkdownSource extends React.Component {
   static propTypes = {
     markdown: React.PropTypes.string.isRequired,
-    caretPos: React.PropTypes.array.isRequired
+    caretPos: React.PropTypes.array.isRequired,
   };
 
   componentDidUpdate() {
@@ -24,8 +24,10 @@ class MarkdownSource extends React.Component {
 
   render() {
     return (
-      <textarea className={styles.textarea} ref="textarea"
-        value={this.props.markdown} onChange={this.onInput} />
+      <textarea
+        className={styles.textarea} ref="textarea"
+        value={this.props.markdown} onChange={this.onInput}
+      />
     );
   }
 }

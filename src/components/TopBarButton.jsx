@@ -10,48 +10,66 @@ class TopBarButton extends React.Component {
     appState: React.PropTypes.object.isRequired,
     panelType: React.PropTypes.string,
     targetPanelType: React.PropTypes.string,
-    topPanelType: React.PropTypes.string
+    topPanelType: React.PropTypes.string,
   };
 
-  onPanelSwitchClick = () => AppActionCreators.switchPanel(this.props.panelType, this.props.targetPanelType);
-  onEnterFullscreenButtonClick = () => AppActionCreators.makePanelEnterFullscreen(this.props.panelType);
+  onPanelSwitchClick = () =>
+    AppActionCreators.switchPanel(this.props.panelType, this.props.targetPanelType);
+
+  onEnterFullscreenButtonClick = () =>
+    AppActionCreators.makePanelEnterFullscreen(this.props.panelType);
+
   onExitFullscreenButtonClick = () => AppActionCreators.makePanelExitFullscreen();
   onTopPanelToggleButtonClick = () => AppActionCreators.toggleTopPanel(this.props.topPanelType);
 
   render() {
-    var { type: buttonType, appState, panelType, targetPanelType, topPanelType } = this.props;
+    var { type: buttonType, appState, targetPanelType, topPanelType } = this.props;
     var buttonClassName;
+    var topBarButtonContent;
 
     switch (buttonType) {
       case TopBarButtonTypes.PANEL_SWITCH:
-        return (
+        topBarButtonContent = (
           <button className={styles.switch} onClick={this.onPanelSwitchClick}>
             {PanelNames[targetPanelType]}
           </button>
         );
+        break;
 
       case TopBarButtonTypes.FULLSCREEN_ON:
-        return (
-          <button className={styles.fullscreenIconButton} title="Go fullscreen"
-            onClick={this.onEnterFullscreenButtonClick}/>
+        topBarButtonContent = (
+          <button
+            className={styles.fullscreenIconButton} title="Go fullscreen"
+            onClick={this.onEnterFullscreenButtonClick}
+          />
         );
+        break;
 
       case TopBarButtonTypes.FULLSCREEN_OFF:
-        return (
-          <button className={styles.selectedFullscreenIconButton} title="Exit fullscreen"
-            onClick={this.onExitFullscreenButtonClick}/>
+        topBarButtonContent = (
+          <button
+            className={styles.selectedFullscreenIconButton} title="Exit fullscreen"
+            onClick={this.onExitFullscreenButtonClick}
+          />
         );
+        break;
 
       case TopBarButtonTypes.TOP_PANEL_TOGGLE:
         buttonClassName =
           appState.visibleTopPanel === topPanelType ? styles.selectedButton : styles.button;
 
-        return (
+        topBarButtonContent = (
           <button className={buttonClassName} onClick={this.onTopPanelToggleButtonClick}>
             {TopPanelNames[topPanelType]}
           </button>
         );
+        break;
+
+      default:
+        break;
     }
+
+    return topBarButtonContent;
   }
 }
 

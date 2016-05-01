@@ -1,15 +1,14 @@
 import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes, PanelTypes } from '../constants/AppConstants';
-import AppActionCreators from '../action-creators/AppActionCreators';
 
 var CHANGE_EVENT = 'change';
 
 var state = {
   appState: {
     visiblePanels: [PanelTypes.MARKDOWN_SOURCE, PanelTypes.MARKDOWN_PREVIEW],
-    visibleTopPanel: null
-  }
+    visibleTopPanel: null,
+  },
 };
 
 var AppStore = Object.assign({}, EventEmitter.prototype, {
@@ -17,7 +16,7 @@ var AppStore = Object.assign({}, EventEmitter.prototype, {
   addChangeListener: (callback) => AppStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => AppStore.removeListener(CHANGE_EVENT, callback),
 
-  getAppState: () => state.appState
+  getAppState: () => state.appState,
 });
 
 var makePanelEnterFullscreen = (panelType) => state.appState.visiblePanels = [panelType];
@@ -34,6 +33,8 @@ var makePanelExitFullscreen = () => {
     case PanelTypes.HTML_SOURCE:
       newVisiblePanels = [PanelTypes.MARKDOWN_SOURCE, PanelTypes.HTML_SOURCE];
       break;
+    default:
+      break;
   }
 
   state.appState.visiblePanels = newVisiblePanels;
@@ -44,13 +45,6 @@ var switchPanel = (currentPanelType, newPanelType) => {
   state.appState.visiblePanels[visiblePanelIndex] = newPanelType;
 };
 
-var toggleTopPanel = (topPanelType) => {
-  var shouldDisableTopPanel = state.appState.visibleTopPanel === topPanelType;
-
-  if (shouldDisableTopPanel) disableTopPanel();
-    else enableTopPanel(topPanelType);
-};
-
 var enableTopPanel = (topPanelType) => {
   state.appState.visibleTopPanel = topPanelType;
 };
@@ -59,10 +53,17 @@ var disableTopPanel = () => {
   state.appState.visibleTopPanel = null;
 };
 
+var toggleTopPanel = (topPanelType) => {
+  var shouldDisableTopPanel = state.appState.visibleTopPanel === topPanelType;
+
+  if (shouldDisableTopPanel) disableTopPanel();
+  else enableTopPanel(topPanelType);
+};
+
 var onDispatchedPayload = (payload) => {
   var isPayloadInteresting = true;
 
-  switch(payload.actionType) {
+  switch (payload.actionType) {
     case ActionTypes.PANEL_ENTER_FULLSCREEN:
       makePanelEnterFullscreen(payload.panelType);
       break;

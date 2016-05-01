@@ -2,18 +2,14 @@ import React from 'react';
 
 import styles from './css/MarkdownPreview.css';
 
-class MarkdownPreview extends React.Component {
-  static propTypes = {
-    html: React.PropTypes.string.isRequired
-  };
+const createPreviewMarkup = (html) => ({ __html: html });
 
-  createPreviewMarkup = () => ({ __html: this.props.html });
+const MarkdownPreview = (props) => (
+  <div className={styles.preview} dangerouslySetInnerHTML={createPreviewMarkup(props.html)} />
+);
 
-  render() {
-    return (
-      <div className={styles.preview} dangerouslySetInnerHTML={this.createPreviewMarkup()} />
-    );
-  }
-}
+MarkdownPreview.propTypes = {
+  html: React.PropTypes.string.isRequired,
+};
 
 export default MarkdownPreview;

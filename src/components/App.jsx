@@ -39,12 +39,15 @@ class App extends React.Component {
 
     return (
       <div className={styles.app}>
-        { appState.visiblePanels.map((panelType) =>
-          <Panel type={panelType} markdown={markdown} html={html}
+        {appState.visiblePanels.map((panelType) => (
+          <Panel
+            type={panelType} markdown={markdown} html={html}
             caretPos={caretPos} appState={appState} files={fileState.files}
-            activeFile={fileState.activeFile}/>) }
+            activeFile={fileState.activeFile}
+          />
+        ))}
 
-        <Modals/>
+        <Modals />
       </div>
     );
   }

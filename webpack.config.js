@@ -1,4 +1,3 @@
-var webpack = require('webpack');
 var path = require('path');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CleanPlugin = require('clean-webpack-plugin');
@@ -7,15 +6,15 @@ var CopyPlugin = require('copy-webpack-plugin');
 var config = {
   cache: true,
 
-  entry:[
+  entry: [
     'babel-polyfill',
-    './src/app.js'
+    './src/app.js',
   ],
 
   output: {
     path: path.join(__dirname, 'dist'),
     // publicPath: 'dist/',
-    filename: 'mme-bundle.js'
+    filename: 'mme-bundle.js',
   },
 
   module: {
@@ -28,23 +27,25 @@ var config = {
         loader: 'babel-loader',
         query: {
           presets: ['es2015', 'stage-0', 'react'],
-          plugins: ['transform-runtime']
-        }
+          plugins: ['transform-runtime'],
+        },
       },
       // Load CSS through style-loader, css-loader and postcss-loader, and enable
       // CSS Modules + the use of PostCSS plugins
       {
         test: /\.css$/,
         loader: ExtractTextPlugin.extract('style-loader', [
-          'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]&-minifyFontValues',
-          'autoprefixer-loader?{browsers: ["last 2 versions", "> 1%", "ie 9", "firefox >= 21", "safari >= 5"], cascade: false}'
-        ].join('!'))
+          'css-loader?modules&importLoaders=1&localIdentName=' +
+          '[name]__[local]___[hash:base64:5]&-minifyFontValues',
+          'autoprefixer-loader?{browsers: ["last 2 versions", ' +
+          '"> 1%", "ie 9", "firefox >= 21", "safari >= 5"], cascade: false}',
+        ].join('!')),
       },
       // Simply allow JSON to be loaded
       { test: /\.json$/, loader: 'json-loader' },
       // Load font icon files and embed them as data uris
-      { test: /\.(woff|ttf|eot|svg)$/, loader: 'url-loader' }
-    ]
+      { test: /\.(woff|ttf|eot|svg)$/, loader: 'url-loader' },
+    ],
   },
 
   plugins: [
@@ -56,12 +57,12 @@ var config = {
       { from: 'src/index.html' },
       { from: 'src/favicon.ico' },
       { from: 'src/components/css/global-styles/light-theme-vars.css' },
-      { from: 'src/components/css/global-styles/dark-theme-vars.css' }
+      { from: 'src/components/css/global-styles/dark-theme-vars.css' },
     ]),
 
     // Output CSS to a separate, CSS-only bundle
-    new ExtractTextPlugin('mme-bundle.css')
-  ]
+    new ExtractTextPlugin('mme-bundle.css'),
+  ],
 };
 
 module.exports = config;

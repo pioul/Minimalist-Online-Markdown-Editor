@@ -11,81 +11,115 @@ class TopBar extends React.Component {
     appState: React.PropTypes.object.isRequired,
     files: React.PropTypes.array.isRequired,
     activeFile: React.PropTypes.object.isRequired,
-    className: React.PropTypes.string
+    className: React.PropTypes.string,
   };
 
   getFullscreenTopBarContents = () => {
     var topBarClassName = [
       styles.topBar,
-      this.props.className
+      this.props.className,
     ].join(' ');
 
     return (
       <div className={topBarClassName}>
         <div className={styles.buttonsContainer}>
-          <TopBarButton type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
-            targetPanelType={PanelTypes.MARKDOWN_SOURCE} appState={this.props.appState}/>
-          <TopBarButton type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
-            targetPanelType={PanelTypes.HTML_SOURCE} appState={this.props.appState}/>
-          <TopBarButton type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
-            targetPanelType={PanelTypes.MARKDOWN_PREVIEW} appState={this.props.appState}/>
-          <TopBarButton type={TopBarButtonTypes.FULLSCREEN_OFF} appState={this.props.appState}/>
+          <TopBarButton
+            type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
+            targetPanelType={PanelTypes.MARKDOWN_SOURCE} appState={this.props.appState}
+          />
+          <TopBarButton
+            type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
+            targetPanelType={PanelTypes.HTML_SOURCE} appState={this.props.appState}
+          />
+          <TopBarButton
+            type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
+            targetPanelType={PanelTypes.MARKDOWN_PREVIEW} appState={this.props.appState}
+          />
+          <TopBarButton type={TopBarButtonTypes.FULLSCREEN_OFF} appState={this.props.appState} />
         </div>
-        <FileMenu files={this.props.files} activeFile={this.props.activeFile}/>
+        <FileMenu files={this.props.files} activeFile={this.props.activeFile} />
       </div>
     );
   };
 
-  getPaneledTopbarContents = (topBarPlacement) => {
+  getPaneledTopBarContents = (topBarPlacement) => {
     var topBarClassName = [
       styles.topBar,
-      this.props.className
+      this.props.className,
     ].join(' ');
+
+    var paneledTopBarContents;
 
     switch (topBarPlacement) {
       case PanelTypes.MARKDOWN_SOURCE:
-        return (
+        paneledTopBarContents = (
           <div className={topBarClassName}>
             <div className={styles.buttonsContainer}>
-              <TopBarButton type={TopBarButtonTypes.TOP_PANEL_TOGGLE}
-                topPanelType={TopPanelTypes.QUICK_REFERENCE} appState={this.props.appState}/>
-              <TopBarButton type={TopBarButtonTypes.TOP_PANEL_TOGGLE}
-                topPanelType={TopPanelTypes.ABOUT} appState={this.props.appState}/>
-              <TopBarButton type={TopBarButtonTypes.FULLSCREEN_ON}
-                panelType={this.props.type} appState={this.props.appState}/>
+              <TopBarButton
+                type={TopBarButtonTypes.TOP_PANEL_TOGGLE}
+                topPanelType={TopPanelTypes.QUICK_REFERENCE} appState={this.props.appState}
+              />
+              <TopBarButton
+                type={TopBarButtonTypes.TOP_PANEL_TOGGLE}
+                topPanelType={TopPanelTypes.ABOUT} appState={this.props.appState}
+              />
+              <TopBarButton
+                type={TopBarButtonTypes.FULLSCREEN_ON}
+                panelType={this.props.type} appState={this.props.appState}
+              />
             </div>
-            <FileMenu files={this.props.files} activeFile={this.props.activeFile}/>
+            <FileMenu files={this.props.files} activeFile={this.props.activeFile} />
           </div>
         );
+        break;
 
       case PanelTypes.MARKDOWN_PREVIEW:
-        return (
+        paneledTopBarContents = (
           <div className={topBarClassName}>
             <div className={styles.buttonsContainer}>
-              <TopBarButton type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
-                targetPanelType={PanelTypes.HTML_SOURCE} appState={this.props.appState}/>
-              <TopBarButton type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
-                targetPanelType={PanelTypes.MARKDOWN_PREVIEW} appState={this.props.appState}/>
-              <TopBarButton type={TopBarButtonTypes.FULLSCREEN_ON} panelType={this.props.type}
-                appState={this.props.appState}/>
+              <TopBarButton
+                type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
+                targetPanelType={PanelTypes.HTML_SOURCE} appState={this.props.appState}
+              />
+              <TopBarButton
+                type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
+                targetPanelType={PanelTypes.MARKDOWN_PREVIEW} appState={this.props.appState}
+              />
+              <TopBarButton
+                type={TopBarButtonTypes.FULLSCREEN_ON} panelType={this.props.type}
+                appState={this.props.appState}
+              />
             </div>
           </div>
         );
+        break;
 
       case PanelTypes.HTML_SOURCE:
-        return (
+        paneledTopBarContents = (
           <div className={topBarClassName}>
             <div className={styles.buttonsContainer}>
-            <TopBarButton type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
-              targetPanelType={PanelTypes.HTML_SOURCE} appState={this.props.appState}/>
-            <TopBarButton type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
-              targetPanelType={PanelTypes.MARKDOWN_PREVIEW} appState={this.props.appState}/>
-            <TopBarButton type={TopBarButtonTypes.FULLSCREEN_ON} panelType={this.props.type}
-              appState={this.props.appState}/>
+              <TopBarButton
+                type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
+                targetPanelType={PanelTypes.HTML_SOURCE} appState={this.props.appState}
+              />
+              <TopBarButton
+                type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
+                targetPanelType={PanelTypes.MARKDOWN_PREVIEW} appState={this.props.appState}
+              />
+              <TopBarButton
+                type={TopBarButtonTypes.FULLSCREEN_ON} panelType={this.props.type}
+                appState={this.props.appState}
+              />
             </div>
           </div>
         );
+        break;
+
+      default:
+        break;
     }
+
+    return paneledTopBarContents;
   };
 
   render() {
@@ -93,7 +127,7 @@ class TopBar extends React.Component {
 
     return isFullscreen ?
       this.getFullscreenTopBarContents() :
-      this.getPaneledTopbarContents(this.props.type);
+      this.getPaneledTopBarContents(this.props.type);
   }
 }
 

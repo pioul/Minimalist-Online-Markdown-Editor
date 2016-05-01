@@ -33,9 +33,12 @@ class App extends React.Component {
           buttons: [
             { text: 'Don\'t close', className: styles.primaryButton },
             { text: 'Close', className: styles.primaryButton,
-              onClick: () => FileActionCreators.closeFile(this.state.options.file, true) }
-          ]
+              onClick: () => FileActionCreators.closeFile(this.state.options.file, true) },
+          ],
         };
+        break;
+
+      default:
         break;
     }
 
@@ -44,10 +47,17 @@ class App extends React.Component {
         <div className={styles.modal}>
           <div className={styles.modalContent}>{modalConfig.text}</div>
           <div className={styles.buttonsContainer}>
-            { modalConfig.buttons.map((button) =>
-                <button onClick={() => {
-                  this.closeModal(), button.onClick && button.onClick()
-                }} className={button.className}>{button.text}</button>) }
+            {modalConfig.buttons.map((button) => (
+              <button
+                onClick={() => {
+                  this.closeModal();
+                  if (button.onClick) button.onClick();
+                }}
+                className={button.className}
+              >
+                {button.text}
+              </button>
+            ))}
           </div>
         </div>
       </div>

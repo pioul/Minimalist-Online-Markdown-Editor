@@ -6,7 +6,7 @@ var CHANGE_EVENT = 'change';
 
 var state = {
   openModal: null,
-  options: {}
+  options: {},
 };
 
 var ModalStore = Object.assign({}, EventEmitter.prototype, {
@@ -14,7 +14,7 @@ var ModalStore = Object.assign({}, EventEmitter.prototype, {
   addChangeListener: (callback) => ModalStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => ModalStore.removeListener(CHANGE_EVENT, callback),
 
-  getState: () => state
+  getState: () => state,
 });
 
 var openModal = (modalType, options) => {
@@ -30,7 +30,7 @@ var closeModal = () => {
 var onDispatchedPayload = (payload) => {
   var isPayloadInteresting = true;
 
-  switch(payload.actionType) {
+  switch (payload.actionType) {
     case ActionTypes.OPEN_MODAL:
       openModal(payload.modalType, payload.options);
       break;

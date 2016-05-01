@@ -8,7 +8,7 @@ import styles from '../components/css/TopPanel.css';
 
 class TopPanel extends React.Component {
   static propTypes = {
-    type: React.PropTypes.string.isRequired
+    type: React.PropTypes.string.isRequired,
   };
 
   onTopPanelCloseButtonClick = () => AppActionCreators.disableTopPanel();
@@ -18,18 +18,21 @@ class TopPanel extends React.Component {
 
     switch (this.props.type) {
       case TopPanelTypes.QUICK_REFERENCE:
-        topPanelContents = <QuickReference/>;
+        topPanelContents = <QuickReference />;
         break;
 
       case TopPanelTypes.ABOUT:
-        topPanelContents = <About/>;
+        topPanelContents = <About />;
+        break;
+
+      default:
         break;
     }
 
     return (
       <div className={styles.topPanel}>
         {topPanelContents}
-        <button className={styles.closeButton} onClick={this.onTopPanelCloseButtonClick}/>
+        <button className={styles.closeButton} onClick={this.onTopPanelCloseButtonClick} />
       </div>
     );
   }

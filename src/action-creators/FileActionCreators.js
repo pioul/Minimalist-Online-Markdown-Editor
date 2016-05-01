@@ -7,8 +7,8 @@ var FileActionCreators = {
   updateMarkdown: (md, caretPos) => {
     AppDispatcher.dispatch({
       actionType: ActionTypes.MARKDOWN_UPDATED,
-      md: md,
-      caretPos: caretPos
+      md,
+      caretPos,
     });
 
     FileActionCreators.parseMarkdown(md);
@@ -19,7 +19,7 @@ var FileActionCreators = {
       .then((html) => {
         AppDispatcher.dispatch({
           actionType: ActionTypes.MARKDOWN_PARSED,
-          html: html
+          html,
         });
       });
   },
@@ -27,14 +27,14 @@ var FileActionCreators = {
   appendToMarkdownSource: (markdown) => {
     AppDispatcher.dispatch({
       actionType: ActionTypes.APPEND_TO_MARKDOWN_SOURCE,
-      markdown: markdown
+      markdown,
     });
   },
 
   updateActiveFile: (file) => {
     AppDispatcher.dispatch({
       actionType: ActionTypes.UPDATE_ACTIVE_FILE,
-      file: file
+      file,
     });
   },
 
@@ -42,21 +42,21 @@ var FileActionCreators = {
     var isFileEmpty = file.markdown.length === 0;
 
     if (!isFileEmpty && !shouldForceClose) {
-      ModalActionCreators.openModal(ModalTypes.CONFIRM_CLOSE_NON_EMPTY_FILE, { file: file });
+      ModalActionCreators.openModal(ModalTypes.CONFIRM_CLOSE_NON_EMPTY_FILE, { file });
       return;
     }
 
     AppDispatcher.dispatch({
       actionType: ActionTypes.CLOSE_FILE,
-      file: file
+      file,
     });
   },
 
   createAndSelectNewFile: () => {
     AppDispatcher.dispatch({
-      actionType: ActionTypes.CREATE_AND_SELECT_NEW_FILE
+      actionType: ActionTypes.CREATE_AND_SELECT_NEW_FILE,
     });
-  }
+  },
 };
 
 export default FileActionCreators;

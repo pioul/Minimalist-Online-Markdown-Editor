@@ -7,7 +7,7 @@ import styles from '../components/css/FileMenuItem.css';
 class FileMenuItem extends React.Component {
   static propTypes = {
     file: React.PropTypes.object.isRequired,
-    activeFile: React.PropTypes.object.isRequired
+    activeFile: React.PropTypes.object.isRequired,
   };
 
   onClick = () => FileActionCreators.updateActiveFile(this.props.file);

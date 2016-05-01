@@ -5,16 +5,16 @@ var ModalActionCreators = {
   openModal: (modalType, options) => {
     AppDispatcher.dispatch({
       actionType: ActionTypes.OPEN_MODAL,
-      modalType: modalType,
-      options: options
+      modalType,
+      options,
     });
   },
 
   closeModal: () => {
     AppDispatcher.dispatch({
-      actionType: ActionTypes.CLOSE_MODAL
+      actionType: ActionTypes.CLOSE_MODAL,
     });
-  }
+  },
 };
 
 export default ModalActionCreators;
