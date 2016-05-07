@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes, PanelTypes } from '../constants/AppConstants';
+import createPersistentStore from '../utils/createPersistentStore';
 
 var CHANGE_EVENT = 'change';
 
@@ -16,6 +17,8 @@ var AppStore = Object.assign({}, EventEmitter.prototype, {
   addChangeListener: (callback) => AppStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => AppStore.removeListener(CHANGE_EVENT, callback),
 
+  getState: () => state,
+  setState: (newState) => state = newState,
   getAppState: () => state.appState,
 });
 
@@ -94,4 +97,4 @@ var onDispatchedPayload = (payload) => {
 
 AppDispatcher.register(onDispatchedPayload);
 
-export default AppStore;
+export default createPersistentStore(AppStore, 'app-state');

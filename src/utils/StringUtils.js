@@ -13,4 +13,18 @@ var getShortString = (str, length) => {
   return str;
 };
 
-export { getShortString };
+/**
+ * Return a random id. If an array of existing ids is passed, it'll ensure
+ * the returned id is unique.
+ */
+var generateUniqueId = (existingIds = []) => {
+  var id;
+
+  do {
+    id = Math.floor(Math.random() * Math.pow(10, 10)).toString(36);
+  } while (existingIds.includes(id));
+
+  return id;
+};
+
+export { getShortString, generateUniqueId };

@@ -2,24 +2,26 @@ import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes } from '../constants/AppConstants';
 import FileActionCreators from '../action-creators/FileActionCreators';
+import createPersistentStore from '../utils/createPersistentStore';
+import { generateUniqueId } from '../utils/StringUtils';
 
 var CHANGE_EVENT = 'change';
 
-var getNewFile = () => ({
-  name: null,
-  markdown: '',
-  html: '',
-  caretPos: [0, 0],
-});
-
-var newFile = getNewFile(); // TODO: move init away from here
-
 var state = {
-  files: [
-    newFile,
-  ],
+  files: [],
+  activeFile: null,
+};
 
-  activeFile: newFile,
+var getNewFile = () => {
+  var existingFileIds = state.files.map((file) => file.id);
+
+  return {
+    id: generateUniqueId(existingFileIds),
+    name: null,
+    markdown: '',
+    html: '',
+    caretPos: [0, 0],
+  };
 };
 
 var FileStore = Object.assign({}, EventEmitter.prototype, {
@@ -28,6 +30,19 @@ var FileStore = Object.assign({}, EventEmitter.prototype, {
   removeChangeListener: (callback) => FileStore.removeListener(CHANGE_EVENT, callback),
 
   getState: () => state,
+
+  getPersistedState: () => ({
+    files: state.files,
+    activeFileId: state.activeFile.id,
+  }),
+
+  setPersistedState: (persistedState) => {
+    state = {
+      files: persistedState.files,
+      activeFile: persistedState.files.find((file) => file.id === persistedState.activeFileId),
+    };
+  },
+
 });
 
 var updateMarkdown = (md, caretPos) => {
@@ -107,6 +122,8 @@ var onDispatchedPayload = (payload) => {
   if (isPayloadInteresting) FileStore.emitChange();
 };
 
+createAndSelectNewFile(); // Init with an empty file
+
 AppDispatcher.register(onDispatchedPayload);
 
-export default FileStore;
+export default createPersistentStore(FileStore, 'file-state');

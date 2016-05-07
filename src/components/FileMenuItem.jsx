@@ -1,6 +1,6 @@
 import React from 'react';
 import FileActionCreators from '../action-creators/FileActionCreators';
-import { getShortString } from '../utils/TextManipulation.js';
+import { getShortString } from '../utils/StringUtils.js';
 
 import styles from '../components/css/FileMenuItem.css';
 

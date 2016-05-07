@@ -13,7 +13,7 @@
 
 .fileMenuItem:last-of-type {
   margin-right: 0px;
-} 
+}
 
 .activeFileMenuItem {
   composes: fileMenuItem;
@@ -43,6 +43,7 @@
 .closeButton {
   composes: closeButton from './CloseButton.css';
 
+  position: absolute;
   top: 5px;
   right: 4px;
   width: 13px;

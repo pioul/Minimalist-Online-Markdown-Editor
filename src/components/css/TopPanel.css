@@ -8,6 +8,7 @@
 .closeButton {
   composes: closeButton from './CloseButton.css';
 
+  position: absolute;
   top: 15px;
   right: 15px;
   color: var(--top-panel-close-color);
