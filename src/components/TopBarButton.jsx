@@ -29,8 +29,11 @@ class TopBarButton extends React.Component {
 
     switch (buttonType) {
       case TopBarButtonTypes.PANEL_SWITCH:
+        buttonClassName =
+          appState.visiblePanels.includes(targetPanelType) ? styles.activeSwitch : styles.switch;
+
         topBarButtonContent = (
-          <button className={styles.switch} onClick={this.onPanelSwitchClick}>
+          <button className={buttonClassName} onClick={this.onPanelSwitchClick}>
             {PanelNames[targetPanelType]}
           </button>
         );
