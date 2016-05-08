@@ -5,6 +5,7 @@ import React from 'react';
 import AppStore from '../stores/AppStore';
 import FileStore from '../stores/FileStore';
 import AppActionCreators from '../action-creators/AppActionCreators';
+import FileActionCreators from '../action-creators/FileActionCreators';
 import ShortcutManager from '../utils/ShortcutManager.js';
 import Panel from '../components/Panel.jsx';
 import Modals from '../components/Modals.jsx';
@@ -27,6 +28,8 @@ class App extends React.Component {
     FileStore.addChangeListener(this.onFileStoreChange);
 
     ShortcutManager.register('ESCAPE', this.onEscapeKeyPressed);
+    ShortcutManager.register(['CTRL + N', 'CTRL + T'], this.onCreateFileShortcutPressed);
+    ShortcutManager.register('CTRL + W', this.onCloseFileShortcutPressed);
   }
 
   componentWillUnmount() {
@@ -34,6 +37,8 @@ class App extends React.Component {
     FileStore.removeChangeListener(this.onFileStoreChange);
 
     ShortcutManager.unregister('ESCAPE', this.onEscapeKeyPressed);
+    ShortcutManager.unregister(['CTRL + N', 'CTRL + T'], this.onCreateFileShortcutPressed);
+    ShortcutManager.unregister('CTRL + W', this.onCloseFileShortcutPressed);
   }
 
   onAppStoreChange = () => this.setState(getAppStoreState());
@@ -42,6 +47,16 @@ class App extends React.Component {
   onEscapeKeyPressed = () => {
     var isFullscreen = this.state.appState.visiblePanels.length === 1;
     if (isFullscreen) AppActionCreators.makePanelExitFullscreen();
+  };
+
+  onCreateFileShortcutPressed = (e) => {
+    e.preventDefault();
+    FileActionCreators.createAndSelectNewFile();
+  };
+
+  onCloseFileShortcutPressed = (e) => {
+    e.preventDefault();
+    FileActionCreators.closeFile(this.state.fileState.activeFile);
   };
 
   render() {
