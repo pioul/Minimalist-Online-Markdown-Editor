@@ -4,6 +4,8 @@ import styles from './css/App.css';
 import React from 'react';
 import AppStore from '../stores/AppStore';
 import FileStore from '../stores/FileStore';
+import AppActionCreators from '../action-creators/AppActionCreators';
+import ShortcutManager from '../utils/ShortcutManager.js';
 import Panel from '../components/Panel.jsx';
 import Modals from '../components/Modals.jsx';
 
@@ -20,18 +22,27 @@ class App extends React.Component {
     );
   }
 
-  componentDidMount = () => {
+  componentDidMount() {
     AppStore.addChangeListener(this.onAppStoreChange);
     FileStore.addChangeListener(this.onFileStoreChange);
-  };
 
-  componentWillUnmount = () => {
+    ShortcutManager.register('ESCAPE', this.onEscapeKeyPressed);
+  }
+
+  componentWillUnmount() {
     AppStore.removeChangeListener(this.onAppStoreChange);
     FileStore.removeChangeListener(this.onFileStoreChange);
-  };
+
+    ShortcutManager.unregister('ESCAPE', this.onEscapeKeyPressed);
+  }
 
   onAppStoreChange = () => this.setState(getAppStoreState());
   onFileStoreChange = () => this.setState(getFileStoreState());
+
+  onEscapeKeyPressed = () => {
+    var isFullscreen = this.state.appState.visiblePanels.length === 1;
+    if (isFullscreen) AppActionCreators.makePanelExitFullscreen();
+  };
 
   render() {
     var { appState, fileState } = this.state;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { TopPanelTypes } from '../constants/AppConstants';
 import AppActionCreators from '../action-creators/AppActionCreators';
+import ShortcutManager from '../utils/ShortcutManager.js';
 import QuickReference from './QuickReference.jsx';
 import About from './About.jsx';
 
@@ -11,6 +12,15 @@ class TopPanel extends React.Component {
     type: React.PropTypes.string.isRequired,
   };
 
+  componentDidMount() {
+    ShortcutManager.register('ESCAPE', this.onEscapeKeyPressed);
+  }
+
+  componentWillUnmount() {
+    ShortcutManager.unregister('ESCAPE', this.onEscapeKeyPressed);
+  }
+
+  onEscapeKeyPressed = () => AppActionCreators.disableTopPanel();
   onTopPanelCloseButtonClick = () => AppActionCreators.disableTopPanel();
 
   render() {
