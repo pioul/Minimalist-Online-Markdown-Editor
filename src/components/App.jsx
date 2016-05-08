@@ -9,6 +9,7 @@ import AppActionCreators from '../action-creators/AppActionCreators';
 import FileActionCreators from '../action-creators/FileActionCreators';
 import SettingsActionCreators from '../action-creators/SettingsActionCreators';
 import ShortcutManager from '../utils/ShortcutManager.js';
+import { Themes } from '../constants/AppConstants';
 import Panel from '../components/Panel.jsx';
 import Modals from '../components/Modals.jsx';
 
@@ -97,11 +98,16 @@ class App extends React.Component {
   };
 
   render() {
-    var { appState, fileState, settingsState } = this.state;
-    var { markdown, html, caretPos } = fileState.activeFile;
+    const { appState, fileState, settingsState } = this.state;
+    const { markdown, html, caretPos } = fileState.activeFile;
+
+    const isDarkThemeEnabled = settingsState.theme === Themes.DARK;
 
     return (
       <div className={styles.app}>
+        {isDarkThemeEnabled &&
+          <link href="dark-theme-vars.css" rel="stylesheet" type="text/css" />}
+
         <div className={styles.panelContainer}>
           {appState.visiblePanels.map((panelType) => (
             <Panel

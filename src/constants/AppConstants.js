@@ -19,6 +19,7 @@ const ActionTypes = keyMirror({
   CLOSE_MODAL: null,
   INCREASE_FONT_SIZE: null,
   DECREASE_FONT_SIZE: null,
+  SWITCH_THEME: null,
 });
 
 const PanelTypes = keyMirror({
@@ -55,9 +56,19 @@ const ModalTypes = keyMirror({
   CONFIRM_CLOSE_NON_EMPTY_FILE: null,
 });
 
+const Themes = keyMirror({
+  LIGHT: null,
+  DARK: null,
+});
+
+const ThemeNames = {
+  LIGHT: 'Light',
+  DARK: 'Dark',
+};
+
 const FontSizeOffsetRange = [-3.6, 14.4];
 
 export {
   ActionTypes, PanelTypes, PanelNames, TopBarButtonTypes, TopPanelTypes,
-  TopPanelNames, ModalTypes, FontSizeOffsetRange,
+  TopPanelNames, ModalTypes, Themes, ThemeNames, FontSizeOffsetRange,
 };

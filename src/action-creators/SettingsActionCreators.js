@@ -13,6 +13,13 @@ var SettingsActionCreators = {
       actionType: ActionTypes.DECREASE_FONT_SIZE,
     });
   },
+
+  switchTheme: (theme) => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.SWITCH_THEME,
+      theme,
+    });
+  },
 };
 
 export default SettingsActionCreators;

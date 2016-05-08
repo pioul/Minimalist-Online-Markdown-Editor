@@ -75,9 +75,6 @@
 	--pre-text-bg-color: var(--main-element-color);
 	--pre-text-highlighted-bg-color: #d7d7d7;
 
-	--settings-light-theme-control: none;
-	--settings-dark-theme-control: inline;
-
 	--scrollbar-size: var(--use-default);
 	--scrollbar-button-size: var(--use-default);
 	--scrollbar-button-display: var(--use-default);
