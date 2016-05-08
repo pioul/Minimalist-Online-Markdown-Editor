@@ -17,6 +17,8 @@ const ActionTypes = keyMirror({
   CLOSE_FILE: null,
   OPEN_MODAL: null,
   CLOSE_MODAL: null,
+  INCREASE_FONT_SIZE: null,
+  DECREASE_FONT_SIZE: null,
 });
 
 const PanelTypes = keyMirror({
@@ -53,7 +55,9 @@ const ModalTypes = keyMirror({
   CONFIRM_CLOSE_NON_EMPTY_FILE: null,
 });
 
+const FontSizeOffsetRange = [-3.6, 14.4];
+
 export {
   ActionTypes, PanelTypes, PanelNames, TopBarButtonTypes, TopPanelTypes,
-  TopPanelNames, ModalTypes,
+  TopPanelNames, ModalTypes, FontSizeOffsetRange,
 };

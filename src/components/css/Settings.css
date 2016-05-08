@@ -1,0 +1,62 @@
+.label {
+	padding-right: 20px;
+}
+
+.button {
+	margin-right: 4px;
+	padding: 5px;
+	background: var(--top-panel-btn-bg-color);
+	border-radius: 3px;
+	cursor: pointer;
+	text-decoration: none;
+	border: 0;
+	color: var(--main-text-color);
+	font-size: var(--main-text-size);
+}
+
+.button:active {
+	background: var(--top-panel-btn-active-bg-color);
+}
+
+.button[disabled] {
+	background: var(--top-panel-btn-disabled-bg-color);
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.increaseFontSizeButton,
+.decreaseFontSizeButton {
+	composes: button;
+
+	position: relative;
+	padding-right: 9px;
+	padding-left: 19px;
+	line-height: 16px;
+}
+
+.increaseFontSizeButton::before,
+.decreaseFontSizeButton::before {
+	content: "A";
+	position: absolute;
+	top: 5px;
+	left: 9px;
+	height: 16px;
+	line-height: 16px;
+	font-family: monospace;
+}
+
+.decreaseFontSizeButton::before {
+	font-size: 13px;
+}
+
+.increaseFontSizeButton::before {
+	font-size: 17px;
+}
+
+.decreaseFontSizeButton::after {
+	content: "-";
+}
+
+.increaseFontSizeButton::after {
+	content: "+";
+}

@@ -7,6 +7,7 @@ class MarkdownSource extends React.Component {
   static propTypes = {
     markdown: React.PropTypes.string.isRequired,
     caretPos: React.PropTypes.array.isRequired,
+    fontSizeOffset: React.PropTypes.number.isRequired,
   };
 
   componentDidUpdate() {
@@ -23,9 +24,14 @@ class MarkdownSource extends React.Component {
   };
 
   render() {
+    const defaultFontSize = 11;
+    const dynamicStyles = {
+      fontSize: defaultFontSize + this.props.fontSizeOffset,
+    };
+
     return (
       <textarea
-        className={styles.textarea} ref="textarea"
+        className={styles.textarea} style={dynamicStyles} ref="textarea"
         value={this.props.markdown} onChange={this.onInput}
       />
     );

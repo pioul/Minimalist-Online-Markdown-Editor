@@ -1,5 +1,6 @@
 :root {
 	--font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	--main-text-size: 14px;
 }
 
 html,
@@ -13,7 +14,7 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: var(--font-family);
-	font-size: 14px;
+	font-size: var(--main-text-size);
 	line-height: 20px;
 	color: var(--body-color);
 	overflow: hidden;

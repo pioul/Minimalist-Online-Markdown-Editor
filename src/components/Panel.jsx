@@ -10,22 +10,31 @@ import styles from '../components/css/Panel.css';
 
 const Panel = (props) => {
   var { visibleTopPanel } = props.appState;
+  var { fontSizeOffset } = props.settingsState;
   var shouldDisplayTopPanel =
     visibleTopPanel !== null && props.type === PanelTypes.MARKDOWN_SOURCE;
   var panelContents;
 
   switch (props.type) {
     case PanelTypes.MARKDOWN_SOURCE:
-      panelContents =
-        <MarkdownSource markdown={props.markdown} caretPos={props.caretPos} />;
+      panelContents = (
+        <MarkdownSource
+          markdown={props.markdown} caretPos={props.caretPos}
+          fontSizeOffset={fontSizeOffset}
+        />
+      );
       break;
 
     case PanelTypes.MARKDOWN_PREVIEW:
-      panelContents = <MarkdownPreview html={props.html} />;
+      panelContents = (
+        <MarkdownPreview html={props.html} fontSizeOffset={fontSizeOffset} />
+      );
       break;
 
     case PanelTypes.HTML_SOURCE:
-      panelContents = <HtmlSource html={props.html} />;
+      panelContents = (
+        <HtmlSource html={props.html} fontSizeOffset={fontSizeOffset} />
+      );
       break;
 
     default:
@@ -35,7 +44,7 @@ const Panel = (props) => {
   return (
     <div className={styles.panel}>
       {shouldDisplayTopPanel ?
-        <TopPanel type={visibleTopPanel} /> : ''}
+        <TopPanel type={visibleTopPanel} settingsState={props.settingsState} /> : ''}
 
       <TopBar className={styles.topBar} {...props} />
 
@@ -50,6 +59,7 @@ Panel.propTypes = {
   html: React.PropTypes.string.isRequired,
   caretPos: React.PropTypes.array.isRequired,
   appState: React.PropTypes.object.isRequired,
+  settingsState: React.PropTypes.object.isRequired,
   files: React.PropTypes.array.isRequired,
   activeFile: React.PropTypes.object.isRequired,
 };

@@ -4,14 +4,17 @@ import styles from './css/App.css';
 import React from 'react';
 import AppStore from '../stores/AppStore';
 import FileStore from '../stores/FileStore';
+import SettingsStore from '../stores/SettingsStore';
 import AppActionCreators from '../action-creators/AppActionCreators';
 import FileActionCreators from '../action-creators/FileActionCreators';
+import SettingsActionCreators from '../action-creators/SettingsActionCreators';
 import ShortcutManager from '../utils/ShortcutManager.js';
 import Panel from '../components/Panel.jsx';
 import Modals from '../components/Modals.jsx';
 
 var getAppStoreState = () => ({ appState: AppStore.getAppState() });
 var getFileStoreState = () => ({ fileState: FileStore.getState() });
+var getSettingsStoreState = () => ({ settingsState: SettingsStore.getState() });
 
 class App extends React.Component {
   constructor(props) {
@@ -19,30 +22,54 @@ class App extends React.Component {
 
     this.state = Object.assign({},
       getAppStoreState(),
-      getFileStoreState()
+      getFileStoreState(),
+      getSettingsStoreState()
     );
   }
 
   componentDidMount() {
     AppStore.addChangeListener(this.onAppStoreChange);
     FileStore.addChangeListener(this.onFileStoreChange);
+    SettingsStore.addChangeListener(this.onSettingsStoreChange);
 
     ShortcutManager.register('ESCAPE', this.onEscapeKeyPressed);
     ShortcutManager.register(['CTRL + N', 'CTRL + T'], this.onCreateFileShortcutPressed);
     ShortcutManager.register('CTRL + W', this.onCloseFileShortcutPressed);
+
+    ShortcutManager.register([
+      'CTRL + PLUS', 'CTRL + PLUS_FF', 'CTRL + SHIFT + PLUS',
+      'CTRL + SHIFT + PLUS_FF', 'CTRL + NUMPADPLUS',
+    ], this.onIncreaseFontSizeShortcutPressed);
+
+    ShortcutManager.register([
+      'CTRL + MINUS', 'CTRL + MINUS_FF', 'CTRL + SHIFT + MINUS',
+      'CTRL + SHIFT + MINUS_FF', 'CTRL + NUMPADMINUS',
+    ], this.onDecreaseFontSizeShortcutPressed);
   }
 
   componentWillUnmount() {
     AppStore.removeChangeListener(this.onAppStoreChange);
     FileStore.removeChangeListener(this.onFileStoreChange);
+    SettingsStore.removeChangeListener(this.onSettingsStoreChange);
 
     ShortcutManager.unregister('ESCAPE', this.onEscapeKeyPressed);
     ShortcutManager.unregister(['CTRL + N', 'CTRL + T'], this.onCreateFileShortcutPressed);
     ShortcutManager.unregister('CTRL + W', this.onCloseFileShortcutPressed);
+
+    ShortcutManager.unregister([
+      'CTRL + PLUS', 'CTRL + PLUS_FF', 'CTRL + SHIFT + PLUS',
+      'CTRL + SHIFT + PLUS_FF', 'CTRL + NUMPADPLUS',
+    ], this.onIncreaseFontSizeShortcutPressed);
+
+    ShortcutManager.unregister([
+      'CTRL + MINUS', 'CTRL + MINUS_FF', 'CTRL + SHIFT + MINUS',
+      'CTRL + SHIFT + MINUS_FF', 'CTRL + NUMPADMINUS',
+    ], this.onDecreaseFontSizeShortcutPressed);
   }
 
   onAppStoreChange = () => this.setState(getAppStoreState());
   onFileStoreChange = () => this.setState(getFileStoreState());
+  onSettingsStoreChange = () => this.setState(getSettingsStoreState());
 
   onEscapeKeyPressed = () => {
     var isFullscreen = this.state.appState.visiblePanels.length === 1;
@@ -59,8 +86,18 @@ class App extends React.Component {
     FileActionCreators.closeFile(this.state.fileState.activeFile);
   };
 
+  onIncreaseFontSizeShortcutPressed = (e) => {
+    e.preventDefault();
+    SettingsActionCreators.increaseFontSize();
+  };
+
+  onDecreaseFontSizeShortcutPressed = (e) => {
+    e.preventDefault();
+    SettingsActionCreators.decreaseFontSize();
+  };
+
   render() {
-    var { appState, fileState } = this.state;
+    var { appState, fileState, settingsState } = this.state;
     var { markdown, html, caretPos } = fileState.activeFile;
 
     return (
@@ -70,7 +107,7 @@ class App extends React.Component {
             <Panel
               type={panelType} markdown={markdown} html={html}
               caretPos={caretPos} appState={appState} files={fileState.files}
-              activeFile={fileState.activeFile}
+              activeFile={fileState.activeFile} settingsState={settingsState}
             />
           ))}
         </div>

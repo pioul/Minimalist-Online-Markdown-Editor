@@ -11,6 +11,7 @@ import styles from '../components/css/TopPanel.css';
 class TopPanel extends React.Component {
   static propTypes = {
     type: React.PropTypes.string.isRequired,
+    settingsState: React.PropTypes.object.isRequired,
   };
 
   componentDidMount() {
@@ -37,7 +38,7 @@ class TopPanel extends React.Component {
         break;
 
       case TopPanelTypes.SETTINGS:
-        topPanelContents = <Settings />;
+        topPanelContents = <Settings settingsState={this.props.settingsState} />;
         break;
 
       default:
