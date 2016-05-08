@@ -41,6 +41,7 @@ const TopBarButtonTypes = keyMirror({
 const TopPanelTypes = keyMirror({
   QUICK_REFERENCE: null,
   ABOUT: null,
+  SETTINGS: null,
 });
 
 const TopPanelNames = {

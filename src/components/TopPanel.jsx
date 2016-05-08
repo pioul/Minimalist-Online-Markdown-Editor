@@ -4,6 +4,7 @@ import AppActionCreators from '../action-creators/AppActionCreators';
 import ShortcutManager from '../utils/ShortcutManager.js';
 import QuickReference from './QuickReference.jsx';
 import About from './About.jsx';
+import Settings from './Settings.jsx';
 
 import styles from '../components/css/TopPanel.css';
 
@@ -33,6 +34,10 @@ class TopPanel extends React.Component {
 
       case TopPanelTypes.ABOUT:
         topPanelContents = <About />;
+        break;
+
+      case TopPanelTypes.SETTINGS:
+        topPanelContents = <Settings />;
         break;
 
       default:

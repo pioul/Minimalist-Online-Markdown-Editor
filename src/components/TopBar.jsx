@@ -35,7 +35,7 @@ class TopBar extends React.Component {
             type={TopBarButtonTypes.PANEL_SWITCH} panelType={this.props.type}
             targetPanelType={PanelTypes.MARKDOWN_PREVIEW} appState={this.props.appState}
           />
-          <TopBarButton type={TopBarButtonTypes.FULLSCREEN_OFF} appState={this.props.appState} />
+          <TopBarButton type={TopBarButtonTypes.FULLSCREEN_OFF} />
         </div>
         <FileMenu files={this.props.files} activeFile={this.props.activeFile} />
       </div>
@@ -64,8 +64,11 @@ class TopBar extends React.Component {
                 topPanelType={TopPanelTypes.ABOUT} appState={this.props.appState}
               />
               <TopBarButton
-                type={TopBarButtonTypes.FULLSCREEN_ON}
-                panelType={this.props.type} appState={this.props.appState}
+                type={TopBarButtonTypes.TOP_PANEL_TOGGLE}
+                topPanelType={TopPanelTypes.SETTINGS} appState={this.props.appState}
+              />
+              <TopBarButton
+                type={TopBarButtonTypes.FULLSCREEN_ON} panelType={this.props.type}
               />
             </div>
             <FileMenu files={this.props.files} activeFile={this.props.activeFile} />
@@ -87,7 +90,6 @@ class TopBar extends React.Component {
               />
               <TopBarButton
                 type={TopBarButtonTypes.FULLSCREEN_ON} panelType={this.props.type}
-                appState={this.props.appState}
               />
             </div>
           </div>
@@ -108,7 +110,6 @@ class TopBar extends React.Component {
               />
               <TopBarButton
                 type={TopBarButtonTypes.FULLSCREEN_ON} panelType={this.props.type}
-                appState={this.props.appState}
               />
             </div>
           </div>

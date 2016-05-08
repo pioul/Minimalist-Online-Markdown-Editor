@@ -1,5 +1,6 @@
 import React from 'react';
-import { PanelNames, TopBarButtonTypes, TopPanelNames } from '../constants/AppConstants';
+import { PanelNames, TopBarButtonTypes, TopPanelTypes, TopPanelNames }
+  from '../constants/AppConstants';
 import AppActionCreators from '../action-creators/AppActionCreators';
 
 import styles from '../components/css/TopBarButton.css';
@@ -7,7 +8,7 @@ import styles from '../components/css/TopBarButton.css';
 class TopBarButton extends React.Component {
   static propTypes = {
     type: React.PropTypes.string.isRequired,
-    appState: React.PropTypes.object.isRequired,
+    appState: React.PropTypes.object,
     panelType: React.PropTypes.string,
     targetPanelType: React.PropTypes.string,
     topPanelType: React.PropTypes.string,
@@ -24,12 +25,11 @@ class TopBarButton extends React.Component {
 
   render() {
     var { type: buttonType, appState, targetPanelType, topPanelType } = this.props;
-    var buttonClassName;
     var topBarButtonContent;
 
     switch (buttonType) {
-      case TopBarButtonTypes.PANEL_SWITCH:
-        buttonClassName =
+      case TopBarButtonTypes.PANEL_SWITCH: {
+        const buttonClassName =
           appState.visiblePanels.includes(targetPanelType) ? styles.activeSwitch : styles.switch;
 
         topBarButtonContent = (
@@ -38,6 +38,7 @@ class TopBarButton extends React.Component {
           </button>
         );
         break;
+      }
 
       case TopBarButtonTypes.FULLSCREEN_ON:
         topBarButtonContent = (
@@ -57,9 +58,16 @@ class TopBarButton extends React.Component {
         );
         break;
 
-      case TopBarButtonTypes.TOP_PANEL_TOGGLE:
-        buttonClassName =
-          appState.visibleTopPanel === topPanelType ? styles.selectedButton : styles.button;
+      case TopBarButtonTypes.TOP_PANEL_TOGGLE: {
+        const isTopPanelVisible = appState.visibleTopPanel === topPanelType;
+        let buttonClassName;
+
+        if (topPanelType === TopPanelTypes.SETTINGS) {
+          buttonClassName =
+            isTopPanelVisible ? styles.selectedSettingsIconButton : styles.settingsIconButton;
+        } else {
+          buttonClassName = isTopPanelVisible ? styles.selectedButton : styles.button;
+        }
 
         topBarButtonContent = (
           <button className={buttonClassName} onClick={this.onTopPanelToggleButtonClick}>
@@ -67,6 +75,7 @@ class TopBarButton extends React.Component {
           </button>
         );
         break;
+      }
 
       default:
         break;

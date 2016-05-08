@@ -48,6 +48,18 @@
   composes: selectedButton;
 }
 
+.settingsIconButton {
+  composes: iconButton;
+  composes: icon-settings from './icons.css';
+
+  font-size: 14px;
+}
+
+.selectedSettingsIconButton {
+  composes: settingsIconButton;
+  composes: selectedButton;
+}
+
 .switch {
   composes: button;
 
