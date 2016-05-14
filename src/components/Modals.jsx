@@ -3,6 +3,7 @@ import ModalStore from '../stores/ModalStore';
 import { ModalTypes } from '../constants/AppConstants';
 import ModalActionCreators from '../action-creators/ModalActionCreators';
 import FileActionCreators from '../action-creators/FileActionCreators';
+import ShortcutManager from '../utils/ShortcutManager.js';
 
 import styles from '../components/css/Modals.css';
 
@@ -14,10 +15,23 @@ class App extends React.Component {
     this.state = getState();
   }
 
-  componentDidMount = () => ModalStore.addChangeListener(this.onStoreChange);
+  componentDidMount() {
+    ModalStore.addChangeListener(this.onStoreChange);
+    ShortcutManager.register('ESCAPE', this.onEscapeKeyPressed);
+  }
+
   componentDidUpdate = () => this.focusPrimaryButton();
-  componentWillUnmount = () => ModalStore.removeChangeListener(this.onStoreChange);
+
+  componentWillUnmount() {
+    ModalStore.removeChangeListener(this.onStoreChange);
+    ShortcutManager.unregister('ESCAPE', this.onEscapeKeyPressed);
+  }
+
   onStoreChange = () => this.setState(getState());
+
+  onEscapeKeyPressed = () => {
+    if (this.isModalOpen()) this.closeModal();
+  };
 
   /**
    * Focus last modal button when the focus is passed to the element preceding
