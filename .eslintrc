@@ -5,6 +5,7 @@
     "no-var": 0,
     "prefer-template": 0,
     "no-return-assign": 0,
-    "no-param-reassign": 0
+    "no-param-reassign": 0,
+    "no-confusing-arrow": ["error", { "allowParens": true }]
   }
 }

@@ -17,21 +17,21 @@ class App extends React.Component {
 
   componentDidMount() {
     ModalStore.addChangeListener(this.onStoreChange);
-    ShortcutManager.register('ESCAPE', this.onEscapeKeyPressed);
+    ShortcutManager.register('ESCAPE', this.onEscapeKeyPressed, 'modal');
+    ShortcutManager.registerScopeResolver(this.shortcutManagerScopeResolver);
   }
 
   componentDidUpdate = () => this.focusPrimaryButton();
 
   componentWillUnmount() {
     ModalStore.removeChangeListener(this.onStoreChange);
-    ShortcutManager.unregister('ESCAPE', this.onEscapeKeyPressed);
+    ShortcutManager.unregister('ESCAPE', this.onEscapeKeyPressed, 'modal');
+    ShortcutManager.unregisterScopeResolver(this.shortcutManagerScopeResolver);
   }
 
   onStoreChange = () => this.setState(getState());
 
-  onEscapeKeyPressed = () => {
-    if (this.isModalOpen()) this.closeModal();
-  };
+  onEscapeKeyPressed = () => this.closeModal();
 
   /**
    * Focus last modal button when the focus is passed to the element preceding
@@ -48,6 +48,8 @@ class App extends React.Component {
   onLastFocusLossDetectorFocus = () => {
     this.refs.buttonsContainer.querySelector('button:first-child').focus();
   };
+
+  shortcutManagerScopeResolver = () => (this.isModalOpen() ? 'modal' : null);
 
   focusPrimaryButton = () => {
     if (!this.isModalOpen()) return;
