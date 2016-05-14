@@ -1,5 +1,8 @@
 .app,
 .panelContainer {
   height: 100%;
-  font-size: calc(14px * attr(data-font-size-offset));
+}
+
+.app {
+  position: relative;
 }

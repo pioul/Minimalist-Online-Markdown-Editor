@@ -11,6 +11,7 @@ import SettingsActionCreators from '../action-creators/SettingsActionCreators';
 import ShortcutManager from '../utils/ShortcutManager.js';
 import { Themes } from '../constants/AppConstants';
 import Panel from '../components/Panel.jsx';
+import BottomBar from '../components/BottomBar.jsx';
 import Modals from '../components/Modals.jsx';
 
 var getAppStoreState = () => ({ appState: AppStore.getAppState() });
@@ -117,6 +118,8 @@ class App extends React.Component {
             />
           ))}
         </div>
+
+        <BottomBar markdown={markdown} />
 
         <Modals />
       </div>

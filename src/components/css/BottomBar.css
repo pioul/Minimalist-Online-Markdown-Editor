@@ -1,0 +1,9 @@
+.bottomBar {
+  position: absolute;
+  right: 5px;
+  bottom: 0;
+  height: var(--panel-bottom-padding);
+  line-height: var(--panel-bottom-padding);
+  font-size: 11px;
+  color: var(--bottom-bar-word-count-color);
+}

@@ -4,7 +4,7 @@
  *
  * E.g. getShortString('React Blog Post', 10) -> 'Reac…Post'
  */
-var getShortString = (str, length) => {
+const getShortString = (str, length) => {
   if (str.length > length) {
     length = Math.round(length / 2) - 1;
     str = str.substr(0, length) + '…' + str.substr(-length);
@@ -17,7 +17,7 @@ var getShortString = (str, length) => {
  * Return a random id. If an array of existing ids is passed, it'll ensure
  * the returned id is unique.
  */
-var generateUniqueId = (existingIds = []) => {
+const generateUniqueId = (existingIds = []) => {
   var id;
 
   do {
