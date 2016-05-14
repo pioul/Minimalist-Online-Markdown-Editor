@@ -15,16 +15,39 @@ class App extends React.Component {
   }
 
   componentDidMount = () => ModalStore.addChangeListener(this.onStoreChange);
+  componentDidUpdate = () => this.focusPrimaryButton();
   componentWillUnmount = () => ModalStore.removeChangeListener(this.onStoreChange);
   onStoreChange = () => this.setState(getState());
 
+  /**
+   * Focus last modal button when the focus is passed to the element preceding
+   * the first modal button (i.e. making focus loop through modal buttons)
+   */
+  onFirstFocusLossDetectorFocus = () => {
+    this.refs.buttonsContainer.querySelector('button:last-child').focus();
+  };
+
+  /**
+   * Focus first modal button when the focus is passed to the element following
+   * the last modal button (i.e. making focus loop through modal buttons)
+   */
+  onLastFocusLossDetectorFocus = () => {
+    this.refs.buttonsContainer.querySelector('button:first-child').focus();
+  };
+
+  focusPrimaryButton = () => {
+    if (!this.isModalOpen()) return;
+    this.refs.buttonsContainer.querySelector('button:last-child').focus();
+  };
+
   closeModal = () => ModalActionCreators.closeModal();
 
+  isModalOpen = () => this.state.openModal !== null;
+
   render() {
-    var isModalOpen = this.state.openModal !== null;
     var modalConfig;
 
-    if (!isModalOpen) return <div></div>;
+    if (!this.isModalOpen()) return <div></div>;
 
     switch (this.state.openModal) {
       case ModalTypes.CONFIRM_CLOSE_NON_EMPTY_FILE:
@@ -46,7 +69,11 @@ class App extends React.Component {
       <div className={styles.modalContainer}>
         <div className={styles.modal}>
           <div className={styles.modalContent}>{modalConfig.text}</div>
-          <div className={styles.buttonsContainer}>
+          <button
+            onFocus={this.onFirstFocusLossDetectorFocus}
+            className={styles.focusLossDetectorButton}
+          />
+          <div className={styles.buttonsContainer} ref="buttonsContainer">
             {modalConfig.buttons.map((button) => (
               <button
                 onClick={() => {
@@ -59,6 +86,10 @@ class App extends React.Component {
               </button>
             ))}
           </div>
+          <button
+            onFocus={this.onLastFocusLossDetectorFocus}
+            className={styles.focusLossDetectorButton}
+          />
         </div>
       </div>
     );
