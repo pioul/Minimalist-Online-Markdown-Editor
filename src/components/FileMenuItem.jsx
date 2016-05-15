@@ -10,11 +10,36 @@ class FileMenuItem extends React.Component {
     activeFile: React.PropTypes.object.isRequired,
   };
 
+  componentDidMount = () => {
+    const { file, activeFile } = this.props;
+    const isActive = file === activeFile;
+    if (isActive) this.scrollElementIntoView();
+  };
+
+  componentDidUpdate = (prevProps) => {
+    const { file, activeFile } = this.props;
+    const isActive = file === activeFile;
+    const wasActive = file === prevProps.activeFile;
+    const wasJustMadeActive = isActive && !wasActive;
+    if (wasJustMadeActive) this.scrollElementIntoView();
+  };
+
   onClick = () => FileActionCreators.updateActiveFile(this.props.file);
 
   onCloseButtonClick = (e) => {
     e.stopPropagation();
     FileActionCreators.closeFile(this.props.file);
+  };
+
+  /**
+   * The parent's dimensions can change depending on the visibility of
+   * navigation controls, so we scroll into view once for immediacy, and a second
+   * time after other operations have been completed to give it a chance to
+   * scroll into view again if the potential layout changes pushed it out of view.
+   */
+  scrollElementIntoView = () => {
+    this.refs.menuItem.scrollIntoView();
+    setImmediate(() => this.refs.menuItem.scrollIntoView());
   };
 
   render() {
@@ -27,7 +52,10 @@ class FileMenuItem extends React.Component {
     var title = fileName !== shortFileName ? fileName : '';
 
     return (
-      <div className={fileMenuItemClassName} title={title} onClick={this.onClick}>
+      <div
+        className={fileMenuItemClassName} title={title}
+        onClick={this.onClick} ref="menuItem"
+      >
         <span className={styles.fileName}>{shortFileName}</span>
         <span className={styles.closeButton} onClick={this.onCloseButtonClick}>×</span>
       </div>
