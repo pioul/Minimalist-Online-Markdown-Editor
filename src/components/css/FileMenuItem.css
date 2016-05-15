@@ -1,7 +1,8 @@
 .fileMenuItem {
   position: relative;
   display: inline-block;
-  height: 18px;
+  box-sizing: border-box;
+  height: var(--top-bar-item-height);
   margin-right: 1px;
   padding: 2px 20px 0 8px;
   color: var(--file-menu-item-color);

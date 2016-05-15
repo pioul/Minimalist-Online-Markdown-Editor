@@ -1,3 +1,8 @@
+.topBar {
+  height: var(--top-bar-item-height);
+  overflow: hidden;
+}
+
 .buttonsContainer {
   float: right;
 }

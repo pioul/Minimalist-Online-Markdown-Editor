@@ -1,7 +1,7 @@
 .button {
   box-sizing: border-box;
   float: left;
-	height: 22px;
+	height: var(--top-bar-item-height);
 	padding: 2px 6px 0;
 	line-height: 18px;
 	color: var(--top-bar-button-color);

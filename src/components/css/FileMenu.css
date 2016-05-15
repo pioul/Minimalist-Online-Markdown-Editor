@@ -1,6 +1,58 @@
-.fileMenu {
+.fileMenuItemsContainer {
   position: relative;
   margin-right: 10px;
+  padding-bottom: 50px;
   overflow: hidden;
+  overflow-x: auto;
   white-space: nowrap;
+}
+
+.navControl {
+  width: 18px;
+  height: 18px;
+  margin: 2px;
+  padding: 0;
+  font-size: 10px;
+  line-height: 18px;
+  text-align: center;
+  border: 0;
+  border-radius: 2px;
+  background: var(--top-bar-arrow-bg-color);
+  color: var(--top-bar-button-color);
+  cursor: pointer;
+}
+
+.navControl:active {
+  background: var(--top-bar-arrow-active-bg-color);
+}
+
+.navControl:focus {
+  outline: none;
+}
+
+.navControl:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+.leftNavControl {
+  composes: navControl;
+
+  float: left;
+  text-indent: -2px;
+}
+
+.leftNavControl::before {
+  content: "\25C4";
+}
+
+.rightNavControl {
+  composes: navControl;
+
+  float: right;
+  text-indent: 2px;
+}
+
+.rightNavControl::before {
+  content: "\25BA";
 }
