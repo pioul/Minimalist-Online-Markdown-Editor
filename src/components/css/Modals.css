@@ -58,9 +58,10 @@
 }
 
 .focusLossDetectorButton {
-  display: block;
-  width: 0;
-  height: 0;
+  position: absolute;
+  z-index: -1;
+  width: 1px;
+  height: 1px;
   margin: 0;
   padding: 0;
   border: 0;
