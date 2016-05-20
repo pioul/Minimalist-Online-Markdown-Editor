@@ -7,6 +7,8 @@ var AppActionCreators = {
       actionType: ActionTypes.PANEL_ENTER_FULLSCREEN,
       panelType,
     });
+
+    AppActionCreators.disableTopPanel();
   },
 
   makePanelExitFullscreen: () => {
