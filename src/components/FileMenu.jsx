@@ -78,7 +78,8 @@ class FileMenu extends React.Component {
           onDoubleClick={this.onFileMenuDoubleClick} ref="fileMenuItemsContainer"
           onScroll={this.onFileMenuScroll}
         >
-          {this.props.files.map((file) => <FileMenuItem file={file} {...this.props} />)}
+          {this.props.files.map((file) =>
+            <FileMenuItem key={file.id} file={file} {...this.props} />)}
         </div>
       </div>
     );
