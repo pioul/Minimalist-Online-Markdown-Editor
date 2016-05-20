@@ -16,6 +16,7 @@
 	border: 0;
 	color: var(--main-text-color);
 	font-size: var(--main-text-size);
+	line-height: 16px;
 }
 
 .button:active {
@@ -45,7 +46,6 @@
 	top: 5px;
 	left: 9px;
 	height: 16px;
-	line-height: 16px;
 	font-family: monospace;
 }
 

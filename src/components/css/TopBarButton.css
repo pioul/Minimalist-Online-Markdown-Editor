@@ -1,20 +1,20 @@
 .button {
   box-sizing: border-box;
   float: left;
-	height: var(--top-bar-item-height);
-	padding: 2px 6px 0;
-	line-height: 18px;
-	color: var(--top-bar-button-color);
-	text-decoration: none;
-	font-size: 11px;
+  height: var(--top-bar-item-height);
+  padding: 2px 6px 0;
+  line-height: 18px;
+  color: var(--top-bar-button-color);
+  text-decoration: none;
+  font-size: 11px;
   border: 0;
-	border-bottom: 2px solid transparent;
-	background: var(--top-bar-button-bg-color);
+  border-bottom: 2px solid transparent;
+  background: var(--top-bar-button-bg-color);
   cursor: pointer;
 }
 
 .button:active {
-	background: var(--top-bar-button-active-bg-color);
+  background: var(--top-bar-button-active-bg-color);
 }
 
 .button:focus {
@@ -24,16 +24,16 @@
 .selectedButton {
   composes: button;
 
-	border-bottom-color: var(--top-bar-button-selected-border-color);
+  border-bottom-color: var(--top-bar-button-selected-border-color);
 }
 
 .iconButton {
   composes: button;
 
   width: 22px;
-	padding-left: 0;
-	padding-right: 0;
-	text-align: center;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
 }
 
 .fullscreenIconButton {
@@ -64,14 +64,14 @@
   composes: button;
 
   position: relative;
-	padding-left: 6px;
-	padding-right: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 
 .switch + .switch::before {
-	content: "/";
-	position: absolute;
-	left: -2px;
+  content: "/";
+  position: absolute;
+  left: -2px;
 }
 
 .activeSwitch {

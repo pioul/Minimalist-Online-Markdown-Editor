@@ -1,3 +1,4 @@
+import 'normalize.css';
 import './css/global-styles/document-styles.css'; // Order of this import matters
 import styles from './css/App.css';
 
