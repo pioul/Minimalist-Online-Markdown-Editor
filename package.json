@@ -29,8 +29,6 @@
     "json-loader": "^0.5.4",
     "keymirror": "^0.1.1",
     "markdown-it": "^5.1.0",
-    "react": "^0.14.6",
-    "react-dom": "^0.14.6",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.10"
@@ -38,6 +36,8 @@
   "dependencies": {
     "draft-js": "^0.7.0",
     "lodash.throttle": "^4.0.1",
-    "normalize.css": "^4.1.1"
+    "normalize.css": "^4.1.1",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0"
   }
 }
