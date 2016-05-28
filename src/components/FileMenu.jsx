@@ -34,7 +34,11 @@ class FileMenu extends React.Component {
     window.removeEventListener('resize', this.updateNavControlsDisplay);
   };
 
-  onFileMenuDoubleClick = () => FileActionCreators.createAndSelectNewFile();
+  onFileMenuDoubleClick = (e) => {
+    const isClickOnFileMenuItself = e.target === this.refs.fileMenuItemsContainer;
+    if (isClickOnFileMenuItself) FileActionCreators.createAndSelectNewFile();
+  };
+
   onFileMenuScroll = () => this.updateNavControlsDisplay();
 
   onLeftNavControlClick = () => this.scrollBy(-FileMenu.SCROLL_STEP);
