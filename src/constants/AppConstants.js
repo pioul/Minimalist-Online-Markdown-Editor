@@ -5,8 +5,8 @@
 import keyMirror from 'keymirror';
 
 const ActionTypes = keyMirror({
-  MARKDOWN_UPDATED: null,
-  MARKDOWN_PARSED: null,
+  EDITOR_STATE_UPDATED: null,
+  EDITOR_MOVE_FOCUS_TO_END: null,
   APPEND_TO_MARKDOWN_SOURCE: null,
   PANEL_ENTER_FULLSCREEN: null,
   PANEL_EXIT_FULLSCREEN: null,

@@ -5,6 +5,7 @@ import TopPanel from '../components/TopPanel.jsx';
 import MarkdownSource from '../components/MarkdownSource.jsx';
 import MarkdownPreview from '../components/MarkdownPreview.jsx';
 import HtmlSource from '../components/HtmlSource.jsx';
+import { EditorState } from 'draft-js';
 
 import styles from '../components/css/Panel.css';
 
@@ -18,22 +19,19 @@ const Panel = (props) => {
   switch (props.type) {
     case PanelTypes.MARKDOWN_SOURCE:
       panelContents = (
-        <MarkdownSource
-          markdown={props.markdown} caretPos={props.caretPos}
-          fontSizeOffset={fontSizeOffset}
-        />
+        <MarkdownSource editorState={props.editorState} fontSizeOffset={fontSizeOffset} />
       );
       break;
 
     case PanelTypes.MARKDOWN_PREVIEW:
       panelContents = (
-        <MarkdownPreview html={props.html} fontSizeOffset={fontSizeOffset} />
+        <MarkdownPreview markdown={props.markdown} fontSizeOffset={fontSizeOffset} />
       );
       break;
 
     case PanelTypes.HTML_SOURCE:
       panelContents = (
-        <HtmlSource html={props.html} fontSizeOffset={fontSizeOffset} />
+        <HtmlSource markdown={props.markdown} fontSizeOffset={fontSizeOffset} />
       );
       break;
 
@@ -55,9 +53,8 @@ const Panel = (props) => {
 
 Panel.propTypes = {
   type: React.PropTypes.string.isRequired,
+  editorState: React.PropTypes.instanceOf(EditorState).isRequired,
   markdown: React.PropTypes.string.isRequired,
-  html: React.PropTypes.string.isRequired,
-  caretPos: React.PropTypes.array.isRequired,
   appState: React.PropTypes.object.isRequired,
   settingsState: React.PropTypes.object.isRequired,
   files: React.PropTypes.array.isRequired,

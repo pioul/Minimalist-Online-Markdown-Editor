@@ -1,4 +1,5 @@
 .topBar {
+  flex-shrink: 0;
   height: var(--top-bar-item-height);
   overflow: hidden;
 }

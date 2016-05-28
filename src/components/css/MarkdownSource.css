@@ -1,5 +1,50 @@
-.textarea {
-  composes: textarea from './Textarea.css';
-  
+.editorContainer {
+  display: flex;
   flex: 1;
+  overflow-y: auto;
+  cursor: text;
+
+  composes: textarea from './Textarea.css';
+}
+
+/**
+ * CSS pulled from draft-js's compiled Draft.css and customized
+ */
+.editorContainer :global(.DraftEditor-editorContainer),
+.editorContainer :global(.DraftEditor-root),
+.editorContainer :global(.public-DraftEditor-content) {
+	height: 100%;
+	text-align: initial;
+}
+
+.editorContainer :global(.DraftEditor-root) {
+  position: relative;
+	width: 100%;
+}
+
+.editorContainer :global(.DraftEditor-editorContainer) {
+	position: relative;
+	z-index: 1;
+	background-color: transparent;
+	border-left: .1px solid transparent;
+}
+
+.editorContainer :global(.public-DraftEditor-block) {
+	position: relative;
+}
+
+.editorContainer :global(.public-DraftEditorPlaceholder-root) {
+	position: absolute;
+  left: 1px;
+	z-index: 0;
+	color: #ced7df;
+}
+
+.editorContainer :global(.DraftEditorPlaceholder-hidden) {
+	display: none;
+}
+
+.editorContainer :global(.public-DraftStyleDefault-block) {
+	position: relative;
+	white-space: pre-wrap;
 }

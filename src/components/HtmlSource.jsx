@@ -1,4 +1,5 @@
 import React from 'react';
+import MarkdownParser from '../utils/MarkdownParser';
 
 import styles from './css/HtmlSource.css';
 
@@ -7,17 +8,18 @@ const HtmlSource = (props) => {
   const dynamicStyles = {
     fontSize: defaultFontSize + props.fontSizeOffset,
   };
+  const html = MarkdownParser.render(props.markdown);
 
   return (
     <textarea
-      className={styles.textarea} value={props.html}
+      className={styles.textarea} value={html}
       style={dynamicStyles} readOnly
     />
   );
 };
 
 HtmlSource.propTypes = {
-  html: React.PropTypes.string.isRequired,
+  markdown: React.PropTypes.string.isRequired,
   fontSizeOffset: React.PropTypes.number.isRequired,
 };
 

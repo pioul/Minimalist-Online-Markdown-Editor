@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes } from '../constants/AppConstants';
-import FileActionCreators from '../action-creators/FileActionCreators';
+import { EditorState, SelectionState, Modifier, convertToRaw, convertFromRaw } from 'draft-js';
 import createPersistentStore from '../utils/createPersistentStore';
 import { generateUniqueId } from '../utils/StringUtils';
 
@@ -18,9 +18,7 @@ var getNewFile = () => {
   return {
     id: generateUniqueId(existingFileIds),
     name: null,
-    markdown: '',
-    html: '',
-    caretPos: [0, 0],
+    editorState: EditorState.createEmpty(),
   };
 };
 
@@ -32,40 +30,97 @@ var FileStore = Object.assign({}, EventEmitter.prototype, {
   getState: () => state,
 
   getPersistedState: () => ({
-    files: state.files,
+    files: state.files.map(({ id, name, editorState }) => {
+      const rawEditorContentState = convertToRaw(editorState.getCurrentContent());
+      const selection = editorState.getSelection();
+      const rawSelection = {
+        anchorKey: selection.getAnchorKey(),
+        anchorOffset: selection.getAnchorOffset(),
+        focusKey: selection.getFocusKey(),
+        focusOffset: selection.getFocusOffset(),
+      };
+
+      return { id, name, rawEditorContentState, rawSelection };
+    }),
+
     activeFileId: state.activeFile.id,
   }),
 
   setPersistedState: (persistedState) => {
-    state = {
-      files: persistedState.files,
-      activeFile: persistedState.files.find((file) => file.id === persistedState.activeFileId),
-    };
+    const restoredFiles = persistedState.files.map((file) => {
+      const { id, name, rawEditorContentState, rawSelection } = file;
+      const selectionState = new SelectionState({ ...rawSelection });
+
+      let editorState = EditorState.createWithContent(convertFromRaw(rawEditorContentState));
+      editorState = EditorState.set(editorState, { selection: selectionState });
+
+      return { id, name, editorState };
+    });
+
+    state.files = restoredFiles;
+
+    const activeFile = restoredFiles.find((file) => file.id === persistedState.activeFileId);
+    updateActiveFile(activeFile);
   },
 
 });
 
-var updateMarkdown = (md, caretPos) => {
-  state.activeFile.markdown = md;
-  state.activeFile.caretPos = caretPos;
+var updateEditorState = (editorState) => {
+  state.activeFile.editorState = editorState;
 };
 
-var updateHtml = (html) => state.activeFile.html = html;
+var moveEditorFocusToEnd = () => {
+  const newEditorState = EditorState.moveFocusToEnd(state.activeFile.editorState);
+  state.activeFile.editorState = newEditorState;
+};
 
 var appendToMarkdownSource = (markdown) => {
-  state.activeFile.markdown += markdown;
-  state.activeFile.caretPos = [state.activeFile.markdown.length, state.activeFile.markdown.length];
+  const editorState = state.activeFile.editorState;
+  const contentState = editorState.getCurrentContent();
+  const lastContentBlock = contentState.getLastBlock();
+  const lastBlockKey = lastContentBlock.getKey();
+  const blockLength = lastContentBlock.getLength();
 
-  FileActionCreators.parseMarkdown(state.activeFile.markdown);
+  const targetRange = new SelectionState({
+    anchorKey: lastBlockKey,
+    anchorOffset: blockLength,
+    focusKey: lastBlockKey,
+    focusOffset: blockLength,
+  });
+
+  let newContentState = Modifier.insertText(contentState, targetRange, markdown);
+  let newEditorState = EditorState.push(editorState, newContentState, 'insert-characters');
+
+  newEditorState = EditorState.moveFocusToEnd(newEditorState);
+  newContentState = newContentState.merge({
+    selectionBefore: contentState.getSelectionAfter(),
+    selectionAfter: newEditorState.getSelection(),
+  });
+
+  newEditorState = EditorState.set(newEditorState, {
+    currentContent: newContentState,
+  });
+
+  state.activeFile.editorState = newEditorState;
 };
 
-var updateActiveFile = (file) => state.activeFile = file;
+var updateActiveFile = (file) => {
+  state.activeFile = file;
+  state.activeFile.editorState = EditorState.forceSelection(
+    state.activeFile.editorState,
+    state.activeFile.editorState.getSelection(),
+  );
+};
 
-var createFile = () => state.files.push(getNewFile());
+var createFile = () => {
+  const newFile = getNewFile();
+  state.files.push(newFile);
+  return newFile;
+};
 
 var createAndSelectNewFile = () => {
-  createFile();
-  state.activeFile = state.files[state.files.length - 1];
+  const newFile = createFile();
+  updateActiveFile(newFile);
 };
 
 var closeFile = (file) => {
@@ -82,7 +137,7 @@ var closeFile = (file) => {
     const newActiveFileIndex =
       (fileIndex <= maxFileIndex) ? fileIndex : fileIndex - 1;
 
-    state.activeFile = state.files[newActiveFileIndex];
+    updateActiveFile(state.files[newActiveFileIndex]);
   }
 };
 
@@ -90,12 +145,12 @@ var onDispatchedPayload = (payload) => {
   var isPayloadInteresting = true;
 
   switch (payload.actionType) {
-    case ActionTypes.MARKDOWN_UPDATED:
-      updateMarkdown(payload.md, payload.caretPos);
+    case ActionTypes.EDITOR_STATE_UPDATED:
+      updateEditorState(payload.editorState);
       break;
 
-    case ActionTypes.MARKDOWN_PARSED:
-      updateHtml(payload.html);
+    case ActionTypes.EDITOR_MOVE_FOCUS_TO_END:
+      moveEditorFocusToEnd();
       break;
 
     case ActionTypes.APPEND_TO_MARKDOWN_SOURCE:

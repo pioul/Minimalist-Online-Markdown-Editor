@@ -1,27 +1,19 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes, ModalTypes } from '../constants/AppConstants';
-import MarkdownParser from '../utils/MarkdownParser';
 import ModalActionCreators from '../action-creators/ModalActionCreators';
 
 var FileActionCreators = {
-  updateMarkdown: (md, caretPos) => {
+  updateEditorState: (editorState) => {
     AppDispatcher.dispatch({
-      actionType: ActionTypes.MARKDOWN_UPDATED,
-      md,
-      caretPos,
+      actionType: ActionTypes.EDITOR_STATE_UPDATED,
+      editorState,
     });
-
-    FileActionCreators.parseMarkdown(md);
   },
 
-  parseMarkdown: (md) => {
-    MarkdownParser.render(md)
-      .then((html) => {
-        AppDispatcher.dispatch({
-          actionType: ActionTypes.MARKDOWN_PARSED,
-          html,
-        });
-      });
+  moveFocusToEnd: () => {
+    AppDispatcher.dispatch({
+      actionType: ActionTypes.EDITOR_MOVE_FOCUS_TO_END,
+    });
   },
 
   appendToMarkdownSource: (markdown) => {
@@ -39,7 +31,7 @@ var FileActionCreators = {
   },
 
   closeFile: (file, shouldForceClose = false) => {
-    var isFileEmpty = file.markdown.length === 0;
+    var isFileEmpty = !file.editorState.getCurrentContent().hasText();
 
     if (!isFileEmpty && !shouldForceClose) {
       ModalActionCreators.openModal(ModalTypes.CONFIRM_CLOSE_NON_EMPTY_FILE, { file });

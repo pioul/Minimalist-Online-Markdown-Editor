@@ -1,27 +1,21 @@
 import React from 'react';
 import FileActionCreators from '../action-creators/FileActionCreators';
+import { Editor, EditorState } from 'draft-js';
 
 import styles from './css/MarkdownSource.css';
 
 class MarkdownSource extends React.Component {
   static propTypes = {
-    markdown: React.PropTypes.string.isRequired,
-    caretPos: React.PropTypes.array.isRequired,
+    editorState: React.PropTypes.instanceOf(EditorState).isRequired,
     fontSizeOffset: React.PropTypes.number.isRequired,
   };
 
-  componentDidUpdate() {
-    this.refs.textarea.setSelectionRange(...this.props.caretPos);
-    this.refs.textarea.focus();
+  onEditorContainerClick = (e) => {
+    const isClickOnContainerItself = e.target === this.refs.editorContainer;
+    if (isClickOnContainerItself) FileActionCreators.moveFocusToEnd();
   }
 
-  onInput = (e) => {
-    var textarea = e.target;
-    var markdown = textarea.value;
-    var caretPos = [textarea.selectionStart, textarea.selectionEnd];
-
-    FileActionCreators.updateMarkdown(markdown, caretPos);
-  };
+  onChange = (editorState) => FileActionCreators.updateEditorState(editorState);
 
   render() {
     const defaultFontSize = 11;
@@ -30,10 +24,15 @@ class MarkdownSource extends React.Component {
     };
 
     return (
-      <textarea
-        className={styles.textarea} style={dynamicStyles} ref="textarea"
-        value={this.props.markdown} onChange={this.onInput}
-      />
+      <div
+        className={styles.editorContainer} onClick={this.onEditorContainerClick}
+        ref="editorContainer" style={dynamicStyles}
+      >
+        <Editor
+          editorState={this.props.editorState} onChange={this.onChange}
+          ref="editor" placeholder="Write Markdown" spellCheck stripPastedStyles
+        />
+      </div>
     );
   }
 }

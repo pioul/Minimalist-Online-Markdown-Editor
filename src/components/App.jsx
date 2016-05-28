@@ -101,7 +101,8 @@ class App extends React.Component {
 
   render() {
     const { appState, fileState, settingsState } = this.state;
-    const { markdown, html, caretPos } = fileState.activeFile;
+    const { editorState } = fileState.activeFile;
+    const markdown = editorState.getCurrentContent().getPlainText();
 
     const isDarkThemeEnabled = settingsState.theme === Themes.DARK;
 
@@ -113,8 +114,8 @@ class App extends React.Component {
         <div className={styles.panelContainer}>
           {appState.visiblePanels.map((panelType) => (
             <Panel
-              key={panelType} type={panelType} markdown={markdown} html={html}
-              caretPos={caretPos} appState={appState} files={fileState.files}
+              key={panelType} type={panelType} editorState={editorState}
+              markdown={markdown} appState={appState} files={fileState.files}
               activeFile={fileState.activeFile} settingsState={settingsState}
             />
           ))}
