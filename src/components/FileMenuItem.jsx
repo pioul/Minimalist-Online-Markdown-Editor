@@ -56,7 +56,7 @@ class FileMenuItem extends React.Component {
         className={fileMenuItemClassName} title={title}
         onClick={this.onClick} ref="menuItem"
       >
-        <span className={styles.fileName}>{shortFileName}</span>
+        <span>{shortFileName}</span>
         <span className={styles.closeButton} onClick={this.onCloseButtonClick}>×</span>
       </div>
     );

@@ -36,11 +36,6 @@
   content: none;
 }
 
-.fileName {
-  position: relative;
-  z-index: -1; /* Place .filename under .file-menu-item for click events to only fire on .file-menu-item; creating other stacking contexts around here or changing these properties might break the file menu on the JS side. */
-}
-
 .closeButton {
   composes: closeButton from './CloseButton.css';
 
