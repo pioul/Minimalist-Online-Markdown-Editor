@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes } from '../constants/AppConstants';
 
-var AppActionCreators = {
+const AppActionCreators = {
   makePanelEnterFullscreen: (panelType) => {
     AppDispatcher.dispatch({
       actionType: ActionTypes.PANEL_ENTER_FULLSCREEN,

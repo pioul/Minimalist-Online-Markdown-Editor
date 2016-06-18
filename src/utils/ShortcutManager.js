@@ -121,9 +121,9 @@ const ShortcutManager = (() => {
 
   return {
     register: (shortcuts, handler, scope = null) => {
-      shortcuts = Array.isArray(shortcuts) ? shortcuts : [shortcuts];
+      const shortcutsArr = Array.isArray(shortcuts) ? shortcuts : [shortcuts];
 
-      forEachShortcut(shortcuts, (shortcut) => {
+      forEachShortcut(shortcutsArr, (shortcut) => {
         const shortcutHandlers = handlers.has(shortcut) ? handlers.get(shortcut) : [];
         shortcutHandlers.push({ handler, scope });
         handlers.set(shortcut, shortcutHandlers);
@@ -131,9 +131,9 @@ const ShortcutManager = (() => {
     },
 
     unregister: (shortcuts, handler, scope = null) => {
-      shortcuts = Array.isArray(shortcuts) ? shortcuts : [shortcuts];
+      const shortcutsArr = Array.isArray(shortcuts) ? shortcuts : [shortcuts];
 
-      forEachShortcut(shortcuts, (shortcut) => {
+      forEachShortcut(shortcutsArr, (shortcut) => {
         const shortcutHandlers = handlers.has(shortcut) ? handlers.get(shortcut) : [];
         const handlerIndex = shortcutHandlers.findIndex((shortcutHandler) =>
           shortcutHandler.handler === handler && shortcutHandler.scope === scope);

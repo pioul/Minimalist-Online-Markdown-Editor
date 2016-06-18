@@ -2,14 +2,14 @@ import { EventEmitter } from 'events';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes } from '../constants/AppConstants';
 
-var CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change';
 
-var state = {
+const state = {
   openModal: null,
   options: {},
 };
 
-var ModalStore = Object.assign({}, EventEmitter.prototype, {
+const ModalStore = Object.assign({}, EventEmitter.prototype, {
   emitChange: () => ModalStore.emit(CHANGE_EVENT),
   addChangeListener: (callback) => ModalStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => ModalStore.removeListener(CHANGE_EVENT, callback),
@@ -17,18 +17,18 @@ var ModalStore = Object.assign({}, EventEmitter.prototype, {
   getState: () => state,
 });
 
-var openModal = (modalType, options) => {
+const openModal = (modalType, options) => {
   state.openModal = modalType;
   state.options = options;
 };
 
-var closeModal = () => {
+const closeModal = () => {
   state.openModal = null;
   state.options = {};
 };
 
-var onDispatchedPayload = (payload) => {
-  var isPayloadInteresting = true;
+const onDispatchedPayload = (payload) => {
+  let isPayloadInteresting = true;
 
   switch (payload.actionType) {
     case ActionTypes.OPEN_MODAL:

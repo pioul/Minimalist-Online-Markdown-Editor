@@ -26,28 +26,19 @@ class TopPanel extends React.Component {
   onTopPanelCloseButtonClick = () => AppActionCreators.disableTopPanel();
 
   render() {
-    var topPanelContents;
-
-    switch (this.props.type) {
-      case TopPanelTypes.QUICK_REFERENCE:
-        topPanelContents = <QuickReference />;
-        break;
-
-      case TopPanelTypes.ABOUT:
-        topPanelContents = <About />;
-        break;
-
-      case TopPanelTypes.SETTINGS:
-        topPanelContents = <Settings settingsState={this.props.settingsState} />;
-        break;
-
-      default:
-        break;
-    }
+    const topPanelType = this.props.type;
 
     return (
       <div className={styles.topPanel}>
-        {topPanelContents}
+        {topPanelType === TopPanelTypes.QUICK_REFERENCE &&
+          <QuickReference />}
+
+        {topPanelType === TopPanelTypes.ABOUT &&
+          <About />}
+
+        {topPanelType === TopPanelTypes.SETTINGS &&
+          <Settings settingsState={this.props.settingsState} />}
+
         <button className={styles.closeButton} onClick={this.onTopPanelCloseButtonClick} />
       </div>
     );

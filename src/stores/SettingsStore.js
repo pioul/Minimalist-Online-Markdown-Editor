@@ -16,7 +16,7 @@ const SettingsStore = Object.assign({}, EventEmitter.prototype, {
   removeChangeListener: (callback) => SettingsStore.removeListener(CHANGE_EVENT, callback),
 
   getState: () => state,
-  setState: (newState) => state = newState,
+  setState: (newState) => (state = newState),
 });
 
 const increaseFontSize = () => {
@@ -37,7 +37,7 @@ const decreaseFontSize = () => {
   state.fontSizeOffset = newFontSizeOffset;
 };
 
-const switchTheme = (theme) => state.theme = theme;
+const switchTheme = (theme) => (state.theme = theme);
 
 const onDispatchedPayload = (payload) => {
   let isPayloadInteresting = true;

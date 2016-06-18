@@ -16,7 +16,7 @@
 import throttle from 'lodash.throttle';
 
 const persistData = (store, storageKey) => {
-  var state = store.getPersistedState ? store.getPersistedState() : store.getState();
+  const state = store.getPersistedState ? store.getPersistedState() : store.getState();
   localStorage.setItem(storageKey, JSON.stringify(state));
 };
 

@@ -15,9 +15,9 @@ import Panel from '../components/Panel.jsx';
 import BottomBar from '../components/BottomBar.jsx';
 import Modals from '../components/Modals.jsx';
 
-var getAppStoreState = () => ({ appState: AppStore.getAppState() });
-var getFileStoreState = () => ({ fileState: FileStore.getState() });
-var getSettingsStoreState = () => ({ settingsState: SettingsStore.getState() });
+const getAppStoreState = () => ({ appState: AppStore.getAppState() });
+const getFileStoreState = () => ({ fileState: FileStore.getState() });
+const getSettingsStoreState = () => ({ settingsState: SettingsStore.getState() });
 
 class App extends React.Component {
   constructor(props) {
@@ -75,7 +75,7 @@ class App extends React.Component {
   onSettingsStoreChange = () => this.setState(getSettingsStoreState());
 
   onEscapeKeyPressed = () => {
-    var isFullscreen = this.state.appState.visiblePanels.length === 1;
+    const isFullscreen = this.state.appState.visiblePanels.length === 1;
     if (isFullscreen) AppActionCreators.makePanelExitFullscreen();
   };
 

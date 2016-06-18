@@ -15,7 +15,7 @@ class TopBar extends React.Component {
   };
 
   getFullscreenTopBarContents = () => {
-    var topBarClassName = [
+    const topBarClassName = [
       styles.topBar,
       this.props.className,
     ].join(' ');
@@ -43,12 +43,12 @@ class TopBar extends React.Component {
   };
 
   getPaneledTopBarContents = (topBarPlacement) => {
-    var topBarClassName = [
+    const topBarClassName = [
       styles.topBar,
       this.props.className,
     ].join(' ');
 
-    var paneledTopBarContents;
+    let paneledTopBarContents;
 
     switch (topBarPlacement) {
       case PanelTypes.MARKDOWN_SOURCE:
@@ -124,7 +124,7 @@ class TopBar extends React.Component {
   };
 
   render() {
-    var isFullscreen = this.props.appState.visiblePanels.length === 1;
+    const isFullscreen = this.props.appState.visiblePanels.length === 1;
 
     return isFullscreen ?
       this.getFullscreenTopBarContents() :

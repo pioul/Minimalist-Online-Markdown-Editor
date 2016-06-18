@@ -3,30 +3,30 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes, PanelTypes } from '../constants/AppConstants';
 import createPersistentStore from '../utils/createPersistentStore';
 
-var CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change';
 
-var state = {
+let state = {
   appState: {
     visiblePanels: [PanelTypes.MARKDOWN_SOURCE, PanelTypes.MARKDOWN_PREVIEW],
     visibleTopPanel: null,
   },
 };
 
-var AppStore = Object.assign({}, EventEmitter.prototype, {
+const AppStore = Object.assign({}, EventEmitter.prototype, {
   emitChange: () => AppStore.emit(CHANGE_EVENT),
   addChangeListener: (callback) => AppStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => AppStore.removeListener(CHANGE_EVENT, callback),
 
   getState: () => state,
-  setState: (newState) => state = newState,
+  setState: (newState) => (state = newState),
   getAppState: () => state.appState,
 });
 
-var makePanelEnterFullscreen = (panelType) => state.appState.visiblePanels = [panelType];
+const makePanelEnterFullscreen = (panelType) => (state.appState.visiblePanels = [panelType]);
 
-var makePanelExitFullscreen = () => {
-  var currentVisiblePanel = state.appState.visiblePanels[0];
-  var newVisiblePanels;
+const makePanelExitFullscreen = () => {
+  const currentVisiblePanel = state.appState.visiblePanels[0];
+  let newVisiblePanels;
 
   switch (currentVisiblePanel) {
     case PanelTypes.MARKDOWN_SOURCE:
@@ -43,28 +43,28 @@ var makePanelExitFullscreen = () => {
   state.appState.visiblePanels = newVisiblePanels;
 };
 
-var switchPanel = (currentPanelType, newPanelType) => {
-  var visiblePanelIndex = state.appState.visiblePanels.indexOf(currentPanelType);
+const switchPanel = (currentPanelType, newPanelType) => {
+  const visiblePanelIndex = state.appState.visiblePanels.indexOf(currentPanelType);
   state.appState.visiblePanels[visiblePanelIndex] = newPanelType;
 };
 
-var enableTopPanel = (topPanelType) => {
+const enableTopPanel = (topPanelType) => {
   state.appState.visibleTopPanel = topPanelType;
 };
 
-var disableTopPanel = () => {
+const disableTopPanel = () => {
   state.appState.visibleTopPanel = null;
 };
 
-var toggleTopPanel = (topPanelType) => {
-  var shouldDisableTopPanel = state.appState.visibleTopPanel === topPanelType;
+const toggleTopPanel = (topPanelType) => {
+  const shouldDisableTopPanel = state.appState.visibleTopPanel === topPanelType;
 
   if (shouldDisableTopPanel) disableTopPanel();
   else enableTopPanel(topPanelType);
 };
 
-var onDispatchedPayload = (payload) => {
-  var isPayloadInteresting = true;
+const onDispatchedPayload = (payload) => {
+  let isPayloadInteresting = true;
 
   switch (payload.actionType) {
     case ActionTypes.PANEL_ENTER_FULLSCREEN:

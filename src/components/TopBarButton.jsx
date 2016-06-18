@@ -24,8 +24,8 @@ class TopBarButton extends React.Component {
   onTopPanelToggleButtonClick = () => AppActionCreators.toggleTopPanel(this.props.topPanelType);
 
   render() {
-    var { type: buttonType, appState, targetPanelType, topPanelType } = this.props;
-    var topBarButtonContent;
+    const { type: buttonType, appState, targetPanelType, topPanelType } = this.props;
+    let topBarButtonContent;
 
     switch (buttonType) {
       case TopBarButtonTypes.PANEL_SWITCH: {

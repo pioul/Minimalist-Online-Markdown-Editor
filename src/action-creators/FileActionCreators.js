@@ -2,7 +2,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes, ModalTypes } from '../constants/AppConstants';
 import ModalActionCreators from '../action-creators/ModalActionCreators';
 
-var FileActionCreators = {
+const FileActionCreators = {
   updateEditorState: (editorState) => {
     AppDispatcher.dispatch({
       actionType: ActionTypes.EDITOR_STATE_UPDATED,
@@ -31,7 +31,7 @@ var FileActionCreators = {
   },
 
   closeFile: (file, shouldForceClose = false) => {
-    var isFileEmpty = !file.editorState.getCurrentContent().hasText();
+    const isFileEmpty = !file.editorState.getCurrentContent().hasText();
 
     if (!isFileEmpty && !shouldForceClose) {
       ModalActionCreators.openModal(ModalTypes.CONFIRM_CLOSE_NON_EMPTY_FILE, { file });

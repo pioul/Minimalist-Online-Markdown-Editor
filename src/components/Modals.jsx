@@ -7,7 +7,7 @@ import ShortcutManager from '../utils/ShortcutManager.js';
 
 import styles from '../components/css/Modals.css';
 
-var getState = () => ModalStore.getState();
+const getState = () => ModalStore.getState();
 
 class App extends React.Component {
   constructor(props) {
@@ -61,9 +61,9 @@ class App extends React.Component {
   isModalOpen = () => this.state.openModal !== null;
 
   render() {
-    var modalConfig;
-
     if (!this.isModalOpen()) return <div></div>;
+
+    let modalConfig;
 
     switch (this.state.openModal) {
       case ModalTypes.CONFIRM_CLOSE_NON_EMPTY_FILE:

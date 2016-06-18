@@ -5,15 +5,15 @@ import { EditorState, SelectionState, Modifier, convertToRaw, convertFromRaw } f
 import createPersistentStore from '../utils/createPersistentStore';
 import { generateUniqueId } from '../utils/StringUtils';
 
-var CHANGE_EVENT = 'change';
+const CHANGE_EVENT = 'change';
 
-var state = {
+const state = {
   files: [],
   activeFile: null,
 };
 
-var getNewFile = () => {
-  var existingFileIds = state.files.map((file) => file.id);
+const getNewFile = () => {
+  const existingFileIds = state.files.map((file) => file.id);
 
   return {
     id: generateUniqueId(existingFileIds),
@@ -22,7 +22,7 @@ var getNewFile = () => {
   };
 };
 
-var FileStore = Object.assign({}, EventEmitter.prototype, {
+const FileStore = Object.assign({}, EventEmitter.prototype, {
   emitChange: () => FileStore.emit(CHANGE_EVENT),
   addChangeListener: (callback) => FileStore.on(CHANGE_EVENT, callback),
   removeChangeListener: (callback) => FileStore.removeListener(CHANGE_EVENT, callback),
@@ -65,16 +65,16 @@ var FileStore = Object.assign({}, EventEmitter.prototype, {
 
 });
 
-var updateEditorState = (editorState) => {
+const updateEditorState = (editorState) => {
   state.activeFile.editorState = editorState;
 };
 
-var moveEditorFocusToEnd = () => {
+const moveEditorFocusToEnd = () => {
   const newEditorState = EditorState.moveFocusToEnd(state.activeFile.editorState);
   state.activeFile.editorState = newEditorState;
 };
 
-var appendToMarkdownSource = (markdown) => {
+const appendToMarkdownSource = (markdown) => {
   const editorState = state.activeFile.editorState;
   const contentState = editorState.getCurrentContent();
   const lastContentBlock = contentState.getLastBlock();
@@ -104,7 +104,7 @@ var appendToMarkdownSource = (markdown) => {
   state.activeFile.editorState = newEditorState;
 };
 
-var updateActiveFile = (file) => {
+const updateActiveFile = (file) => {
   state.activeFile = file;
   state.activeFile.editorState = EditorState.forceSelection(
     state.activeFile.editorState,
@@ -112,20 +112,20 @@ var updateActiveFile = (file) => {
   );
 };
 
-var createFile = () => {
+const createFile = () => {
   const newFile = getNewFile();
   state.files.push(newFile);
   return newFile;
 };
 
-var createAndSelectNewFile = () => {
+const createAndSelectNewFile = () => {
   const newFile = createFile();
   updateActiveFile(newFile);
 };
 
-var closeFile = (file) => {
+const closeFile = (file) => {
   // Remove file from state
-  var fileIndex = state.files.indexOf(file);
+  const fileIndex = state.files.indexOf(file);
   state.files.splice(fileIndex, 1);
 
   // Make sure at least one file is always open
@@ -141,8 +141,8 @@ var closeFile = (file) => {
   }
 };
 
-var onDispatchedPayload = (payload) => {
-  var isPayloadInteresting = true;
+const onDispatchedPayload = (payload) => {
+  let isPayloadInteresting = true;
 
   switch (payload.actionType) {
     case ActionTypes.EDITOR_STATE_UPDATED:

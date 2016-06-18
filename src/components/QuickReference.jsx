@@ -4,7 +4,7 @@ import FileActionCreators from '../action-creators/FileActionCreators';
 import styles from '../components/css/QuickReference.css';
 
 const onCodeSnippetClick = (e) => {
-  var markdown = '\n\n' + e.currentTarget.textContent;
+  const markdown = `\n\n${e.currentTarget.textContent}`;
   FileActionCreators.appendToMarkdownSource(markdown);
 };
 

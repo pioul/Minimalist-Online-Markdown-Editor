@@ -44,7 +44,7 @@ class FileMenu extends React.Component {
   onLeftNavControlClick = () => this.scrollBy(-FileMenu.SCROLL_STEP);
   onRightNavControlClick = () => this.scrollBy(FileMenu.SCROLL_STEP);
 
-  scrollBy = (x) => this.refs.fileMenuItemsContainer.scrollLeft += x;
+  scrollBy = (x) => (this.refs.fileMenuItemsContainer.scrollLeft += x);
 
   updateNavControlsDisplay = throttle(() => {
     const container = this.refs.fileMenuItemsContainer;

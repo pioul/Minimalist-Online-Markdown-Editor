@@ -10,34 +10,11 @@ import { EditorState } from 'draft-js';
 import styles from '../components/css/Panel.css';
 
 const Panel = (props) => {
-  var { visibleTopPanel } = props.appState;
-  var { fontSizeOffset } = props.settingsState;
-  var shouldDisplayTopPanel =
-    visibleTopPanel !== null && props.type === PanelTypes.MARKDOWN_SOURCE;
-  var panelContents;
-
-  switch (props.type) {
-    case PanelTypes.MARKDOWN_SOURCE:
-      panelContents = (
-        <MarkdownSource editorState={props.editorState} fontSizeOffset={fontSizeOffset} />
-      );
-      break;
-
-    case PanelTypes.MARKDOWN_PREVIEW:
-      panelContents = (
-        <MarkdownPreview markdown={props.markdown} fontSizeOffset={fontSizeOffset} />
-      );
-      break;
-
-    case PanelTypes.HTML_SOURCE:
-      panelContents = (
-        <HtmlSource markdown={props.markdown} fontSizeOffset={fontSizeOffset} />
-      );
-      break;
-
-    default:
-      break;
-  }
+  const { visibleTopPanel } = props.appState;
+  const { fontSizeOffset } = props.settingsState;
+  const panelType = props.type;
+  const shouldDisplayTopPanel =
+    visibleTopPanel !== null && panelType === PanelTypes.MARKDOWN_SOURCE;
 
   return (
     <div className={styles.panel}>
@@ -46,7 +23,14 @@ const Panel = (props) => {
 
       <TopBar className={styles.topBar} {...props} />
 
-      {panelContents}
+      {panelType === PanelTypes.MARKDOWN_SOURCE &&
+        <MarkdownSource editorState={props.editorState} fontSizeOffset={fontSizeOffset} />}
+
+      {panelType === PanelTypes.MARKDOWN_PREVIEW &&
+        <MarkdownPreview markdown={props.markdown} fontSizeOffset={fontSizeOffset} />}
+
+      {panelType === PanelTypes.HTML_SOURCE &&
+        <HtmlSource markdown={props.markdown} fontSizeOffset={fontSizeOffset} />}
     </div>
   );
 };

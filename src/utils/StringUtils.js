@@ -5,12 +5,17 @@
  * E.g. getShortString('React Blog Post', 10) -> 'Reac…Post'
  */
 const getShortString = (str, length) => {
-  if (str.length > length) {
-    length = Math.round(length / 2) - 1;
-    str = str.substr(0, length) + '…' + str.substr(-length);
+  let shortString = str;
+
+  if (shortString.length > length) {
+    const substrLength = Math.round(length / 2) - 1;
+    const leftSubstr = str.substr(0, substrLength);
+    const rightSubstr = str.substr(-substrLength);
+
+    shortString = `${leftSubstr}…${rightSubstr}`;
   }
 
-  return str;
+  return shortString;
 };
 
 /**
@@ -18,7 +23,7 @@ const getShortString = (str, length) => {
  * the returned id is unique.
  */
 const generateUniqueId = (existingIds = []) => {
-  var id;
+  let id;
 
   do {
     id = Math.floor(Math.random() * Math.pow(10, 10)).toString(36);

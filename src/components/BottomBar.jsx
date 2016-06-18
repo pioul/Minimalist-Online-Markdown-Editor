@@ -7,8 +7,8 @@ const WORD_REGEX = /(\w+)/g;
 const getWordCount = (markdown) => {
   const wordMatches = markdown.match(WORD_REGEX);
   const wordCount = wordMatches ? wordMatches.length : 0;
-  const formattedWordCount =
-    wordCount.toLocaleString() + ' word' + (wordCount > 1 ? 's' : '');
+  const unit = wordCount > 1 ? ' words' : ' word';
+  const formattedWordCount = wordCount.toLocaleString() + unit;
 
   return formattedWordCount;
 };

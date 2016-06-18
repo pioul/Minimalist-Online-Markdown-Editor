@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes } from '../constants/AppConstants';
 
-var ModalActionCreators = {
+const ModalActionCreators = {
   openModal: (modalType, options) => {
     AppDispatcher.dispatch({
       actionType: ActionTypes.OPEN_MODAL,

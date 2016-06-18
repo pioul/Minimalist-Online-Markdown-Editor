@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher/AppDispatcher';
 import { ActionTypes } from '../constants/AppConstants';
 
-var SettingsActionCreators = {
+const SettingsActionCreators = {
   increaseFontSize: () => {
     AppDispatcher.dispatch({
       actionType: ActionTypes.INCREASE_FONT_SIZE,

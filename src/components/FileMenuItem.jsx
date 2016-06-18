@@ -43,13 +43,13 @@ class FileMenuItem extends React.Component {
   };
 
   render() {
-    var { file, activeFile } = this.props;
-    var fileName = file.name || 'untitled';
-    var isActive = file === activeFile;
+    const { file, activeFile } = this.props;
+    const fileName = file.name || 'untitled';
+    const isActive = file === activeFile;
 
-    var fileMenuItemClassName = isActive ? styles.activeFileMenuItem : styles.fileMenuItem;
-    var shortFileName = getShortString(fileName, 35);
-    var title = fileName !== shortFileName ? fileName : '';
+    const fileMenuItemClassName = isActive ? styles.activeFileMenuItem : styles.fileMenuItem;
+    const shortFileName = getShortString(fileName, 35);
+    const title = fileName !== shortFileName ? fileName : '';
 
     return (
       <div
