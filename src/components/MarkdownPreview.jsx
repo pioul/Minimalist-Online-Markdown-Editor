@@ -1,12 +1,7 @@
 import React from 'react';
-import MarkdownParser from '../utils/MarkdownParser';
+import MarkdownPreviewMarkup from '../components/MarkdownPreviewMarkup.jsx';
 
 import styles from './css/MarkdownPreview.css';
-
-const createPreviewMarkup = (markdown) => {
-  const html = MarkdownParser.render(markdown);
-  return ({ __html: html });
-};
 
 const MarkdownPreview = (props) => {
   const defaultFontSize = 14;
@@ -15,10 +10,9 @@ const MarkdownPreview = (props) => {
   };
 
   return (
-    <div
-      className={styles.preview} style={dynamicStyles}
-      dangerouslySetInnerHTML={createPreviewMarkup(props.markdown)}
-    />
+    <div className={styles.preview} style={dynamicStyles}>
+      <MarkdownPreviewMarkup markdown={props.markdown} />
+    </div>
   );
 };
 
